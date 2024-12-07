@@ -6,6 +6,10 @@ android {
     namespace 'com.example.onlinecourseande_learningapp'
     compileSdk 34
 
+    buildFeatures{
+        viewBinding true
+    }
+
     defaultConfig {
         applicationId "com.example.onlinecourseande_learningapp"
         minSdk 24
@@ -52,4 +56,13 @@ dependencies {
     // UI
     implementation libs.constraintlayout
     implementation libs.material
+
+    //Splash screen
+    implementation libs.core.splashscreen
+
+
+    //Lottie
+    implementation libs.lottie
+
+
 }
