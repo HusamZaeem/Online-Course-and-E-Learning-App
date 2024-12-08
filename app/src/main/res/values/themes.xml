@@ -4,6 +4,9 @@
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
         <item name="android:windowSplashScreenBackground" tools:ignore="NewApi">@color/splash_background</item>
+        <item name="android:windowSplashScreenAnimatedIcon" tools:ignore="NewApi">@drawable/app_logo</item>
+        <item name="postSplashScreenTheme">@style/Theme.OnlineCourseAndELearningApp</item>
+
     </style>
 
     <style name="Theme.OnlineCourseAndELearningApp" parent="Base.Theme.OnlineCourseAndELearningApp" />

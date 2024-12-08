@@ -8,13 +8,14 @@
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@drawable/app_logo"
         android:label="@string/app_name"
-        android:roundIcon="@color/splash_background"
+        android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.OnlineCourseAndELearningApp"
         tools:targetApi="31">
         <activity
             android:name=".SplashActivity"
-            android:exported="true" >
+            android:exported="true"
+            android:theme="@style/Theme.OnlineCourseAndELearningApp">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

@@ -21,27 +21,13 @@ public class SplashActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
 
-        new Handler(Looper.getMainLooper()).postDelayed(() -> {
-
-            navigateToMain();
-
-        }, 3000); // Delay for 3 seconds
-
-
-
-
-
-
+        new Handler(Looper.getMainLooper()).postDelayed(() -> navigateToMain(), 3000);
     }
-
-
 
     private void navigateToMain() {
         Intent intent = new Intent(SplashActivity.this, MainActivity.class);
         startActivity(intent);
+        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out); // smooth transition
         finish();
     }
-
-
-
 }
