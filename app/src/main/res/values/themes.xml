@@ -6,6 +6,8 @@
         <item name="android:windowSplashScreenBackground" tools:ignore="NewApi">@color/splash_background</item>
         <item name="android:windowSplashScreenAnimatedIcon" tools:ignore="NewApi">@drawable/app_logo</item>
         <item name="postSplashScreenTheme">@style/Theme.OnlineCourseAndELearningApp</item>
+        <item name="android:statusBarColor">@color/status_bar_color</item>
+        <item name="android:windowLightStatusBar">true</item>
 
     </style>
 

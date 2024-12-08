@@ -1,4 +1,12 @@
 <resources>
     <string name="app_name">Online Course and E-Learning App</string>
     <string name="app_logo">App Logo</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="onboarding_content_description">onBoarding</string>
+    <string name="tvOnboarding1"><![CDATA[We provide the best learning courses & great mentors!]]></string>
+    <string name="next">Next</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="tvOnboarding2">Learn anytime and anywhere easily and conveniently</string>
+    <string name="tvOnboarding3">Let\'s improve your skills together with Elera right now!</string>
 </resources>

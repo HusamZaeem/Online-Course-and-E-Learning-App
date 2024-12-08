@@ -3,4 +3,9 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="splash_background">#4F75FC</color>
+    <color name="onboardingTextColor">#000000</color>
+    <color name="btn_color">#335EF5</color>
+    <color name="dot_notActive">#DFDFDF</color>
+    <color name="btn_text_color">#FFFFFF</color>
+    <color name="status_bar_color">#FFFFFF</color>
 </resources>

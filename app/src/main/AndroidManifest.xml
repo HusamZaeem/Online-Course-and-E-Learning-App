@@ -13,9 +13,13 @@
         android:theme="@style/Theme.OnlineCourseAndELearningApp"
         tools:targetApi="31">
         <activity
+            android:name=".Onboarding"
+            android:theme="@style/Theme.OnlineCourseAndELearningApp"
+            android:exported="true" />
+        <activity
             android:name=".SplashActivity"
-            android:exported="true"
-            android:theme="@style/Theme.OnlineCourseAndELearningApp">
+            android:theme="@style/customSplashScreen"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -24,7 +28,7 @@
         </activity>
         <activity
             android:name=".MainActivity"
-            android:exported="false"/>
+            android:exported="true" />
     </application>
 
 </manifest>

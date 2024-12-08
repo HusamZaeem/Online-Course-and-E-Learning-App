@@ -3,7 +3,13 @@
 
 
 
+    <style name="customSplashScreen" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="android:windowSplashScreenBackground" tools:ignore="NewApi">@color/splash_background</item>
+        <item name="postSplashScreenTheme">@style/Theme.OnlineCourseAndELearningApp</item>
+        <item name="android:statusBarColor">@color/splash_background</item>
+        <item name="android:windowLightStatusBar">false</item>
 
+    </style>
 
 
 </resources>
