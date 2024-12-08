@@ -13,13 +13,16 @@
         android:theme="@style/Theme.OnlineCourseAndELearningApp"
         tools:targetApi="31">
         <activity
+            android:name=".SignupLogin"
+            android:exported="false" />
+        <activity
             android:name=".Onboarding"
-            android:theme="@style/Theme.OnlineCourseAndELearningApp"
-            android:exported="true" />
+            android:exported="true"
+            android:theme="@style/Theme.OnlineCourseAndELearningApp" />
         <activity
             android:name=".SplashActivity"
-            android:theme="@style/customSplashScreen"
-            android:exported="true">
+            android:exported="true"
+            android:theme="@style/customSplashScreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

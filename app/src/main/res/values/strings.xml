@@ -9,4 +9,13 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="tvOnboarding2">Learn anytime and anywhere easily and conveniently</string>
     <string name="tvOnboarding3">Let\'s improve your skills together with Elera right now!</string>
+    <string name="imageview">ImageView</string>
+    <string name="tvSignupLogin">Let\'s you in</string>
+    <string name="btn_facebook">Continue with Facebook</string>
+    <string name="btn_google">Continue with Google</string>
+    <string name="btn_apple">Continue with Apple</string>
+    <string name="or">or</string>
+    <string name="btnSign_in">Sign in with password</string>
+    <string name="no_account">Don\'t have an account?</string>
+    <string name="sign_up">Sign up</string>
 </resources>

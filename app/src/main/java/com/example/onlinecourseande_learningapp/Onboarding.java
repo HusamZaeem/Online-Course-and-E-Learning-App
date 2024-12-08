@@ -67,7 +67,7 @@ public class Onboarding extends AppCompatActivity {
     }
 
     private void navigateToLogin() {
-        Intent intent = new Intent(getBaseContext(), MainActivity.class);
+        Intent intent = new Intent(getBaseContext(), SignupLogin.class);
         startActivity(intent);
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out); // smooth transition
         finish();
