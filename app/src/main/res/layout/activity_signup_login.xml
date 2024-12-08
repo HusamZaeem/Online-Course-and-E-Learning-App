@@ -170,7 +170,7 @@
         android:id="@+id/tvNoAccount"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="80dp"
+        android:layout_marginStart="100dp"
         android:layout_marginTop="20dp"
         android:text="@string/no_account"
         android:textColor="@color/secondary_color"
