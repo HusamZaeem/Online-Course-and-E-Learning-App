@@ -15,6 +15,7 @@ public class Onboarding extends AppCompatActivity {
     ActivityOnboardingBinding binding;
 
 
+
     private OnBoardingAdapter adapter;
 
     @Override
