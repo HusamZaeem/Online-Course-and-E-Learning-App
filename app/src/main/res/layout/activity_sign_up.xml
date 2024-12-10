@@ -50,7 +50,7 @@
         android:drawableStart="@drawable/baseline_email_24"
         android:drawablePadding="12dp"
         android:hint="@string/email"
-        android:padding="6dp"
+        android:padding="10dp"
         android:background="@drawable/et_bg"
         android:inputType="textEmailAddress"
         android:layout_marginStart="20dp"
@@ -70,7 +70,7 @@
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:layout_marginTop="16dp"
-        android:padding="6dp"
+        android:padding="10dp"
         android:drawableStart="@drawable/baseline_lock_24"
         android:drawableEnd="@drawable/ic_eye_closed"
         android:drawablePadding="12dp"
@@ -89,5 +89,16 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/etEmail" />
 
+
+    <CheckBox
+        android:id="@+id/cbRememberMe"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:text="@string/rememberMe"
+        android:button="@drawable/custom_checkbox"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/etPassword" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
