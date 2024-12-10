@@ -1,7 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<shape xmlns:android="http://schemas.android.com/apk/res/android">
-
-    <corners android:radius="14dp"/>
-    <solid android:color="#F2F2F2"/>
-
-</shape>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Focused state -->
+    <item android:state_focused="true">
+        <shape>
+            <solid android:color="#F2F2F2"/>
+            <stroke android:width="2dp" android:color="@color/et_bg_active"/> <!-- Border color when focused -->
+            <corners android:radius="14dp"/>
+        </shape>
+    </item>
+    <!-- Default state -->
+    <item>
+        <shape>
+            <solid android:color="#F2F2F2"/>
+            <stroke android:width="2dp" android:color="@color/et_bg_default"/> <!-- Border color when not focused -->
+            <corners android:radius="14dp"/>
+        </shape>
+    </item>
+</selector>
