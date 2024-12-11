@@ -26,13 +26,13 @@
 
     <TextView
         android:id="@+id/tvSignup"
-        android:layout_width="200dp"
+        android:layout_width="260dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         android:text="@string/tvSignup"
         android:textAlignment="textStart"
         android:textColor="@color/primary_color"
-        android:textSize="38sp"
+        android:textSize="50sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.066"
@@ -40,26 +40,24 @@
         app:layout_constraintTop_toBottomOf="@+id/btn_back" />
 
 
-    <!-- Password EditText -->
-
     <androidx.appcompat.widget.AppCompatEditText
         android:id="@+id/etEmail"
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:layout_marginTop="40dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="20dp"
+        android:background="@drawable/et_bg"
         android:drawableStart="@drawable/baseline_email_24"
         android:drawablePadding="12dp"
-        android:hint="@string/email"
-        android:padding="10dp"
-        android:background="@drawable/et_bg"
-        android:inputType="textEmailAddress"
-        android:layout_marginStart="20dp"
-        app:cornerRadius="12dp"
-        android:layout_marginEnd="20dp"
         android:elevation="4dp"
+        android:hint="@string/email"
+        android:inputType="textEmailAddress"
+        android:padding="10dp"
         android:textAlignment="textStart"
         android:textColor="@color/primary_color"
         android:textSize="16sp"
+        app:cornerRadius="12dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -69,41 +67,210 @@
         android:id="@+id/etPassword"
         android:layout_width="match_parent"
         android:layout_height="60dp"
+        android:layout_marginStart="20dp"
         android:layout_marginTop="16dp"
-        android:padding="10dp"
+        android:layout_marginEnd="20dp"
+        android:background="@drawable/et_bg"
         android:drawableStart="@drawable/baseline_lock_24"
         android:drawableEnd="@drawable/ic_eye_closed"
         android:drawablePadding="12dp"
-        android:layout_marginStart="20dp"
-        app:cornerRadius="12dp"
-        android:layout_marginEnd="20dp"
         android:elevation="4dp"
+        android:hint="@string/password"
+        android:inputType="textPassword"
+        android:padding="10dp"
         android:textAlignment="textStart"
         android:textColor="@color/primary_color"
         android:textSize="16sp"
-        android:background="@drawable/et_bg"
-        android:hint="@string/password"
-        android:inputType="textPassword"
+        app:cornerRadius="12dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/etEmail" />
 
 
-
-
     <com.google.android.material.checkbox.MaterialCheckBox
         android:id="@+id/cbRememberMe"
+        style="@style/Widget.App.CheckBox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:text="@string/rememberMe"
-        android:buttonTint="@color/btn_color"
-
         android:drawableTint="@color/white"
+        android:text="@string/rememberMe"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/etPassword"
-        />
+        app:layout_constraintTop_toBottomOf="@+id/etPassword" />
+
+
+    <Button
+        android:id="@+id/btn_Sign_up"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="20dp"
+        android:backgroundTint="@color/btn_color"
+        android:text="@string/btnSign_up"
+        android:textColor="@color/btn_text_color"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cbRememberMe" />
+
+
+    <LinearLayout
+        android:id="@+id/ll_Or"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:orientation="horizontal"
+        android:gravity="center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btn_Sign_up">
+
+
+
+        <View
+            android:id="@+id/vFirst"
+            android:layout_width="80dp"
+            android:layout_height="1dp"
+            android:layout_marginEnd="20dp"
+            android:background="@color/vColor" />
+
+        <TextView
+            android:id="@+id/tvOrContinue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/orContinue"
+            android:textColor="@color/primary_color"
+            android:textSize="18sp"/>
+
+        <View
+            android:id="@+id/vSecond"
+            android:layout_width="80dp"
+            android:layout_height="1dp"
+            android:layout_marginStart="20dp"
+            android:background="@color/vColor" />
+
+
+
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/llButtons"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:orientation="horizontal"
+        android:gravity="center"
+        app:layout_constraintTop_toBottomOf="@id/ll_Or"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnSignupFacebook"
+            android:layout_width="80dp"
+            android:layout_height="70dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_gravity="center"
+            android:backgroundTint="@color/btn_signup_login_color"
+            android:elevation="4dp"
+            android:contentDescription="@string/btn_facebook"
+            android:clickable="true"
+            android:focusable="true"
+            app:cornerRadius="14dp"
+            app:icon="@drawable/facebook"
+            app:iconSize="30dp"
+            app:iconTint="@null"
+            app:strokeColor="@color/btn_signupLogin_Stroke"
+            app:strokeWidth="2dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnSignupGoogle"
+            android:layout_width="80dp"
+            android:layout_height="70dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_gravity="center"
+            android:backgroundTint="@color/btn_signup_login_color"
+            android:elevation="4dp"
+            android:contentDescription="@string/btn_google"
+            android:clickable="true"
+            android:focusable="true"
+            app:cornerRadius="14dp"
+            app:icon="@drawable/google"
+            app:iconSize="40dp"
+            app:iconTint="@null"
+            app:strokeColor="@color/btn_signupLogin_Stroke"
+            app:strokeWidth="2sp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnSignupApple"
+            android:layout_width="80dp"
+            android:layout_height="70dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_gravity="center"
+            android:backgroundTint="@color/btn_signup_login_color"
+            android:elevation="4dp"
+            android:contentDescription="@string/btn_apple"
+            android:clickable="true"
+            android:focusable="true"
+            app:cornerRadius="14dp"
+            app:icon="@drawable/apple"
+            app:iconSize="30dp"
+            app:iconTint="@null"
+            app:strokeColor="@color/btn_signupLogin_Stroke"
+            app:strokeWidth="2dp" />
+
+
+
+    </LinearLayout>
+
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:orientation="horizontal"
+        android:gravity="center"
+        app:layout_constraintTop_toBottomOf="@id/llButtons"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+
+        <TextView
+            android:id="@+id/tvHaveAccount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/have_account"
+            android:textColor="@color/secondary_color"
+            android:textSize="16sp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnSignIn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@android:color/transparent"
+            android:clickable="true"
+            android:focusable="true"
+            android:padding="0dp"
+            android:text="@string/sign_in"
+            android:textColor="@color/tv_sign_up"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+
+    </LinearLayout>
+
+
+
+
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

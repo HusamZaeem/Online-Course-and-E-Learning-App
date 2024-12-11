@@ -23,4 +23,8 @@
     <string name="email">Email</string>
     <string name="password">Password</string>
     <string name="rememberMe">Remember me</string>
+    <string name="btnSign_up">Sign up</string>
+    <string name="orContinue">or continue with</string>
+    <string name="sign_in">Sign in</string>
+    <string name="have_account">Already have an account</string>
 </resources>

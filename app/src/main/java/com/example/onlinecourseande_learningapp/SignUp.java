@@ -63,10 +63,9 @@ public class SignUp extends AppCompatActivity {
         });
 
 
-
         binding.etEmail.setOnFocusChangeListener((v, hasFocus) -> {
             int color = hasFocus ? getResources().getColor(R.color.et_bg_active) : getResources().getColor(R.color.et_bg_default);
-            // Update color for email icon
+            // Update email icon color
             binding.etEmail.getCompoundDrawables()[0].setColorFilter(color, PorterDuff.Mode.SRC_IN);
         });
 

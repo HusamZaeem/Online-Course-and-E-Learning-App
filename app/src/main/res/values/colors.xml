@@ -4,6 +4,7 @@
     <color name="white">#FFFFFFFF</color>
     <color name="primary_color">#000000</color>
     <color name="secondary_color">#818181</color>
+    <color name="vColor">#000000</color>
     <color name="tv_sign_up">#335EF5</color>
     <color name="splash_background">#4F75FC</color>
     <color name="onboardingTextColor">#000000</color>
