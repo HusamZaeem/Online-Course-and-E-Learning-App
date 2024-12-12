@@ -1,10 +1,12 @@
 package com.example.onlinecourseande_learningapp;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.text.InputType;
 import android.view.MotionEvent;
+import android.view.View;
 import android.widget.EditText;
 
 import androidx.activity.EdgeToEdge;
@@ -13,30 +15,31 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.onlinecourseande_learningapp.databinding.ActivitySignInBinding;
 import com.example.onlinecourseande_learningapp.databinding.ActivitySignUpBinding;
 
 public class SignIn extends AppCompatActivity {
 
     private boolean isPasswordVisible = false;
 
-    ActivitySignUpBinding binding;
+    ActivitySignInBinding binding;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = ActivitySignUpBinding.inflate(getLayoutInflater());
+        binding = ActivitySignInBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
 
 
         // Add Eye Icon Click Listener
-        binding.etPassword.setOnTouchListener((v, event) -> {
+        binding.etPasswordSignIn.setOnTouchListener((v, event) -> {
             if (event.getAction() == MotionEvent.ACTION_UP) {
                 int drawableEndIndex = 2; // Index for drawableEnd
-                if (event.getRawX() >= (binding.etPassword.getRight() -
-                        binding.etPassword.getCompoundDrawables()[drawableEndIndex].getBounds().width())) {
-                    togglePasswordVisibility(binding.etPassword);
+                if (event.getRawX() >= (binding.etPasswordSignIn.getRight() -
+                        binding.etPasswordSignIn.getCompoundDrawables()[drawableEndIndex].getBounds().width())) {
+                    togglePasswordVisibility(binding.etPasswordSignIn);
                     return true;
                 }
             }
@@ -44,21 +47,35 @@ public class SignIn extends AppCompatActivity {
         });
 
         // Change colors on focus
-        binding.etPassword.setOnFocusChangeListener((v, hasFocus) -> {
+        binding.etPasswordSignIn.setOnFocusChangeListener((v, hasFocus) -> {
             int color = hasFocus ? getResources().getColor(R.color.et_bg_active) : getResources().getColor(R.color.et_bg_default);
             // Change icon color
-            binding.etPassword.getCompoundDrawables()[0].setColorFilter(color, PorterDuff.Mode.SRC_IN); // Lock icon
-            binding.etPassword.getCompoundDrawables()[2].setColorFilter(color, PorterDuff.Mode.SRC_IN); // Eye icon
+            binding.etPasswordSignIn.getCompoundDrawables()[0].setColorFilter(color, PorterDuff.Mode.SRC_IN); // Lock icon
+            binding.etPasswordSignIn.getCompoundDrawables()[2].setColorFilter(color, PorterDuff.Mode.SRC_IN); // Eye icon
         });
 
 
-        binding.etEmail.setOnFocusChangeListener((v, hasFocus) -> {
+        binding.etEmailSignIn.setOnFocusChangeListener((v, hasFocus) -> {
             int color = hasFocus ? getResources().getColor(R.color.et_bg_active) : getResources().getColor(R.color.et_bg_default);
             // Update email icon color
-            binding.etEmail.getCompoundDrawables()[0].setColorFilter(color, PorterDuff.Mode.SRC_IN);
+            binding.etEmailSignIn.getCompoundDrawables()[0].setColorFilter(color, PorterDuff.Mode.SRC_IN);
         });
 
 
+
+
+
+        binding.btnSignUpNoAccount.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent intent = new Intent(SignIn.this, SignUp.class);
+                startActivity(intent);
+                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+
+
+            }
+        });
 
 
 

@@ -44,23 +44,23 @@ import java.util.List;
 public class AppRepository {
 
 
-    private final UserDao userDao;
-    private final CourseDao courseDao;
-    private final BookmarkDao bookmarkDao;
-    private final CallDao callDao;
-    private final CertificateDao certificateDao;
-    private final ChatDao chatDao;
-    private final CommentDao commentDao;
-    private final DiscussionPostDao discussionPostDao;
-    private final EnrollmentDao enrollmentDao;
-    private final GradeDao gradeDao;
-    private final LessonDao lessonDao;
-    private final MentorDao mentorDao;
-    private final MessageDao messageDao;
-    private final ModuleDao moduleDao;
-    private final NotificationDao notificationDao;
-    private final ParticipantDao participantDao;
-    private final ReviewDao reviewDao;
+    private UserDao userDao;
+    private CourseDao courseDao;
+    private BookmarkDao bookmarkDao;
+    private CallDao callDao;
+    private CertificateDao certificateDao;
+    private ChatDao chatDao;
+    private CommentDao commentDao;
+    private DiscussionPostDao discussionPostDao;
+    private EnrollmentDao enrollmentDao;
+    private GradeDao gradeDao;
+    private LessonDao lessonDao;
+    private MentorDao mentorDao;
+    private MessageDao messageDao;
+    private ModuleDao moduleDao;
+    private NotificationDao notificationDao;
+    private ParticipantDao participantDao;
+    private ReviewDao reviewDao;
 
 
     AppRepository(Application application) {
@@ -88,21 +88,21 @@ public class AppRepository {
 
     //UserDao -----------------------------
 
-    void insertUser (User user){
+    public void insertUser (User user){
         AppDatabase.databaseWriteExecutor.execute(() -> {
             userDao.insertUser(user);
         });
     }
 
 
-    void updateUser (User user){
+    public void updateUser (User user){
         AppDatabase.databaseWriteExecutor.execute(() -> {
             userDao.updateUser(user);
         });
     }
 
 
-    void deleteUser (User user){
+    public void deleteUser (User user){
         AppDatabase.databaseWriteExecutor.execute(() -> {
             userDao.deleteUser(user);
         });
@@ -122,21 +122,21 @@ public class AppRepository {
     //CourseDao ------------------------
 
 
-    void insertCourse (Course course){
+    public void insertCourse (Course course){
         AppDatabase.databaseWriteExecutor.execute(() -> {
             courseDao.insertCourse(course);
         });
     }
 
 
-    void updateCourse (Course course){
+    public void updateCourse (Course course){
         AppDatabase.databaseWriteExecutor.execute(() -> {
             courseDao.updateCourse(course);
         });
     }
 
 
-    void deleteCourse (Course course){
+    public void deleteCourse (Course course){
         AppDatabase.databaseWriteExecutor.execute(() -> {
             courseDao.deleteCourse(course);
         });
@@ -155,21 +155,21 @@ public class AppRepository {
 
     //BookmarkDao --------------------
 
-    void insertBookmark (Bookmark bookmark){
+    public void insertBookmark (Bookmark bookmark){
         AppDatabase.databaseWriteExecutor.execute(() -> {
             bookmarkDao.insertBookmark(bookmark);
         });
     }
 
 
-    void updateBookmark (Bookmark bookmark){
+    public void updateBookmark (Bookmark bookmark){
         AppDatabase.databaseWriteExecutor.execute(() -> {
             bookmarkDao.updateBookmark(bookmark);
         });
     }
 
 
-    void deleteBookmark (Bookmark bookmark){
+    public void deleteBookmark (Bookmark bookmark){
         AppDatabase.databaseWriteExecutor.execute(() -> {
             bookmarkDao.deleteBookmark(bookmark);
         });

@@ -3,25 +3,20 @@ package com.example.onlinecourseande_learningapp;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.PorterDuff;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.text.Editable;
 import android.text.InputType;
-import android.text.TextWatcher;
+import android.util.Patterns;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.example.onlinecourseande_learningapp.databinding.ActivitySignUpBinding;
-
-
-
+import com.example.onlinecourseande_learningapp.room_database.AppViewModel;
+import com.example.onlinecourseande_learningapp.room_database.entities.User;
 
 
 public class SignUp extends AppCompatActivity {
@@ -31,6 +26,9 @@ public class SignUp extends AppCompatActivity {
 
     ActivitySignUpBinding binding;
 
+
+
+
     @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,18 +36,18 @@ public class SignUp extends AppCompatActivity {
         binding = ActivitySignUpBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-
+       AppViewModel appViewModel = new ViewModelProvider(this).get(AppViewModel.class);
 
 
 
 
         // Add Eye Icon Click Listener
-        binding.etPassword.setOnTouchListener((v, event) -> {
+        binding.etPasswordSignUp.setOnTouchListener((v, event) -> {
             if (event.getAction() == MotionEvent.ACTION_UP) {
                 int drawableEndIndex = 2; // Index for drawableEnd
-                if (event.getRawX() >= (binding.etPassword.getRight() -
-                        binding.etPassword.getCompoundDrawables()[drawableEndIndex].getBounds().width())) {
-                    togglePasswordVisibility(binding.etPassword);
+                if (event.getRawX() >= (binding.etPasswordSignUp.getRight() -
+                        binding.etPasswordSignUp.getCompoundDrawables()[drawableEndIndex].getBounds().width())) {
+                    togglePasswordVisibility(binding.etPasswordSignUp);
                     return true;
                 }
             }
@@ -57,33 +55,68 @@ public class SignUp extends AppCompatActivity {
         });
 
         // Change colors on focus
-        binding.etPassword.setOnFocusChangeListener((v, hasFocus) -> {
+        binding.etPasswordSignUp.setOnFocusChangeListener((v, hasFocus) -> {
             int color = hasFocus ? getResources().getColor(R.color.et_bg_active) : getResources().getColor(R.color.et_bg_default);
             // Change icon color
-            binding.etPassword.getCompoundDrawables()[0].setColorFilter(color, PorterDuff.Mode.SRC_IN); // Lock icon
-            binding.etPassword.getCompoundDrawables()[2].setColorFilter(color, PorterDuff.Mode.SRC_IN); // Eye icon
+            binding.etPasswordSignUp.getCompoundDrawables()[0].setColorFilter(color, PorterDuff.Mode.SRC_IN); // Lock icon
+            binding.etPasswordSignUp.getCompoundDrawables()[2].setColorFilter(color, PorterDuff.Mode.SRC_IN); // Eye icon
         });
 
 
-        binding.etEmail.setOnFocusChangeListener((v, hasFocus) -> {
+        binding.etEmailSignUp.setOnFocusChangeListener((v, hasFocus) -> {
             int color = hasFocus ? getResources().getColor(R.color.et_bg_active) : getResources().getColor(R.color.et_bg_default);
             // Update email icon color
-            binding.etEmail.getCompoundDrawables()[0].setColorFilter(color, PorterDuff.Mode.SRC_IN);
+            binding.etEmailSignUp.getCompoundDrawables()[0].setColorFilter(color, PorterDuff.Mode.SRC_IN);
         });
 
 
 
 
 
-        binding.btnSignIn.setOnClickListener(new View.OnClickListener() {
+
+
+
+
+
+
+
+        binding.btnSignUpNewAccount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                Intent intent = new Intent(getBaseContext(), SignIn.class);
+               String email = binding.etEmailSignUp.getText().toString();
+               String password = binding.etPasswordSignUp.getText().toString();
+
+                if (isValidEmail(email) && isValidPassword(password)){
+
+                    appViewModel.insertUser(new User(email,password));
+                    Toast.makeText(getBaseContext(),"Registered Successfully",Toast.LENGTH_LONG).show();
+
+                }
+
+
+
+            }
+        });
+
+
+
+
+
+
+
+
+
+
+
+
+        binding.btnSignInHaveAccount.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent intent = new Intent(SignUp.this, SignIn.class);
                 startActivity(intent);
-                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out); // smooth transition
-
-
+                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
 
             }
         });
@@ -132,4 +165,44 @@ public class SignUp extends AppCompatActivity {
         passwordEditText.setSelection(passwordEditText.length()); // Move cursor to end
         isPasswordVisible = !isPasswordVisible;
     }
+
+
+
+
+    private boolean isValidEmail(String email) {
+
+
+        if (!email.isEmpty() && Patterns.EMAIL_ADDRESS.matcher(email).matches()){
+
+            return true;
+        }else {
+
+            Toast.makeText(this,"Please enter a valid email address.",Toast.LENGTH_LONG).show();
+            return false;
+        }
+
+
+    }
+
+
+    private boolean isValidPassword(String password) {
+
+
+        if (password.length() >= 8 &&
+                password.matches(".*[A-Z].*") &&    // At least one uppercase letter
+                password.matches(".*[a-z].*") &&    // At least one lowercase letter
+                password.matches(".*\\d.*") &&      // At least one digit
+                password.matches(".*[@#$%^&+=!].*")){
+
+            return true;
+        }else {
+            Toast.makeText(this,"Password must be at least 8 characters, include uppercase, lowercase, a digit, and a special character.",Toast.LENGTH_LONG).show();
+            return false;
+        }
+
+
+    }
+
+
+
 }

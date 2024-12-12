@@ -9,7 +9,7 @@
 
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/btn_back"
+        android:id="@+id/btn_back_sign_up"
         android:layout_width="80dp"
         android:layout_height="50dp"
         android:layout_marginTop="24dp"
@@ -25,8 +25,8 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/tvSignin"
-        android:layout_width="260dp"
+        android:id="@+id/tvSignin_sign_up"
+        android:layout_width="280dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         android:text="@string/tvSignup"
@@ -37,11 +37,11 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.066"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btn_back" />
+        app:layout_constraintTop_toBottomOf="@+id/btn_back_sign_up" />
 
 
     <androidx.appcompat.widget.AppCompatEditText
-        android:id="@+id/etEmail"
+        android:id="@+id/etEmail_sign_up"
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:layout_marginStart="20dp"
@@ -61,10 +61,10 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvSignin" />
+        app:layout_constraintTop_toBottomOf="@+id/tvSignin_sign_up" />
 
     <androidx.appcompat.widget.AppCompatEditText
-        android:id="@+id/etPassword"
+        android:id="@+id/etPassword_sign_up"
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:layout_marginStart="20dp"
@@ -85,11 +85,11 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/etEmail" />
+        app:layout_constraintTop_toBottomOf="@+id/etEmail_sign_up" />
 
 
     <com.google.android.material.checkbox.MaterialCheckBox
-        android:id="@+id/cbRememberMe"
+        android:id="@+id/cbRememberMe_sign_up"
         style="@style/Widget.App.CheckBox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -98,11 +98,11 @@
         android:text="@string/rememberMe"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/etPassword" />
+        app:layout_constraintTop_toBottomOf="@+id/etPassword_sign_up" />
 
 
     <Button
-        android:id="@+id/btn_Sign_up"
+        android:id="@+id/btnSignUpNewAccount"
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:layout_marginStart="20dp"
@@ -115,11 +115,11 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cbRememberMe" />
+        app:layout_constraintTop_toBottomOf="@+id/cbRememberMe_sign_up" />
 
 
     <LinearLayout
-        android:id="@+id/ll_Or"
+        android:id="@+id/ll_Or_sign_up"
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:orientation="horizontal"
@@ -131,14 +131,14 @@
 
 
         <View
-            android:id="@+id/vFirst"
+            android:id="@+id/vFirst_sign_up"
             android:layout_width="80dp"
             android:layout_height="1dp"
             android:layout_marginEnd="20dp"
             android:background="@color/vColor" />
 
         <TextView
-            android:id="@+id/tvOrContinue"
+            android:id="@+id/tvOrContinue_sign_up"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/orContinue"
@@ -146,7 +146,7 @@
             android:textSize="18sp"/>
 
         <View
-            android:id="@+id/vSecond"
+            android:id="@+id/vSecond_sign_up"
             android:layout_width="80dp"
             android:layout_height="1dp"
             android:layout_marginStart="20dp"
@@ -159,19 +159,19 @@
 
 
     <LinearLayout
-        android:id="@+id/llButtons"
+        android:id="@+id/llButtons_sign_up"
         android:layout_width="match_parent"
         android:layout_height="80dp"
         android:orientation="horizontal"
         android:gravity="center"
-        app:layout_constraintTop_toBottomOf="@id/ll_Or"
+        app:layout_constraintTop_toBottomOf="@id/ll_Or_sign_up"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
 
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnSignupFacebook"
+            android:id="@+id/btnSignupFacebook_sign_up"
             android:layout_width="80dp"
             android:layout_height="70dp"
             android:layout_marginStart="20dp"
@@ -190,7 +190,7 @@
             app:strokeWidth="2dp" />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnSignupGoogle"
+            android:id="@+id/btnSignupGoogle_sign_up"
             android:layout_width="80dp"
             android:layout_height="70dp"
             android:layout_marginStart="20dp"
@@ -209,7 +209,7 @@
             app:strokeWidth="2sp" />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnSignupApple"
+            android:id="@+id/btnSignupApple_sign_up"
             android:layout_width="80dp"
             android:layout_height="70dp"
             android:layout_marginStart="20dp"
@@ -234,17 +234,18 @@
 
 
     <LinearLayout
+        android:id="@+id/llHaveAccount_sign_up"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="60dp"
         android:orientation="horizontal"
         android:gravity="center"
-        app:layout_constraintTop_toBottomOf="@id/llButtons"
+        app:layout_constraintTop_toBottomOf="@id/llButtons_sign_up"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
 
         <TextView
-            android:id="@+id/tvHaveAccount"
+            android:id="@+id/tvHaveAccount_sign_up"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/have_account"
@@ -252,7 +253,7 @@
             android:textSize="16sp" />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnSignIn"
+            android:id="@+id/btnSignInHaveAccount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:backgroundTint="@android:color/transparent"

@@ -2,6 +2,7 @@ package com.example.onlinecourseande_learningapp.room_database.entities;
 
 
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 import java.util.Date;
@@ -20,6 +21,12 @@ public class User {
     private boolean is_admin;
 
 
+    public User(String email, String password) {
+        this.email = email;
+        this.password = password;
+    }
+
+    @Ignore
     public User(String first_name, String last_name, String email, String password, String profile_photo, Date date_of_birth, boolean is_admin) {
         this.first_name = first_name;
         this.last_name = last_name;
