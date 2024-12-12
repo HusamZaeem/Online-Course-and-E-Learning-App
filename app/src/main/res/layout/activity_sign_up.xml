@@ -25,7 +25,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/tvSignup"
+        android:id="@+id/tvSignin"
         android:layout_width="260dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
@@ -61,7 +61,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvSignup" />
+        app:layout_constraintTop_toBottomOf="@+id/tvSignin" />
 
     <androidx.appcompat.widget.AppCompatEditText
         android:id="@+id/etPassword"

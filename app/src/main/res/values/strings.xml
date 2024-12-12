@@ -27,4 +27,6 @@
     <string name="orContinue">or continue with</string>
     <string name="sign_in">Sign in</string>
     <string name="have_account">Already have an account</string>
+    <string name="tvSignIn">Login to your Account</string>
+    <string name="forgot_pass">Forgot the password?</string>
 </resources>
