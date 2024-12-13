@@ -126,7 +126,7 @@
         android:gravity="center"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btn_Sign_up">
+        app:layout_constraintTop_toBottomOf="@+id/btnSignUpNewAccount">
 
 
 
