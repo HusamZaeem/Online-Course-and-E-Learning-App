@@ -28,7 +28,6 @@ public class Notification {
         this.timestamp = timestamp;
     }
 
-
     public int getNotification_id() {
         return notification_id;
     }
@@ -37,12 +36,12 @@ public class Notification {
         this.notification_id = notification_id;
     }
 
-    public int getUser_id() {
+    public int getStudent_id() {
         return student_id;
     }
 
-    public void setUser_id(int user_id) {
-        this.student_id = user_id;
+    public void setStudent_id(int student_id) {
+        this.student_id = student_id;
     }
 
     public String getContent() {

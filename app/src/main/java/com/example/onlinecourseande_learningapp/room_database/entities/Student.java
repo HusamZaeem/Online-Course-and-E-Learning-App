@@ -35,11 +35,11 @@ public class Student {
         this.date_of_birth = date_of_birth;
     }
 
-    public int getUser_id() {
+    public int getStudent_id() {
         return student_id;
     }
 
-    public void setUser_id(int user_id) {
+    public void setStudent_id(int user_id) {
         this.student_id = user_id;
     }
 

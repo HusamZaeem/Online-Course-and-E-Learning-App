@@ -37,11 +37,11 @@ public class Review {
         this.review_id = review_id;
     }
 
-    public int getUser_id() {
+    public int getStudent_id() {
         return student_id;
     }
 
-    public void setUser_id(int user_id) {
+    public void setStudent_id(int user_id) {
         this.student_id = user_id;
     }
 

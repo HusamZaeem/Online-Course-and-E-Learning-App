@@ -89,7 +89,7 @@ public class SignUp extends AppCompatActivity {
 
                 if (isValidEmail(email) && isValidPassword(password)){
 
-                    appViewModel.insertUser(new Student(email,password));
+                    appViewModel.insertStudent(new Student(email,password));
                     Toast.makeText(getBaseContext(),"Registered Successfully",Toast.LENGTH_LONG).show();
 
                 }

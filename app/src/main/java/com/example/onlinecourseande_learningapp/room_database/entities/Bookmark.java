@@ -37,7 +37,7 @@ public class Bookmark {
         this.bookmark_id = bookmark_id;
     }
 
-    public int getUser_id() {
+    public int getStudent_id() {
         return student_id;
     }
 

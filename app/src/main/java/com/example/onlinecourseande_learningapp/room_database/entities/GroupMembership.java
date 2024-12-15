@@ -3,6 +3,7 @@ package com.example.onlinecourseande_learningapp.room_database.entities;
 
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
+import androidx.room.Ignore;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
@@ -42,6 +43,7 @@ public class GroupMembership {
     public GroupMembership() {
     }
 
+    @Ignore
     public GroupMembership(int group_id, int student_id) {
         this.group_id = group_id;
         this.student_id = student_id;

@@ -29,7 +29,7 @@ public interface StudentLessonDao {
 
 
     @Query("SELECT completion_status FROM StudentLesson WHERE student_id = :student_id AND lesson_id = :lesson_id")
-    String getCompletionStatus(int student_id, int lesson_id);
+    boolean getCompletionStatus(int student_id, int lesson_id);
 
 
     @Query("UPDATE StudentLesson SET completion_status = :completion_status WHERE student_id = :student_id AND lesson_id = :lesson_id")

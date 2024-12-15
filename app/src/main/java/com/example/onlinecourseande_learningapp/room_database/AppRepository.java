@@ -998,7 +998,7 @@ public class AppRepository {
     }
 
 
-    String getCompletionStatus(int student_id, int lesson_id){
+    boolean getCompletionStatus(int student_id, int lesson_id){
         return studentLessonDao.getCompletionStatus(student_id,lesson_id);
     }
 
