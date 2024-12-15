@@ -31,38 +31,38 @@ import androidx.room.Index;
 public class StudentModule {
 
 
-    private Integer student_id;
-    private Integer module_id;
-    private Double module_grade;
+    private int student_id;
+    private int module_id;
+    private double module_grade;
 
-    public StudentModule(Integer module_id, Double module_grade, Integer student_id) {
+    public StudentModule(int module_id, double module_grade, int student_id) {
         this.module_id = module_id;
         this.module_grade = module_grade;
         this.student_id = student_id;
     }
 
 
-    public Integer getStudent_id() {
+    public int getStudent_id() {
         return student_id;
     }
 
-    public void setStudent_id(Integer student_id) {
+    public void setStudent_id(int student_id) {
         this.student_id = student_id;
     }
 
-    public Integer getModule_id() {
+    public int getModule_id() {
         return module_id;
     }
 
-    public void setModule_id(Integer module_id) {
+    public void setModule_id(int module_id) {
         this.module_id = module_id;
     }
 
-    public Double getModule_grade() {
+    public double getModule_grade() {
         return module_grade;
     }
 
-    public void setModule_grade(Double module_grade) {
+    public void setModule_grade(double module_grade) {
         this.module_grade = module_grade;
     }
 }

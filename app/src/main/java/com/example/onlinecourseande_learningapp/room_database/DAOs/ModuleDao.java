@@ -34,6 +34,11 @@ public interface ModuleDao {
     @Query("SELECT * FROM Module WHERE course_id = :course_id")
     LiveData<List<Module>> getAllCourseModules (int course_id);
 
+    @Query("SELECT SUM(lesson_duration) FROM Lesson WHERE module_id = :module_id")
+    int getModuleDuration(int module_id);
+
+    @Query("UPDATE Module SET duration = (SELECT SUM(lesson_duration) FROM Lesson WHERE module_id = :module_id) WHERE module_id = :module_id")
+    void updateModuleDuration(int module_id);
 
 
 }

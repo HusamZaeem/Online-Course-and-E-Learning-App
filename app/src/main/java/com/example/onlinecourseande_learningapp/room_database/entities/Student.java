@@ -11,7 +11,7 @@ import java.util.Date;
 public class Student {
 
     @PrimaryKey(autoGenerate = true)
-    private Integer student_id;
+    private int student_id;
     private String first_name;
     private String last_name;
     private String email;
@@ -35,11 +35,11 @@ public class Student {
         this.date_of_birth = date_of_birth;
     }
 
-    public Integer getUser_id() {
+    public int getUser_id() {
         return student_id;
     }
 
-    public void setUser_id(Integer user_id) {
+    public void setUser_id(int user_id) {
         this.student_id = user_id;
     }
 

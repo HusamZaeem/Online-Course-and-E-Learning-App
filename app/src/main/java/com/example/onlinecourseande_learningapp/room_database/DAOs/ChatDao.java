@@ -30,7 +30,10 @@ public interface ChatDao {
     LiveData<List<Chat>> getAllChats();
 
     @Query("SELECT * FROM Chat WHERE chat_id = :chat_id")
-    LiveData<List<Chat>> getChatById(int chat_id);
+    Chat getChatById(int chat_id);
 
+
+    @Query("SELECT * FROM Chat WHERE sender_id = :student_id")
+    LiveData<List<Chat>> getAllStudentChats(int student_id);
 
 }

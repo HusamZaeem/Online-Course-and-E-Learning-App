@@ -32,27 +32,27 @@ import androidx.room.Index;
 )
 public class StudentMentor {
 
-    private Integer student_id;
-    private Integer mentor_id;
+    private int student_id;
+    private int mentor_id;
 
-    public StudentMentor(Integer student_id, Integer mentor_id) {
+    public StudentMentor(int student_id, int mentor_id) {
         this.student_id = student_id;
         this.mentor_id = mentor_id;
     }
 
-    public Integer getStudent_id() {
+    public int getStudent_id() {
         return student_id;
     }
 
-    public void setStudent_id(Integer student_id) {
+    public void setStudent_id(int student_id) {
         this.student_id = student_id;
     }
 
-    public Integer getMentor_id() {
+    public int getMentor_id() {
         return mentor_id;
     }
 
-    public void setMentor_id(Integer mentor_id) {
+    public void setMentor_id(int mentor_id) {
         this.mentor_id = mentor_id;
     }
 }

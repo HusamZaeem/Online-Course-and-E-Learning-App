@@ -31,6 +31,9 @@ public interface GroupMembershipDao {
     LiveData<List<GroupMembership>> getGroupMembershipById(int group_membership_id);
 
     @Query("SELECT student_id FROM GroupMembership WHERE group_id = :group_id")
-    LiveData<List<Integer>> getAllStudentsInGroup(int group_id);
+    LiveData<List<Integer>> getAllGroupStudents(int group_id);
+
+    @Query("SELECT group_id FROM GroupMembership WHERE student_id = :student_id")
+    LiveData<List<Integer>> getAllStudentGroups(int student_id);
 
 }

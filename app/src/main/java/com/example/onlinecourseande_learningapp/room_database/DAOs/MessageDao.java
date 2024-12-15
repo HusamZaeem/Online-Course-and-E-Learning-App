@@ -31,5 +31,17 @@ public interface MessageDao {
     @Query("SELECT * FROM Message WHERE message_id = :message_id")
     LiveData<List<Message>> getMessageById(int message_id);
 
+    @Query("SELECT * FROM Message WHERE group_id = :group_id")
+    LiveData<List<Message>> getGroupMessagesByGroupId(int group_id);
+
+    @Query("SELECT * FROM Message WHERE chat_id = :chat_id")
+    LiveData<List<Message>> getChatMessagesByChatId(int chat_id);
+
+    @Query("SELECT * FROM Message WHERE message_type = :message_type")
+    LiveData<List<Message>> getChatMessagesByMessageType(String message_type);
+
+
+    @Query("SELECT * FROM Message WHERE content LIKE '%' || :content || '%'")
+    LiveData<List<Message>> searchMessagesByContent(String content);
 
 }

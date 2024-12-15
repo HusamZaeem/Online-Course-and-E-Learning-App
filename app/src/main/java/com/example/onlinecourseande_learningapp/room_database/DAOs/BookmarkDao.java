@@ -30,5 +30,8 @@ public interface BookmarkDao {
     @Query("SELECT * FROM Bookmark WHERE bookmark_id = :bookmark_id")
     LiveData<List<Bookmark>> getBookmarkById (int bookmark_id);
 
+    @Query("SELECT * FROM Bookmark WHERE student_id = :student_id")
+    LiveData<List<Bookmark>> getAllStudentBookmarks (int student_id);
+
 
 }

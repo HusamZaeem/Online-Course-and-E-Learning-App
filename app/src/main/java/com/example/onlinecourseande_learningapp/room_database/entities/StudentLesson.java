@@ -29,38 +29,38 @@ import androidx.room.Index;
 )
 public class StudentLesson {
 
-    private Integer student_id;
-    private Integer lesson_id;
-    private String completion_status;
+    private int student_id;
+    private int lesson_id;
+    private boolean completion_status;
 
 
-    public StudentLesson(Integer student_id, Integer lesson_id, String completion_status) {
+    public StudentLesson(int student_id, int lesson_id, boolean completion_status) {
         this.student_id = student_id;
         this.lesson_id = lesson_id;
         this.completion_status = completion_status;
     }
 
-    public Integer getStudent_id() {
+    public int getStudent_id() {
         return student_id;
     }
 
-    public void setStudent_id(Integer student_id) {
+    public void setStudent_id(int student_id) {
         this.student_id = student_id;
     }
 
-    public Integer getLesson_id() {
+    public int getLesson_id() {
         return lesson_id;
     }
 
-    public void setLesson_id(Integer lesson_id) {
+    public void setLesson_id(int lesson_id) {
         this.lesson_id = lesson_id;
     }
 
-    public String getCompletion_status() {
+    public boolean getCompletion_status() {
         return completion_status;
     }
 
-    public void setCompletion_status(String completion_status) {
+    public void setCompletion_status(boolean completion_status) {
         this.completion_status = completion_status;
     }
 }

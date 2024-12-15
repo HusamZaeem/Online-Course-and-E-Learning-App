@@ -39,6 +39,9 @@ public class GroupMembership {
     private int student_id;
 
 
+    public GroupMembership() {
+    }
+
     public GroupMembership(int group_id, int student_id) {
         this.group_id = group_id;
         this.student_id = student_id;
