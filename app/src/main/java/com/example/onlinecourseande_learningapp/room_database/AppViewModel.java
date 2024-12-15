@@ -8,21 +8,16 @@ import androidx.lifecycle.LiveData;
 
 import com.example.onlinecourseande_learningapp.room_database.entities.Bookmark;
 import com.example.onlinecourseande_learningapp.room_database.entities.Call;
-import com.example.onlinecourseande_learningapp.room_database.entities.Certificate;
 import com.example.onlinecourseande_learningapp.room_database.entities.Chat;
-import com.example.onlinecourseande_learningapp.room_database.entities.Comment;
 import com.example.onlinecourseande_learningapp.room_database.entities.Course;
-import com.example.onlinecourseande_learningapp.room_database.entities.DiscussionPost;
 import com.example.onlinecourseande_learningapp.room_database.entities.Enrollment;
-import com.example.onlinecourseande_learningapp.room_database.entities.Grade;
 import com.example.onlinecourseande_learningapp.room_database.entities.Lesson;
 import com.example.onlinecourseande_learningapp.room_database.entities.Mentor;
 import com.example.onlinecourseande_learningapp.room_database.entities.Message;
 import com.example.onlinecourseande_learningapp.room_database.entities.Module;
 import com.example.onlinecourseande_learningapp.room_database.entities.Notification;
-import com.example.onlinecourseande_learningapp.room_database.entities.Participant;
 import com.example.onlinecourseande_learningapp.room_database.entities.Review;
-import com.example.onlinecourseande_learningapp.room_database.entities.User;
+import com.example.onlinecourseande_learningapp.room_database.entities.Student;
 
 import java.util.List;
 
@@ -43,27 +38,27 @@ public class AppViewModel extends AndroidViewModel {
 
     //UserDao -----------------------------
 
-    public void insertUser(User user){
-            appRepository.insertUser(user);
+    public void insertUser(Student student){
+            appRepository.insertUser(student);
     }
 
 
-    public void updateUser (User user){
-        appRepository.updateUser(user);
+    public void updateUser (Student student){
+        appRepository.updateUser(student);
     }
 
 
-    public void deleteUser (User user){
-            appRepository.deleteUser(user);
+    public void deleteUser (Student student){
+            appRepository.deleteUser(student);
     }
 
 
-    public  LiveData<List<User>> getAllUsers (){
+    public  LiveData<List<Student>> getAllUsers (){
         return appRepository.getAllUsers();
     }
 
 
-    public  LiveData<List<User>> getUserById (int user_id){
+    public  LiveData<List<Student>> getUserById (int user_id){
         return appRepository.getUserById(user_id);
     }
 

@@ -16,7 +16,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.example.onlinecourseande_learningapp.databinding.ActivitySignUpBinding;
 import com.example.onlinecourseande_learningapp.room_database.AppViewModel;
-import com.example.onlinecourseande_learningapp.room_database.entities.User;
+import com.example.onlinecourseande_learningapp.room_database.entities.Student;
 
 
 public class SignUp extends AppCompatActivity {
@@ -89,7 +89,7 @@ public class SignUp extends AppCompatActivity {
 
                 if (isValidEmail(email) && isValidPassword(password)){
 
-                    appViewModel.insertUser(new User(email,password));
+                    appViewModel.insertUser(new Student(email,password));
                     Toast.makeText(getBaseContext(),"Registered Successfully",Toast.LENGTH_LONG).show();
 
                 }

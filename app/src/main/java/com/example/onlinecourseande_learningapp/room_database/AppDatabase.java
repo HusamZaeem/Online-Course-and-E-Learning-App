@@ -9,47 +9,37 @@ import androidx.room.TypeConverters;
 
 import com.example.onlinecourseande_learningapp.room_database.DAOs.BookmarkDao;
 import com.example.onlinecourseande_learningapp.room_database.DAOs.CallDao;
-import com.example.onlinecourseande_learningapp.room_database.DAOs.CertificateDao;
 import com.example.onlinecourseande_learningapp.room_database.DAOs.ChatDao;
-import com.example.onlinecourseande_learningapp.room_database.DAOs.CommentDao;
 import com.example.onlinecourseande_learningapp.room_database.DAOs.CourseDao;
-import com.example.onlinecourseande_learningapp.room_database.DAOs.DiscussionPostDao;
 import com.example.onlinecourseande_learningapp.room_database.DAOs.EnrollmentDao;
-import com.example.onlinecourseande_learningapp.room_database.DAOs.GradeDao;
 import com.example.onlinecourseande_learningapp.room_database.DAOs.LessonDao;
 import com.example.onlinecourseande_learningapp.room_database.DAOs.MentorDao;
 import com.example.onlinecourseande_learningapp.room_database.DAOs.MessageDao;
 import com.example.onlinecourseande_learningapp.room_database.DAOs.ModuleDao;
 import com.example.onlinecourseande_learningapp.room_database.DAOs.NotificationDao;
-import com.example.onlinecourseande_learningapp.room_database.DAOs.ParticipantDao;
 import com.example.onlinecourseande_learningapp.room_database.DAOs.ReviewDao;
-import com.example.onlinecourseande_learningapp.room_database.DAOs.UserDao;
+import com.example.onlinecourseande_learningapp.room_database.DAOs.StudentDao;
 import com.example.onlinecourseande_learningapp.room_database.entities.Bookmark;
 import com.example.onlinecourseande_learningapp.room_database.entities.Call;
-import com.example.onlinecourseande_learningapp.room_database.entities.Certificate;
 import com.example.onlinecourseande_learningapp.room_database.entities.Chat;
-import com.example.onlinecourseande_learningapp.room_database.entities.Comment;
 import com.example.onlinecourseande_learningapp.room_database.entities.Course;
-import com.example.onlinecourseande_learningapp.room_database.entities.DiscussionPost;
 import com.example.onlinecourseande_learningapp.room_database.entities.Enrollment;
-import com.example.onlinecourseande_learningapp.room_database.entities.Grade;
 import com.example.onlinecourseande_learningapp.room_database.entities.Lesson;
 import com.example.onlinecourseande_learningapp.room_database.entities.Mentor;
 import com.example.onlinecourseande_learningapp.room_database.entities.Message;
 import com.example.onlinecourseande_learningapp.room_database.entities.Module;
 import com.example.onlinecourseande_learningapp.room_database.entities.Notification;
-import com.example.onlinecourseande_learningapp.room_database.entities.Participant;
 import com.example.onlinecourseande_learningapp.room_database.entities.Review;
-import com.example.onlinecourseande_learningapp.room_database.entities.User;
+import com.example.onlinecourseande_learningapp.room_database.entities.Student;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-@Database(entities = {User.class , Course.class, Bookmark.class, Call.class, Certificate.class, Chat.class, Comment.class, DiscussionPost.class, Enrollment.class, Grade.class, Lesson.class, Mentor.class, Message.class, Module.class, Notification.class, Participant.class, Review.class}, version = 1 , exportSchema = false)
+@Database(entities = {Student.class , Course.class, Bookmark.class, Call.class, Certificate.class, Chat.class, Comment.class, DiscussionPost.class, Enrollment.class, Grade.class, Lesson.class, Mentor.class, Message.class, Module.class, Notification.class, Participant.class, Review.class}, version = 1 , exportSchema = false)
 @TypeConverters({Converter.class})
 public abstract class AppDatabase extends RoomDatabase {
 
-    public abstract UserDao userDao();
+    public abstract StudentDao userDao();
     public abstract CourseDao courseDao();
     public abstract BookmarkDao bookmarkDao();
     public abstract CallDao callDao();

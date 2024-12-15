@@ -31,6 +31,9 @@ public interface ModuleDao {
     @Query("SELECT * FROM Module WHERE module_id = :module_id")
     LiveData<List<Module>> getModuleById (int module_id);
 
+    @Query("SELECT * FROM Module WHERE course_id = :course_id")
+    LiveData<List<Module>> getAllCourseModules (int course_id);
+
 
 
 }

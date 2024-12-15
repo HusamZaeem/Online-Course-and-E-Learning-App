@@ -7,22 +7,22 @@ import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
 @Entity(tableName = "Review",
-        foreignKeys = @ForeignKey(entity = User.class, parentColumns = "user_id", childColumns = "user_id", onDelete = ForeignKey.CASCADE),
-        indices = @Index(value = "user_id")
+        foreignKeys = @ForeignKey(entity = Student.class, parentColumns = "student_id", childColumns = "student_id", onDelete = ForeignKey.CASCADE),
+        indices = @Index(value = "student_id")
     )
 public class Review {
 
     @PrimaryKey(autoGenerate = true)
     private int review_id;
-    private int user_id;
+    private int student_id;
     private int target_id;
     private String type;
     private double rate;
     private String comment;
 
 
-    public Review(int user_id, int target_id, String type, double rate, String comment) {
-        this.user_id = user_id;
+    public Review(int student_id, int target_id, String type, double rate, String comment) {
+        this.student_id = student_id;
         this.target_id = target_id;
         this.type = type;
         this.rate = rate;
@@ -38,11 +38,11 @@ public class Review {
     }
 
     public int getUser_id() {
-        return user_id;
+        return student_id;
     }
 
     public void setUser_id(int user_id) {
-        this.user_id = user_id;
+        this.student_id = user_id;
     }
 
     public int getTarget_id() {

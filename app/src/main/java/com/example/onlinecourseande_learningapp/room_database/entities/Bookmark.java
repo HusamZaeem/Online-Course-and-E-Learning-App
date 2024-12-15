@@ -9,23 +9,23 @@ import androidx.room.PrimaryKey;
 @Entity(tableName = "Bookmark",
         foreignKeys = {
                 @ForeignKey(entity = Course.class, parentColumns = "course_id", childColumns = "course_id", onDelete = ForeignKey.CASCADE),
-                @ForeignKey(entity = User.class, parentColumns = "user_id", childColumns = "user_id", onDelete = ForeignKey.CASCADE)
+                @ForeignKey(entity = Student.class, parentColumns = "student_id", childColumns = "student_id", onDelete = ForeignKey.CASCADE)
         },
         indices = {
         @Index(value = "course_id"),
-        @Index(value = "user_id")
+        @Index(value = "student_id")
         }
         )
 public class Bookmark {
 
     @PrimaryKey(autoGenerate = true)
     private int bookmark_id;
-    private int user_id;
+    private int student_id;
     private int course_id;
 
 
-    public Bookmark(int user_id, int course_id) {
-        this.user_id = user_id;
+    public Bookmark(int student_id, int course_id) {
+        this.student_id = student_id;
         this.course_id = course_id;
     }
 
@@ -38,11 +38,11 @@ public class Bookmark {
     }
 
     public int getUser_id() {
-        return user_id;
+        return student_id;
     }
 
     public void setUser_id(int user_id) {
-        this.user_id = user_id;
+        this.student_id = user_id;
     }
 
     public int getCourse_id() {

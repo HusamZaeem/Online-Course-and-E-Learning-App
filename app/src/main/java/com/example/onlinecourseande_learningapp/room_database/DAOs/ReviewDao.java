@@ -31,6 +31,29 @@ public interface ReviewDao {
     @Query("SELECT * FROM Review WHERE review_id = :review_id")
     LiveData<List<Review>> getReviewById(int review_id);
 
+    // Get all reviews for a specific course
+    @Query("SELECT * FROM Review WHERE type = 'Course' AND target_id = :course_id")
+    LiveData<List<Review>> getReviewsForCourse(int course_id);
 
+    // Get all reviews for a specific mentor
+    @Query("SELECT * FROM Review WHERE type = 'Mentor' AND target_id = :mentor_id")
+    LiveData<List<Review>> getReviewsForMentor(int mentor_id);
+
+    // Delete all reviews for a specific course
+    @Query("DELETE FROM Review WHERE type = 'Course' AND target_id = :course_id")
+    void deleteReviewsForCourse(int course_id);
+
+    // Delete all reviews for a specific mentor
+    @Query("DELETE FROM Review WHERE type = 'Mentor' AND target_id = :mentor_id")
+    void deleteReviewsForMentor(int mentor_id);
+
+    // Delete a review for a specific course
+    @Query("DELETE FROM Review WHERE type = 'Course' AND target_id = :course_id AND review_id = :review_id")
+    void deleteReviewForCourse(int course_id, int review_id);
+
+
+    // Delete a review for a specific mentor
+    @Query("DELETE FROM Review WHERE type = 'Mentor' AND target_id = :mentor_id AND review_id = :review_id")
+    void deleteReviewForMentor(int mentor_id, int review_id);
 
 }

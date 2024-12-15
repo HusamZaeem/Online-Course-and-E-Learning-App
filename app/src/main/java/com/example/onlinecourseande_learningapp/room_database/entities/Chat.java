@@ -2,22 +2,33 @@ package com.example.onlinecourseande_learningapp.room_database.entities;
 
 
 import androidx.room.Entity;
+import androidx.room.ForeignKey;
+import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
-@Entity(tableName = "Chat")
+import java.util.Date;
+
+@Entity(tableName = "Chat",
+        foreignKeys = {@ForeignKey(entity = Student.class, parentColumns = "student_id", childColumns = "sender_id", onDelete = ForeignKey.CASCADE),
+                      @ForeignKey(entity = Student.class, parentColumns = "student_id", childColumns = "receiver_id", onDelete = ForeignKey.CASCADE)
+        },
+        indices = {@Index(value = "sender_id"),
+                    @Index(value = "receiver_id")
+        })
 public class Chat {
 
     @PrimaryKey(autoGenerate = true)
     private int chat_id;
-    private String chat_type;
-    private String chat_name;
+    private int sender_id;
+    private int receiver_id;
+    private Date timestamp;
 
 
-    public Chat(String chat_type, String chat_name) {
-        this.chat_type = chat_type;
-        this.chat_name = chat_name;
+    public Chat(int sender_id, int receiver_id, Date timestamp) {
+        this.sender_id = sender_id;
+        this.receiver_id = receiver_id;
+        this.timestamp = timestamp;
     }
-
 
     public int getChat_id() {
         return chat_id;
@@ -27,19 +38,27 @@ public class Chat {
         this.chat_id = chat_id;
     }
 
-    public String getChat_type() {
-        return chat_type;
+    public int getSender_id() {
+        return sender_id;
     }
 
-    public void setChat_type(String chat_type) {
-        this.chat_type = chat_type;
+    public void setSender_id(int sender_id) {
+        this.sender_id = sender_id;
     }
 
-    public String getChat_name() {
-        return chat_name;
+    public int getReceiver_id() {
+        return receiver_id;
     }
 
-    public void setChat_name(String chat_name) {
-        this.chat_name = chat_name;
+    public void setReceiver_id(int receiver_id) {
+        this.receiver_id = receiver_id;
+    }
+
+    public Date getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(Date timestamp) {
+        this.timestamp = timestamp;
     }
 }

@@ -7,42 +7,40 @@ import androidx.room.PrimaryKey;
 
 import java.util.Date;
 
-@Entity(tableName = "user")
-public class User {
+@Entity(tableName = "Student")
+public class Student {
 
     @PrimaryKey(autoGenerate = true)
-    private int user_id;
+    private Integer student_id;
     private String first_name;
     private String last_name;
     private String email;
     private String password;
     private String profile_photo;
     private Date date_of_birth;
-    private boolean is_admin;
 
 
-    public User(String email, String password) {
+    public Student(String email, String password) {
         this.email = email;
         this.password = password;
     }
 
     @Ignore
-    public User(String first_name, String last_name, String email, String password, String profile_photo, Date date_of_birth, boolean is_admin) {
+    public Student(String first_name, String last_name, String email, String password, String profile_photo, Date date_of_birth) {
         this.first_name = first_name;
         this.last_name = last_name;
         this.email = email;
         this.password = password;
         this.profile_photo = profile_photo;
         this.date_of_birth = date_of_birth;
-        this.is_admin = is_admin;
     }
 
-    public int getUser_id() {
-        return user_id;
+    public Integer getUser_id() {
+        return student_id;
     }
 
-    public void setUser_id(int user_id) {
-        this.user_id = user_id;
+    public void setUser_id(Integer user_id) {
+        this.student_id = user_id;
     }
 
     public String getFirst_name() {
@@ -93,11 +91,4 @@ public class User {
         this.date_of_birth = date_of_birth;
     }
 
-    public boolean isIs_admin() {
-        return is_admin;
-    }
-
-    public void setIs_admin(boolean is_admin) {
-        this.is_admin = is_admin;
-    }
 }

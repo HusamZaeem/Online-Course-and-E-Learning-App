@@ -11,8 +11,8 @@ import androidx.room.PrimaryKey;
         tableName = "Call",
         foreignKeys = {
                 @ForeignKey(entity = Chat.class, parentColumns = "chat_id", childColumns = "chat_id", onDelete = ForeignKey.CASCADE),
-                @ForeignKey(entity = User.class, parentColumns = "user_id", childColumns = "caller_id", onDelete = ForeignKey.CASCADE),
-                @ForeignKey(entity = User.class, parentColumns = "user_id", childColumns = "receiver_id", onDelete = ForeignKey.CASCADE)
+                @ForeignKey(entity = Student.class, parentColumns = "student_id", childColumns = "caller_id", onDelete = ForeignKey.CASCADE),
+                @ForeignKey(entity = Student.class, parentColumns = "student_id", childColumns = "receiver_id", onDelete = ForeignKey.CASCADE)
         },
         indices = {
                 @Index(value = "chat_id"),
@@ -29,8 +29,6 @@ public class Call {
 
     private int caller_id;
 
-
-    @Nullable
     private Integer receiver_id;
 
     private String callType; // "Voice", "Video"

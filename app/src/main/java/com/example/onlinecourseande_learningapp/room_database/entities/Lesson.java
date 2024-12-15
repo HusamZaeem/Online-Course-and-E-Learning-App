@@ -16,16 +16,18 @@ public class Lesson {
     private int lesson_id;
     private int module_id;
     private String lesson_title;
+    private int lesson_duration;
     private String content_url;
     private boolean is_exam;
 
-    public Lesson(int module_id, String lesson_title, String content_url, boolean is_exam) {
+
+    public Lesson(int module_id, String lesson_title, int lesson_duration, String content_url, boolean is_exam) {
         this.module_id = module_id;
         this.lesson_title = lesson_title;
+        this.lesson_duration = lesson_duration;
         this.content_url = content_url;
         this.is_exam = is_exam;
     }
-
 
     public int getLesson_id() {
         return lesson_id;
@@ -49,6 +51,14 @@ public class Lesson {
 
     public void setLesson_title(String lesson_title) {
         this.lesson_title = lesson_title;
+    }
+
+    public int getLesson_duration() {
+        return lesson_duration;
+    }
+
+    public void setLesson_duration(int lesson_duration) {
+        this.lesson_duration = lesson_duration;
     }
 
     public String getContent_url() {

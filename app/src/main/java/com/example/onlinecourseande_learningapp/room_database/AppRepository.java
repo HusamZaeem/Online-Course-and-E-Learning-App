@@ -6,45 +6,35 @@ import androidx.lifecycle.LiveData;
 
 import com.example.onlinecourseande_learningapp.room_database.DAOs.BookmarkDao;
 import com.example.onlinecourseande_learningapp.room_database.DAOs.CallDao;
-import com.example.onlinecourseande_learningapp.room_database.DAOs.CertificateDao;
 import com.example.onlinecourseande_learningapp.room_database.DAOs.ChatDao;
-import com.example.onlinecourseande_learningapp.room_database.DAOs.CommentDao;
 import com.example.onlinecourseande_learningapp.room_database.DAOs.CourseDao;
-import com.example.onlinecourseande_learningapp.room_database.DAOs.DiscussionPostDao;
 import com.example.onlinecourseande_learningapp.room_database.DAOs.EnrollmentDao;
-import com.example.onlinecourseande_learningapp.room_database.DAOs.GradeDao;
 import com.example.onlinecourseande_learningapp.room_database.DAOs.LessonDao;
 import com.example.onlinecourseande_learningapp.room_database.DAOs.MentorDao;
 import com.example.onlinecourseande_learningapp.room_database.DAOs.MessageDao;
 import com.example.onlinecourseande_learningapp.room_database.DAOs.ModuleDao;
 import com.example.onlinecourseande_learningapp.room_database.DAOs.NotificationDao;
-import com.example.onlinecourseande_learningapp.room_database.DAOs.ParticipantDao;
 import com.example.onlinecourseande_learningapp.room_database.DAOs.ReviewDao;
-import com.example.onlinecourseande_learningapp.room_database.DAOs.UserDao;
+import com.example.onlinecourseande_learningapp.room_database.DAOs.StudentDao;
 import com.example.onlinecourseande_learningapp.room_database.entities.Bookmark;
 import com.example.onlinecourseande_learningapp.room_database.entities.Call;
-import com.example.onlinecourseande_learningapp.room_database.entities.Certificate;
 import com.example.onlinecourseande_learningapp.room_database.entities.Chat;
-import com.example.onlinecourseande_learningapp.room_database.entities.Comment;
 import com.example.onlinecourseande_learningapp.room_database.entities.Course;
-import com.example.onlinecourseande_learningapp.room_database.entities.DiscussionPost;
 import com.example.onlinecourseande_learningapp.room_database.entities.Enrollment;
-import com.example.onlinecourseande_learningapp.room_database.entities.Grade;
 import com.example.onlinecourseande_learningapp.room_database.entities.Lesson;
 import com.example.onlinecourseande_learningapp.room_database.entities.Mentor;
 import com.example.onlinecourseande_learningapp.room_database.entities.Message;
 import com.example.onlinecourseande_learningapp.room_database.entities.Module;
 import com.example.onlinecourseande_learningapp.room_database.entities.Notification;
-import com.example.onlinecourseande_learningapp.room_database.entities.Participant;
 import com.example.onlinecourseande_learningapp.room_database.entities.Review;
-import com.example.onlinecourseande_learningapp.room_database.entities.User;
+import com.example.onlinecourseande_learningapp.room_database.entities.Student;
 
 import java.util.List;
 
 public class AppRepository {
 
 
-    private UserDao userDao;
+    private StudentDao studentDao;
     private CourseDao courseDao;
     private BookmarkDao bookmarkDao;
     private CallDao callDao;
@@ -65,7 +55,7 @@ public class AppRepository {
 
     AppRepository(Application application) {
         AppDatabase db = AppDatabase.getDatabase(application);
-        userDao = db.userDao();
+        studentDao = db.userDao();
         courseDao = db.courseDao();
         bookmarkDao = db.bookmarkDao();
         callDao = db.callDao();
@@ -88,34 +78,34 @@ public class AppRepository {
 
     //UserDao -----------------------------
 
-    public void insertUser (User user){
+    public void insertUser (Student student){
         AppDatabase.databaseWriteExecutor.execute(() -> {
-            userDao.insertUser(user);
+            studentDao.insertUser(student);
         });
     }
 
 
-    public void updateUser (User user){
+    public void updateUser (Student student){
         AppDatabase.databaseWriteExecutor.execute(() -> {
-            userDao.updateUser(user);
+            studentDao.updateUser(student);
         });
     }
 
 
-    public void deleteUser (User user){
+    public void deleteUser (Student student){
         AppDatabase.databaseWriteExecutor.execute(() -> {
-            userDao.deleteUser(user);
+            studentDao.deleteUser(student);
         });
     }
 
 
-    LiveData<List<User>> getAllUsers (){
-        return userDao.getAllUsers();
+    LiveData<List<Student>> getAllUsers (){
+        return studentDao.getAllUsers();
     }
 
 
-    LiveData<List<User>> getUserById (int user_id){
-        return userDao.getUserById(user_id);
+    LiveData<List<Student>> getUserById (int user_id){
+        return studentDao.getUserById(user_id);
     }
 
 

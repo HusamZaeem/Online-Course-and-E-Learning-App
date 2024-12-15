@@ -9,21 +9,21 @@ import androidx.room.PrimaryKey;
 import java.util.Date;
 
 @Entity(tableName = "Notification",
-        foreignKeys = @ForeignKey(entity = User.class, parentColumns = "user_id", childColumns = "user_id", onDelete = ForeignKey.CASCADE),
-        indices = @Index(value = "user_id")
+        foreignKeys = @ForeignKey(entity = Student.class, parentColumns = "student_id", childColumns = "student_id", onDelete = ForeignKey.CASCADE),
+        indices = @Index(value = "student_id")
     )
 public class Notification {
 
 
     @PrimaryKey(autoGenerate = true)
     private int notification_id;
-    private int user_id;
+    private int student_id;
     private String content;
     private Date timestamp;
 
 
-    public Notification(int user_id, String content, Date timestamp) {
-        this.user_id = user_id;
+    public Notification(int student_id, String content, Date timestamp) {
+        this.student_id = student_id;
         this.content = content;
         this.timestamp = timestamp;
     }
@@ -38,11 +38,11 @@ public class Notification {
     }
 
     public int getUser_id() {
-        return user_id;
+        return student_id;
     }
 
     public void setUser_id(int user_id) {
-        this.user_id = user_id;
+        this.student_id = user_id;
     }
 
     public String getContent() {
