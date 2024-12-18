@@ -17,6 +17,12 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.onlinecourseande_learningapp.databinding.ActivitySignUpBinding;
 import com.example.onlinecourseande_learningapp.room_database.AppViewModel;
 import com.example.onlinecourseande_learningapp.room_database.entities.Student;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class SignUp extends AppCompatActivity {
@@ -26,7 +32,10 @@ public class SignUp extends AppCompatActivity {
 
     ActivitySignUpBinding binding;
 
+    private AppViewModel appViewModel;
 
+    private FirebaseAuth firebaseAuth;
+    private FirebaseFirestore firestore;
 
 
     @SuppressLint("ClickableViewAccessibility")
@@ -36,7 +45,10 @@ public class SignUp extends AppCompatActivity {
         binding = ActivitySignUpBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-       AppViewModel appViewModel = new ViewModelProvider(this).get(AppViewModel.class);
+        firebaseAuth = FirebaseAuth.getInstance();
+        firestore = FirebaseFirestore.getInstance();
+
+       appViewModel = new ViewModelProvider(this).get(AppViewModel.class);
 
 
 
@@ -87,17 +99,30 @@ public class SignUp extends AppCompatActivity {
                String email = binding.etEmailSignUp.getText().toString();
                String password = binding.etPasswordSignUp.getText().toString();
 
-                if (isValidEmail(email) && isValidPassword(password)){
+                if (isValidEmail(email) && isValidPassword(password)) {
+                    // Hash the password
+                    String hashedPassword = PasswordHasher.hashPassword(password);
 
-                    appViewModel.insertStudent(new Student(email,password));
-                    Toast.makeText(getBaseContext(),"Registered Successfully",Toast.LENGTH_LONG).show();
+                    // Insert into Room database
+                    appViewModel.insertStudent(new Student(email, hashedPassword));
 
+                    // Add to Firebase Auth
+                    FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+                    firebaseAuth.createUserWithEmailAndPassword(email, password)
+                            .addOnCompleteListener(task -> {
+                                if (task.isSuccessful()) {
+                                    // Firebase user creation successful
+                                    Toast.makeText(getBaseContext(), "Registered Successfully", Toast.LENGTH_LONG).show();
+                                } else {
+                                    // Firebase user creation failed
+                                    Toast.makeText(getBaseContext(), "Firebase Auth Error: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                                }
+                            });
                 }
-
-
-
             }
         });
+
+
 
 
 
@@ -123,10 +148,61 @@ public class SignUp extends AppCompatActivity {
 
 
 
+
+
+
+
     }
 
 
 
+
+
+
+
+
+
+
+    private void signUpWithFirebase(String email, String password){
+        firebaseAuth.createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
+                        if (firebaseUser != null) {
+                            String uid = firebaseUser.getUid();
+
+                            // Save to Firebase Firestore
+                            saveUserToFirestore(uid, email, password);
+
+                            // Save to Room Database
+                            Student student = new Student(email, password);
+                            new Thread(() -> appViewModel.insertStudent(student)).start();
+
+                            Toast.makeText(SignUp.this, "Registered Successfully!", Toast.LENGTH_LONG).show();
+                            Intent intent = new Intent(SignUp.this, MainActivity.class); // Replace with the main app activity
+                            startActivity(intent);
+                            finish();
+                        }
+                    } else {
+                        Toast.makeText(SignUp.this, "Sign-Up Failed: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                    }
+                });
+
+    }
+
+
+
+
+    private void saveUserToFirestore(String student_id, String email, String password) {
+        Map<String, Object> userMap = new HashMap<>();
+        userMap.put("student_id", student_id);
+        userMap.put("email", email);
+        userMap.put("password", password);
+
+        firestore.collection("students").document(student_id).set(userMap)
+                .addOnSuccessListener(aVoid -> Toast.makeText(SignUp.this, "User saved to Firestore.", Toast.LENGTH_SHORT).show())
+                .addOnFailureListener(e -> Toast.makeText(SignUp.this, "Failed to save user to Firestore.", Toast.LENGTH_SHORT).show());
+    }
 
 
 
