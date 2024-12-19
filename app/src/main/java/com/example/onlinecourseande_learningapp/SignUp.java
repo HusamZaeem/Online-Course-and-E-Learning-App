@@ -104,7 +104,7 @@ public class SignUp extends AppCompatActivity {
                     String hashedPassword = PasswordHasher.hashPassword(password);
 
                     // Insert into Room database
-                    appViewModel.insertStudent(new Student(email, hashedPassword));
+                    //appViewModel.insertStudent(new Student(email, hashedPassword));
 
                     // Add to Firebase Auth
                     FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
@@ -175,8 +175,8 @@ public class SignUp extends AppCompatActivity {
                             saveUserToFirestore(uid, email, password);
 
                             // Save to Room Database
-                            Student student = new Student(email, password);
-                            new Thread(() -> appViewModel.insertStudent(student)).start();
+                            //Student student = new Student(email, password);
+                            //new Thread(() -> appViewModel.insertStudent(student)).start();
 
                             Toast.makeText(SignUp.this, "Registered Successfully!", Toast.LENGTH_LONG).show();
                             Intent intent = new Intent(SignUp.this, MainActivity.class); // Replace with the main app activity

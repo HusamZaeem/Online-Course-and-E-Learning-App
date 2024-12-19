@@ -71,14 +71,14 @@ public class AppViewModel extends AndroidViewModel {
 
 
 
-    public List<Attachment> getStudentAttachmentsInChat(int student_id){
+    public List<Attachment> getStudentAttachmentsInChat(String student_id){
         return appRepository.getStudentAttachmentsInChat(student_id);
     }
 
 
 
 
-    public List<Attachment> getStudentAttachmentsInAChat(int student_id, int chat_id){
+    public List<Attachment> getStudentAttachmentsInAChat(String student_id, int chat_id){
         return appRepository.getStudentAttachmentsInAChat(student_id,chat_id);
     }
 
@@ -116,7 +116,7 @@ public class AppViewModel extends AndroidViewModel {
     }
 
 
-    public LiveData<List<Bookmark>> getAllStudentBookmarks (int student_id){
+    public LiveData<List<Bookmark>> getAllStudentBookmarks (String student_id){
         return appRepository.getAllStudentBookmarks(student_id);
     }
 
@@ -156,13 +156,13 @@ public class AppViewModel extends AndroidViewModel {
 
 
 
-    public LiveData<List<Call>> getAllStudentCalls (int student_id){
+    public LiveData<List<Call>> getAllStudentCalls (String student_id){
         return appRepository.getAllStudentCalls(student_id);
     }
 
 
 
-    public LiveData<List<Call>> getAllStudentCallsForAChat (int student_id, int chat_id){
+    public LiveData<List<Call>> getAllStudentCallsForAChat (String student_id, int chat_id){
         return appRepository.getAllStudentCallsForAChat(student_id,chat_id);
     }
 
@@ -203,7 +203,7 @@ public class AppViewModel extends AndroidViewModel {
 
 
 
-    public LiveData<List<Chat>> getAllStudentChats(int student_id){
+    public LiveData<List<Chat>> getAllStudentChats(String student_id){
         return appRepository.getAllStudentChats(student_id);
     }
 
@@ -272,7 +272,7 @@ public class AppViewModel extends AndroidViewModel {
     }
 
 
-    public Enrollment getStudentEnrollmentInCourse(int student_id, int course_id){
+    public Enrollment getStudentEnrollmentInCourse(String student_id, int course_id){
         return appRepository.getStudentEnrollmentInCourse(student_id,course_id);
     }
 
@@ -282,31 +282,31 @@ public class AppViewModel extends AndroidViewModel {
     }
 
 
-    public int getCompletedLessonsForStudentInCourse(int student_id, int course_id){
+    public int getCompletedLessonsForStudentInCourse(String student_id, int course_id){
         return appRepository.getCompletedLessonsForStudentInCourse(student_id,course_id);
     }
 
 
 
-    public void updateEnrollmentProgress(int student_id, int course_id){
+    public void updateEnrollmentProgress(String student_id, int course_id){
             appRepository.updateEnrollmentProgress(student_id,course_id);
     }
 
 
-    public LiveData<List<Enrollment>> getEnrollmentsForStudent(int student_id){
+    public LiveData<List<Enrollment>> getEnrollmentsForStudent(String student_id){
         return appRepository.getEnrollmentsForStudent(student_id);
     }
 
 
 
 
-    public void calculateFinalGrade(int student_id, int course_id){
+    public void calculateFinalGrade(String student_id, int course_id){
             appRepository.calculateFinalGrade(student_id,course_id);
     }
 
 
 
-    public void setCompletionDateIfAllLessonsCompleted(int student_id, int course_id){
+    public void setCompletionDateIfAllLessonsCompleted(String student_id, int course_id){
         appRepository.setCompletionDateIfAllLessonsCompleted(student_id,course_id);
     }
 
@@ -314,18 +314,18 @@ public class AppViewModel extends AndroidViewModel {
 
 
     // Enroll in a paid course
-    public void completeEnrollment(int studentId, int courseId, double fee, String courseName) {
+    public void completeEnrollment(String studentId, int courseId, double fee, String courseName) {
         appRepository.completeEnrollment(studentId, courseId, fee, courseName);
     }
 
 
 
     // Enroll in a free course
-    public void enrollInFreeCourse(int studentId, int courseId) {
+    public void enrollInFreeCourse(String studentId, int courseId) {
             appRepository.enrollInFreeCourse(studentId, courseId);
     }
 
-    public Enrollment checkEnrollment(int student_id, int course_id) {
+    public Enrollment checkEnrollment(String student_id, int course_id) {
         return appRepository.checkEnrollment(student_id, course_id);
     }
 
@@ -376,7 +376,7 @@ public class AppViewModel extends AndroidViewModel {
     }
 
     // Add a student to a group
-    public void addStudentToGroup(int studentId, int courseId) {
+    public void addStudentToGroup(String studentId, int courseId) {
             Group group = appRepository.getGroupByCourseId(courseId);
             if (group != null) {
                 GroupMembership groupMembership = new GroupMembership();
@@ -411,11 +411,11 @@ public class AppViewModel extends AndroidViewModel {
         return appRepository.getGroupMembershipById(group_membership_id);
     }
 
-    public LiveData<List<Integer>> getAllGroupStudents(int group_id){
+    public LiveData<List<String>> getAllGroupStudents(int group_id){
         return appRepository.getAllGroupStudents(group_id);
     }
 
-    public LiveData<List<Integer>> getAllStudentGroups(int student_id){
+    public LiveData<List<Integer>> getAllStudentGroups(String student_id){
         return appRepository.getAllStudentGroups(student_id);
     }
 
@@ -481,7 +481,7 @@ public class AppViewModel extends AndroidViewModel {
 
 
 
-    public void finishExam(int studentId, int lessonId, int moduleId, int courseId, double grade) {
+    public void finishExam(String studentId, int lessonId, int moduleId, int courseId, double grade) {
             // Set module grade
             appRepository.setModuleGrade(studentId, moduleId, grade);
 
@@ -672,7 +672,7 @@ public class AppViewModel extends AndroidViewModel {
 
 
 
-    public LiveData<List<Notification>> getAllStudentNotifications(int student_id){
+    public LiveData<List<Notification>> getAllStudentNotifications(String student_id){
         return appRepository.getAllStudentNotifications(student_id);
     }
 
@@ -699,13 +699,13 @@ public class AppViewModel extends AndroidViewModel {
             appRepository.deleteReview(review);
     }
 
-    public void insertMentorReview(int student_id, int mentor_id, double rate, String comment) {
+    public void insertMentorReview(String student_id, int mentor_id, double rate, String comment) {
             Review review = new Review(student_id, mentor_id, "Mentor", rate, comment);
             insertReview(review);
     }
 
 
-    public void insertCourseReview(int student_id, int course_id, double rate, String comment) {
+    public void insertCourseReview(String student_id, int course_id, double rate, String comment) {
             Review review = new Review(student_id, course_id, "Course", rate, comment);
             insertReview(review);
     }
@@ -775,7 +775,7 @@ public class AppViewModel extends AndroidViewModel {
         return appRepository.getAllStudents();
     }
 
-    public LiveData<List<Student>> getStudentById (int student_id){
+    public LiveData<List<Student>> getStudentById (String student_id){
         return appRepository.getStudentById(student_id);
     }
 
@@ -803,28 +803,28 @@ public class AppViewModel extends AndroidViewModel {
     }
 
 
-    public void updateCompletionStatus(int student_id, int lesson_id, boolean completion_status){
+    public void updateCompletionStatus(String student_id, int lesson_id, boolean completion_status){
             appRepository.updateCompletionStatus(student_id,lesson_id,completion_status);
     }
 
 
-    boolean getCompletionStatus(int student_id, int lesson_id){
+    boolean getCompletionStatus(String student_id, int lesson_id){
         return appRepository.getCompletionStatus(student_id,lesson_id);
     }
 
 
-    public void updateLessonCompletionStatus(int student_id, int lesson_id, boolean completion_status){
+    public void updateLessonCompletionStatus(String student_id, int lesson_id, boolean completion_status){
             appRepository.updateLessonCompletionStatus(student_id,lesson_id,completion_status);
     }
 
-    public void updateLessonStatusAndProgress(int student_id, int lesson_id, boolean completion_status, EnrollmentDao enrollmentDao, int course_id) {
+    public void updateLessonStatusAndProgress(String student_id, int lesson_id, boolean completion_status, EnrollmentDao enrollmentDao, int course_id) {
         updateLessonCompletionStatus(student_id, lesson_id, completion_status);
         enrollmentDao.updateEnrollmentProgress(student_id, course_id);
 
     }
 
 
-    public void markLessonAsCompleted(int studentId, int lessonId, int courseId) {
+    public void markLessonAsCompleted(String studentId, int lessonId, int courseId) {
         AppExecutors.getInstance().diskIO().execute(() -> {
             try {
                 appRepository.markLessonAsCompleted(studentId, lessonId, courseId);
@@ -856,11 +856,11 @@ public class AppViewModel extends AndroidViewModel {
             appRepository.deleteStudentMentor(studentMentor);
     }
 
-    public LiveData<List<Integer>> getAllMentorStudents(int mentor_id){
+    public LiveData<List<String>> getAllMentorStudents(int mentor_id){
         return appRepository.getAllMentorStudents(mentor_id);
     }
 
-    public LiveData<List<Integer>> getAllStudentMentors(int student_id){
+    public LiveData<List<Integer>> getAllStudentMentors(String student_id){
         return appRepository.getAllStudentMentors(student_id);
     }
 
@@ -887,16 +887,16 @@ public class AppViewModel extends AndroidViewModel {
             appRepository.deleteStudentModule(studentModule);
     }
 
-    public LiveData<List<Double>> getAllStudentModuleGrade(int student_id){
+    public LiveData<List<Double>> getAllStudentModuleGrade(String student_id){
         return appRepository.getAllStudentModuleGrade(student_id);
     }
 
-    public LiveData<List<Double>> getStudentModuleGrade(int student_id, int module_id){
+    public LiveData<List<Double>> getStudentModuleGrade(String student_id, int module_id){
         return appRepository.getStudentModuleGrade(student_id,module_id);
     }
 
 
-    public void setModuleGrade(int student_id, int module_id, double module_grade){
+    public void setModuleGrade(String student_id, int module_id, double module_grade){
             appRepository.setModuleGrade(student_id,module_id,module_grade);
     }
 

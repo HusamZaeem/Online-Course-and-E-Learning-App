@@ -1,6 +1,7 @@
 package com.example.onlinecourseande_learningapp.room_database.entities;
 
 
+import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
 import androidx.room.Index;
@@ -32,19 +33,20 @@ import androidx.room.Index;
 )
 public class StudentMentor {
 
-    private int student_id;
+    @NonNull
+    private String student_id;
     private int mentor_id;
 
-    public StudentMentor(int student_id, int mentor_id) {
+    public StudentMentor(String student_id, int mentor_id) {
         this.student_id = student_id;
         this.mentor_id = mentor_id;
     }
 
-    public int getStudent_id() {
+    public String getStudent_id() {
         return student_id;
     }
 
-    public void setStudent_id(int student_id) {
+    public void setStudent_id(String student_id) {
         this.student_id = student_id;
     }
 

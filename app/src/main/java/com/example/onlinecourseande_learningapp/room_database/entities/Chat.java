@@ -19,12 +19,12 @@ public class Chat {
 
     @PrimaryKey(autoGenerate = true)
     private int chat_id;
-    private int sender_id;
-    private int receiver_id;
+    private String sender_id;
+    private String receiver_id;
     private Date timestamp;
 
 
-    public Chat(int sender_id, int receiver_id, Date timestamp) {
+    public Chat(String sender_id, String receiver_id, Date timestamp) {
         this.sender_id = sender_id;
         this.receiver_id = receiver_id;
         this.timestamp = timestamp;
@@ -38,19 +38,19 @@ public class Chat {
         this.chat_id = chat_id;
     }
 
-    public int getSender_id() {
+    public String getSender_id() {
         return sender_id;
     }
 
-    public void setSender_id(int sender_id) {
+    public void setSender_id(String sender_id) {
         this.sender_id = sender_id;
     }
 
-    public int getReceiver_id() {
+    public String getReceiver_id() {
         return receiver_id;
     }
 
-    public void setReceiver_id(int receiver_id) {
+    public void setReceiver_id(String receiver_id) {
         this.receiver_id = receiver_id;
     }
 

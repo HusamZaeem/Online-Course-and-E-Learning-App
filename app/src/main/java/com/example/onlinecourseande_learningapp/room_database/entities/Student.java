@@ -1,17 +1,21 @@
 package com.example.onlinecourseande_learningapp.room_database.entities;
 
 
+import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 import java.util.Date;
 
+import javax.annotation.Nonnull;
+
 @Entity(tableName = "Student")
 public class Student {
 
-    @PrimaryKey(autoGenerate = true)
-    private int student_id;
+    @NonNull
+    @PrimaryKey
+    private String student_id="";
     private String first_name;
     private String last_name;
     private String email;
@@ -20,9 +24,10 @@ public class Student {
     private Date date_of_birth;
 
 
-    public Student(String email, String password) {
+    public Student(String student_id, String email, String password) {
         this.email = email;
         this.password = password;
+        this.student_id=student_id;
     }
 
     @Ignore
@@ -35,12 +40,12 @@ public class Student {
         this.date_of_birth = date_of_birth;
     }
 
-    public int getStudent_id() {
+    public String getStudent_id() {
         return student_id;
     }
 
-    public void setStudent_id(int user_id) {
-        this.student_id = user_id;
+    public void setStudent_id(String student_id) {
+        this.student_id = student_id;
     }
 
     public String getFirst_name() {

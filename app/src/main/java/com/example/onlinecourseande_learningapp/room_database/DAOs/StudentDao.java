@@ -29,6 +29,6 @@ public interface StudentDao {
     LiveData<List<Student>> getAllStudents ();
 
     @Query("SELECT * FROM Student WHERE student_id = :student_id")
-    LiveData<List<Student>> getStudentById (int student_id);
+    LiveData<List<Student>> getStudentById (String student_id);
 
 }

@@ -14,14 +14,14 @@ public class Review {
 
     @PrimaryKey(autoGenerate = true)
     private int review_id;
-    private int student_id;
+    private String student_id;
     private int target_id;
     private String type;
     private double rate;
     private String comment;
 
 
-    public Review(int student_id, int target_id, String type, double rate, String comment) {
+    public Review(String student_id, int target_id, String type, double rate, String comment) {
         this.student_id = student_id;
         this.target_id = target_id;
         this.type = type;
@@ -37,12 +37,12 @@ public class Review {
         this.review_id = review_id;
     }
 
-    public int getStudent_id() {
+    public String getStudent_id() {
         return student_id;
     }
 
-    public void setStudent_id(int user_id) {
-        this.student_id = user_id;
+    public void setStudent_id(String student_id) {
+        this.student_id = student_id;
     }
 
     public int getTarget_id() {

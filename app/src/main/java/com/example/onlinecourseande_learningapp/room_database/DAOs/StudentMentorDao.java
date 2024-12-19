@@ -28,10 +28,10 @@ public interface StudentMentorDao {
     void deleteStudentMentor(StudentMentor studentMentor);
 
     @Query("SELECT student_id FROM StudentMentor WHERE mentor_id = :mentor_id")
-    LiveData<List<Integer>> getAllMentorStudents(int mentor_id);
+    LiveData<List<String>> getAllMentorStudents(int mentor_id);
 
     @Query("SELECT mentor_id FROM StudentMentor WHERE student_id = :student_id")
-    LiveData<List<Integer>> getAllStudentMentors(int student_id);
+    LiveData<List<Integer>> getAllStudentMentors(String student_id);
 
 
 

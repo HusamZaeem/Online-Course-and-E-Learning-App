@@ -27,9 +27,9 @@ public class Call {
 
     private int chat_id;
 
-    private int caller_id;
+    private String caller_id;
 
-    private Integer receiver_id;
+    private String receiver_id;
 
     private String callType; // "Voice", "Video"
 
@@ -40,7 +40,7 @@ public class Call {
     private String callStatus;
 
 
-    public Call(int chat_id, int caller_id, @Nullable Integer receiver_id, String callType, String startTime, String endTime, String callStatus) {
+    public Call(int chat_id, String caller_id, String receiver_id, String callType, String startTime, String endTime, String callStatus) {
         this.chat_id = chat_id;
         this.caller_id = caller_id;
         this.receiver_id = receiver_id;
@@ -66,20 +66,20 @@ public class Call {
         this.chat_id = chat_id;
     }
 
-    public int getCaller_id() {
+    public String getCaller_id() {
         return caller_id;
     }
 
-    public void setCaller_id(int caller_id) {
+    public void setCaller_id(String caller_id) {
         this.caller_id = caller_id;
     }
 
-    @Nullable
-    public Integer getReceiver_id() {
+
+    public String getReceiver_id() {
         return receiver_id;
     }
 
-    public void setReceiver_id(@Nullable Integer receiver_id) {
+    public void setReceiver_id(String receiver_id) {
         this.receiver_id = receiver_id;
     }
 

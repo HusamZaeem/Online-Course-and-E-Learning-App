@@ -38,7 +38,7 @@ public interface AttachmentDao {
                     "INNER JOIN Chat ON Message.chat_id = Chat.chat_id " +
                     "WHERE Chat.sender_id = :student_id"
     )
-    List<Attachment> getStudentAttachmentsInChat(int student_id);
+    List<Attachment> getStudentAttachmentsInChat(String student_id);
 
 
 
@@ -49,7 +49,7 @@ public interface AttachmentDao {
                     "INNER JOIN Chat ON Message.chat_id = Chat.chat_id " +
                     "WHERE Chat.sender_id = :student_id AND Chat.chat_id = :chat_id"
     )
-    List<Attachment> getStudentAttachmentsInAChat(int student_id, int chat_id);
+    List<Attachment> getStudentAttachmentsInAChat(String student_id, int chat_id);
 
 
 

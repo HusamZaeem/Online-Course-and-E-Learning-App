@@ -34,10 +34,10 @@ public interface CallDao {
 
 
     @Query("SELECT * FROM Call WHERE caller_id = :student_id")
-    LiveData<List<Call>> getAllStudentCalls (int student_id);
+    LiveData<List<Call>> getAllStudentCalls (String student_id);
 
 
     @Query("SELECT * FROM Call WHERE caller_id = :student_id AND chat_id = :chat_id")
-    LiveData<List<Call>> getAllStudentCallsForAChat (int student_id, int chat_id);
+    LiveData<List<Call>> getAllStudentCallsForAChat (String student_id, int chat_id);
 
 }

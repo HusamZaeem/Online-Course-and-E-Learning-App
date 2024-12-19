@@ -33,6 +33,6 @@ public interface NotificationDao {
 
 
     @Query("SELECT * FROM Notification WHERE student_id = :student_id")
-    LiveData<List<Notification>> getAllStudentNotifications(int student_id);
+    LiveData<List<Notification>> getAllStudentNotifications(String student_id);
 
 }

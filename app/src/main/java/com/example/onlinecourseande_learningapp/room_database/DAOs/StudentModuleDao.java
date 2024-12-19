@@ -27,13 +27,13 @@ public interface StudentModuleDao {
     void deleteStudentModule(StudentModule studentModule);
 
     @Query("SELECT module_grade FROM StudentModule WHERE student_id = :student_id")
-    LiveData<List<Double>> getAllStudentModuleGrade(int student_id);
+    LiveData<List<Double>> getAllStudentModuleGrade(String student_id);
 
     @Query("SELECT module_grade FROM StudentModule WHERE student_id = :student_id AND module_id = :module_id")
-    LiveData<List<Double>> getStudentModuleGrade(int student_id, int module_id);
+    LiveData<List<Double>> getStudentModuleGrade(String student_id, int module_id);
 
 
     @Query("UPDATE StudentModule SET module_grade = :module_grade WHERE student_id = :student_id AND module_id = :module_id")
-    void setModuleGrade(int student_id, int module_id, double module_grade);
+    void setModuleGrade(String student_id, int module_id, double module_grade);
 
 }

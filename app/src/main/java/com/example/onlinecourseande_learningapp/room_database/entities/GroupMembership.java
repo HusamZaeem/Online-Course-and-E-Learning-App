@@ -37,14 +37,14 @@ public class GroupMembership {
     @PrimaryKey
     private int group_membership_id;
     private int group_id;
-    private int student_id;
+    private String student_id;
 
 
     public GroupMembership() {
     }
 
     @Ignore
-    public GroupMembership(int group_id, int student_id) {
+    public GroupMembership(int group_id, String student_id) {
         this.group_id = group_id;
         this.student_id = student_id;
     }
@@ -65,11 +65,11 @@ public class GroupMembership {
         this.group_id = group_id;
     }
 
-    public int getStudent_id() {
+    public String getStudent_id() {
         return student_id;
     }
 
-    public void setStudent_id(int student_id) {
+    public void setStudent_id(String student_id) {
         this.student_id = student_id;
     }
 }

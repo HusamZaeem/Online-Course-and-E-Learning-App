@@ -20,11 +20,11 @@ public class Bookmark {
 
     @PrimaryKey(autoGenerate = true)
     private int bookmark_id;
-    private int student_id;
+    private String student_id;
     private int course_id;
 
 
-    public Bookmark(int student_id, int course_id) {
+    public Bookmark(String student_id, int course_id) {
         this.student_id = student_id;
         this.course_id = course_id;
     }
@@ -37,12 +37,12 @@ public class Bookmark {
         this.bookmark_id = bookmark_id;
     }
 
-    public int getStudent_id() {
+    public String getStudent_id() {
         return student_id;
     }
 
-    public void setUser_id(int user_id) {
-        this.student_id = user_id;
+    public void setStudent_id(String student_id) {
+        this.student_id = student_id;
     }
 
     public int getCourse_id() {

@@ -26,14 +26,14 @@ public interface ReviewDao {
     void deleteReview (Review review);
 
     @Insert
-    default void insertMentorReview(int student_id, int mentor_id, double rate, String comment) {
+    default void insertMentorReview(String student_id, int mentor_id, double rate, String comment) {
         Review review = new Review(student_id, mentor_id, "Mentor", rate, comment);
         insertReview(review);
     }
 
 
     @Insert
-    default void insertCourseReview(int student_id, int course_id, double rate, String comment) {
+    default void insertCourseReview(String student_id, int course_id, double rate, String comment) {
         Review review = new Review(student_id, course_id, "Course", rate, comment);
         insertReview(review);
     }

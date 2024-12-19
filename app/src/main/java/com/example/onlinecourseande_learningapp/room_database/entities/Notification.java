@@ -17,12 +17,12 @@ public class Notification {
 
     @PrimaryKey(autoGenerate = true)
     private int notification_id;
-    private int student_id;
+    private String student_id;
     private String content;
     private Date timestamp;
 
 
-    public Notification(int student_id, String content, Date timestamp) {
+    public Notification(String student_id, String content, Date timestamp) {
         this.student_id = student_id;
         this.content = content;
         this.timestamp = timestamp;
@@ -36,11 +36,11 @@ public class Notification {
         this.notification_id = notification_id;
     }
 
-    public int getStudent_id() {
+    public String getStudent_id() {
         return student_id;
     }
 
-    public void setStudent_id(int student_id) {
+    public void setStudent_id(String student_id) {
         this.student_id = student_id;
     }
 
