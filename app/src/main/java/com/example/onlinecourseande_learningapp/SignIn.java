@@ -1,28 +1,39 @@
 package com.example.onlinecourseande_learningapp;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.PorterDuff;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.text.InputType;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.example.onlinecourseande_learningapp.databinding.ActivitySignInBinding;
 import com.example.onlinecourseande_learningapp.databinding.ActivitySignUpBinding;
+import com.example.onlinecourseande_learningapp.room_database.AppViewModel;
+import com.example.onlinecourseande_learningapp.room_database.entities.Student;
+import com.google.firebase.auth.FirebaseAuth;
 
 public class SignIn extends AppCompatActivity {
 
     private boolean isPasswordVisible = false;
 
-    ActivitySignInBinding binding;
+    private ActivitySignInBinding binding;
+
+    private AppViewModel appViewModel;
+    private FirebaseAuth firebaseAuth;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -31,6 +42,9 @@ public class SignIn extends AppCompatActivity {
         binding = ActivitySignInBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+
+        appViewModel = new ViewModelProvider(this).get(AppViewModel.class);
+        firebaseAuth = FirebaseAuth.getInstance();
 
 
         // Add Eye Icon Click Listener
@@ -82,10 +96,72 @@ public class SignIn extends AppCompatActivity {
 
 
 
+
+        binding.btnSignIn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                String email = binding.etEmailSignIn.getText().toString();
+                String password = binding.etPasswordSignIn.getText().toString();
+
+                if (isValidEmail(email) && isValidPassword(password)) {
+                    if (isNetworkAvailable()) {
+                        // User is online, sign in normally with Firebase
+                        firebaseAuth.signInWithEmailAndPassword(email, password)
+                                .addOnCompleteListener(task -> {
+                                    if (task.isSuccessful()) {
+                                        startActivity(new Intent(getBaseContext(), MainActivity.class));
+                                        finish();
+                                    } else {
+                                        showErrorMessage("Sign-In Failed: " + task.getException().getMessage());
+                                    }
+                                });
+                    } else {
+                        // User is offline, observe the LiveData for student
+                        appViewModel.getStudentByEmail(email).observe(SignIn.this, student -> {
+                            if (student != null && student.getPassword().equals(password)) {
+                                // User logged in successfully with local data
+                                startActivity(new Intent(getBaseContext(), MainActivity.class));
+                                finish();
+                            } else {
+                                showErrorMessage("No matching user found offline.");
+                            }
+                        });
+                    }
+                } else {
+                    showErrorMessage("Invalid email or password");
+                }
+
+            }
+        });
+
+
+
+
+
+
+
+
     }
 
 
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+        return networkInfo != null && networkInfo.isConnected();
+    }
 
+    private void showErrorMessage(String message) {
+        Toast.makeText(getBaseContext(), message, Toast.LENGTH_LONG).show();
+    }
+
+    private boolean isValidEmail(String email) {
+        return !email.isEmpty();
+    }
+
+    private boolean isValidPassword(String password) {
+        return password.length() >= 8;
+    }
 
 
 

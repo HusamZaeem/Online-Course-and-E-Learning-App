@@ -22,6 +22,7 @@ public class Student {
     private String password;
     private String profile_photo;
     private Date date_of_birth;
+    private boolean is_synced;
 
 
     public Student(String student_id, String email, String password) {
@@ -30,14 +31,28 @@ public class Student {
         this.student_id=student_id;
     }
 
+    public Student(@NonNull String student_id, String email) {
+        this.student_id = student_id;
+        this.email = email;
+    }
+
     @Ignore
-    public Student(String first_name, String last_name, String email, String password, String profile_photo, Date date_of_birth) {
+    public Student(String first_name, String last_name, String email, String password, String profile_photo, Date date_of_birth,boolean is_synced) {
         this.first_name = first_name;
         this.last_name = last_name;
         this.email = email;
         this.password = password;
         this.profile_photo = profile_photo;
         this.date_of_birth = date_of_birth;
+        this.is_synced=is_synced;
+    }
+
+    public boolean isIs_synced() {
+        return is_synced;
+    }
+
+    public void setIs_synced(boolean is_synced) {
+        this.is_synced = is_synced;
     }
 
     public String getStudent_id() {

@@ -29,4 +29,5 @@
     <string name="have_account">Already have an account</string>
     <string name="tvSignIn">Login to your Account</string>
     <string name="forgot_pass">Forgot the password?</string>
+    <string name="default_web_client_id">943534388733-jjsgre3hdgeu2uurg5n5qj8cq42k9mlf.apps.googleusercontent.com</string>
 </resources>

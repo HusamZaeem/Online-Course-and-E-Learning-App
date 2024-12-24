@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
+import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Update;
 
@@ -19,6 +20,9 @@ public interface StudentDao {
     @Insert
     void insertStudent (Student student);
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertStudents(List<Student> students);
+
     @Update
     void updateStudent (Student student);
 
@@ -30,5 +34,11 @@ public interface StudentDao {
 
     @Query("SELECT * FROM Student WHERE student_id = :student_id")
     LiveData<List<Student>> getStudentById (String student_id);
+
+    @Query("SELECT * FROM Student WHERE email = :email LIMIT 1")
+    LiveData<Student> getStudentByEmail (String email);
+
+    @Query("SELECT * FROM Student WHERE is_synced = 0")
+    LiveData<List<Student>> getUnsyncedStudents();
 
 }

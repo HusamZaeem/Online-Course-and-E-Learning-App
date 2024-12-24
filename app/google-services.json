@@ -12,7 +12,20 @@
           "package_name": "com.example.onlinecourseande_learningapp"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "943534388733-cof7lr2hnfl2r95ugu0ei6okmf70k234.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.onlinecourseande_learningapp",
+            "certificate_hash": "7945d97a66e019517e14a3b55f5cfef95bcc050c"
+          }
+        },
+        {
+          "client_id": "943534388733-jjsgre3hdgeu2uurg5n5qj8cq42k9mlf.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyD42snkopSNuf51XbvCxGCPRTykeb8Ic4g"
@@ -20,7 +33,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "943534388733-jjsgre3hdgeu2uurg5n5qj8cq42k9mlf.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

@@ -941,6 +941,13 @@ public class AppRepository {
         });
     }
 
+
+    void insertStudents(List<Student> students){
+        AppDatabase.databaseWriteExecutor.execute(() -> {
+            studentDao.insertStudents(students);
+        });
+    }
+
     void updateStudent (Student student){
         AppDatabase.databaseWriteExecutor.execute(() -> {
             studentDao.updateStudent(student);
@@ -963,6 +970,15 @@ public class AppRepository {
 
 
 
+    LiveData<List<Student>> getUnsyncedStudents(){
+        return studentDao.getUnsyncedStudents();
+    }
+
+
+
+    LiveData<Student> getStudentByEmail (String email){
+        return studentDao.getStudentByEmail(email);
+    }
 
 
     // StudentLessonDao --------------------------------------------

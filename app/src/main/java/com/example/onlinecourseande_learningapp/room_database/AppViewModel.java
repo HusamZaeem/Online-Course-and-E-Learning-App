@@ -1,6 +1,7 @@
 package com.example.onlinecourseande_learningapp.room_database;
 
 import android.app.Application;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -27,8 +28,13 @@ import com.example.onlinecourseande_learningapp.room_database.entities.Student;
 import com.example.onlinecourseande_learningapp.room_database.entities.StudentLesson;
 import com.example.onlinecourseande_learningapp.room_database.entities.StudentMentor;
 import com.example.onlinecourseande_learningapp.room_database.entities.StudentModule;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class AppViewModel extends AndroidViewModel {
 
@@ -763,6 +769,10 @@ public class AppViewModel extends AndroidViewModel {
             appRepository.insertStudent(student);
     }
 
+     public void insertStudents(List<Student> students){
+            appRepository.insertStudents(students);
+    }
+
     public void updateStudent (Student student){
             appRepository.updateStudent(student);
     }
@@ -778,6 +788,20 @@ public class AppViewModel extends AndroidViewModel {
     public LiveData<List<Student>> getStudentById (String student_id){
         return appRepository.getStudentById(student_id);
     }
+
+
+    public LiveData<List<Student>> getUnsyncedStudents(){
+        return appRepository.getUnsyncedStudents();
+    }
+
+
+
+
+    public LiveData<Student> getStudentByEmail (String email){
+        return appRepository.getStudentByEmail(email);
+    }
+
+
 
 
 
