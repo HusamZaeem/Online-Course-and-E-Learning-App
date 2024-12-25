@@ -60,7 +60,7 @@ public class SyncWorker extends Worker {
             userMap.put("password", student.getPassword());
 
             // Upload the student data to Firestore
-            firestore.collection("students").document(student.getStudent_id())
+            firestore.collection("Student").document(student.getStudent_id())
                     .set(userMap)
                     .addOnSuccessListener(aVoid -> {
                         // Mark student as synced after successful upload
@@ -73,13 +73,13 @@ public class SyncWorker extends Worker {
 
     private void syncFirestoreToRoom() {
         // Fetch students from Firestore and update the local Room database
-        firestore.collection("students")
+        firestore.collection("Student")
                 .get()
                 .addOnSuccessListener(querySnapshot -> {
                     // Perform the operation in a background thread to avoid UI blocking
                     AppDatabase.getDatabaseWriteExecutor().execute(() -> {
                         for (QueryDocumentSnapshot document : querySnapshot) {
-                            String uid = document.getString("student_id");
+                            String uid = document.getId();
                             String email = document.getString("email");
                             String password = document.getString("password");
 
