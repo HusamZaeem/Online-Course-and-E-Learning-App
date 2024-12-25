@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Online Course and E-Learning App</string>
     <string name="app_logo">App Logo</string>
+    <string name="facebook_app_id">1270279474247537</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="onboarding_content_description">onBoarding</string>
     <string name="tvOnboarding1"><![CDATA[We provide the best learning courses & great mentors!]]></string>

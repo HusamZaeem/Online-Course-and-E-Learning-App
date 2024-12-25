@@ -9,7 +9,6 @@ import androidx.room.Query;
 import androidx.room.Update;
 
 import com.example.onlinecourseande_learningapp.room_database.entities.Enrollment;
-import com.example.onlinecourseande_learningapp.room_database.entities.StudentLesson;
 
 import java.util.List;
 

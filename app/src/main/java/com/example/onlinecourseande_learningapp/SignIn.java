@@ -13,17 +13,11 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.onlinecourseande_learningapp.databinding.ActivitySignInBinding;
-import com.example.onlinecourseande_learningapp.databinding.ActivitySignUpBinding;
 import com.example.onlinecourseande_learningapp.room_database.AppViewModel;
-import com.example.onlinecourseande_learningapp.room_database.entities.Student;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class SignIn extends AppCompatActivity {

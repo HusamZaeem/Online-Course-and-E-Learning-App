@@ -8,8 +8,6 @@ import androidx.room.Insert;
 import androidx.room.Query;
 import androidx.room.Update;
 
-import com.example.onlinecourseande_learningapp.room_database.entities.MentorCourse;
-import com.example.onlinecourseande_learningapp.room_database.entities.StudentLesson;
 import com.example.onlinecourseande_learningapp.room_database.entities.StudentMentor;
 
 import java.util.List;

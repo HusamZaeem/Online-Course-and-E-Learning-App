@@ -8,8 +8,6 @@ import androidx.room.PrimaryKey;
 
 import java.util.Date;
 
-import javax.annotation.Nonnull;
-
 @Entity(tableName = "Student")
 public class Student {
 
@@ -31,6 +29,7 @@ public class Student {
         this.student_id=student_id;
     }
 
+    @Ignore
     public Student(@NonNull String student_id, String email) {
         this.student_id = student_id;
         this.email = email;

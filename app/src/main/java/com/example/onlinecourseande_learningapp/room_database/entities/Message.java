@@ -1,7 +1,6 @@
 package com.example.onlinecourseande_learningapp.room_database.entities;
 
 
-import androidx.annotation.Nullable;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
 import androidx.room.Index;

@@ -50,25 +50,25 @@ public class AppRepository {
     private AppRepository appRepository;
 
 
-    private final AttachmentDao attachmentDao;
-    private final BookmarkDao bookmarkDao;
-    private final CallDao callDao;
-    private final ChatDao chatDao;
-    private final CourseDao courseDao;
-    private final EnrollmentDao enrollmentDao;
-    private final GroupDao groupDao;
-    private final GroupMembershipDao groupMembershipDao;
-    private final LessonDao lessonDao;
-    private final MentorCourseDao mentorCourseDao;
-    private final MentorDao mentorDao;
-    private final MessageDao messageDao;
-    private final ModuleDao moduleDao;
-    private final NotificationDao notificationDao;
-    private final ReviewDao reviewDao;
-    private final StudentDao studentDao;
-    private final StudentLessonDao studentLessonDao;
-    private final StudentMentorDao studentMentorDao;
-    private final StudentModuleDao studentModuleDao;
+    private AttachmentDao attachmentDao;
+    private BookmarkDao bookmarkDao;
+    private CallDao callDao;
+    private ChatDao chatDao;
+    private CourseDao courseDao;
+    private EnrollmentDao enrollmentDao;
+    private GroupDao groupDao;
+    private GroupMembershipDao groupMembershipDao;
+    private LessonDao lessonDao;
+    private MentorCourseDao mentorCourseDao;
+    private MentorDao mentorDao;
+    private MessageDao messageDao;
+    private ModuleDao moduleDao;
+    private NotificationDao notificationDao;
+    private ReviewDao reviewDao;
+    private StudentDao studentDao;
+    private StudentLessonDao studentLessonDao;
+    private StudentMentorDao studentMentorDao;
+    private StudentModuleDao studentModuleDao;
 
 
     AppRepository(Application application) {

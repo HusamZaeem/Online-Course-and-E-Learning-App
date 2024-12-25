@@ -50,9 +50,9 @@ dependencies {
 
 
     // Room components
-    implementation libs.room.runtime
-    annotationProcessor "androidx.room:room-compiler:$rootProject.roomVersion"
-    androidTestImplementation libs.room.testing
+    implementation 'androidx.room:room-runtime:2.5.0'
+    annotationProcessor 'androidx.room:room-compiler:2.5.0'
+    androidTestImplementation 'androidx.room:room-testing:2.5.0'
 
     // Lifecycle components
     implementation libs.lifecycle.viewmodel

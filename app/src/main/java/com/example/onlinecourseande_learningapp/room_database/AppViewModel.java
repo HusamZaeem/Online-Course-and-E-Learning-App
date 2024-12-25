@@ -1,7 +1,6 @@
 package com.example.onlinecourseande_learningapp.room_database;
 
 import android.app.Application;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -28,17 +27,12 @@ import com.example.onlinecourseande_learningapp.room_database.entities.Student;
 import com.example.onlinecourseande_learningapp.room_database.entities.StudentLesson;
 import com.example.onlinecourseande_learningapp.room_database.entities.StudentMentor;
 import com.example.onlinecourseande_learningapp.room_database.entities.StudentModule;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class AppViewModel extends AndroidViewModel {
 
-    private final AppRepository appRepository;
+    AppRepository appRepository;
     private final MutableLiveData<Boolean> lessonCompletionStatus = new MutableLiveData<>();
 
 

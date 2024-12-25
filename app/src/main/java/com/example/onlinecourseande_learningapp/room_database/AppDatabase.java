@@ -49,7 +49,7 @@ import com.example.onlinecourseande_learningapp.room_database.entities.StudentMo
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-@Database(entities = {Attachment.class, Bookmark.class, Call.class, Chat.class, Course.class, Enrollment.class, Group.class, GroupMembership.class,Lesson.class, MentorCourse.class, Mentor.class, Message.class, Module.class, Notification.class, Review.class, Student.class, StudentLesson.class, StudentMentor.class, StudentModule.class}, version = 1 , exportSchema = false)
+@Database(entities = {Attachment.class, Bookmark.class, Call.class, Chat.class, Course.class, Enrollment.class, Group.class, GroupMembership.class, Lesson.class, MentorCourse.class, Mentor.class, Message.class, Module.class, Notification.class, Review.class, Student.class, StudentLesson.class, StudentMentor.class, StudentModule.class}, version = 1 , exportSchema = false)
 @TypeConverters({Converter.class})
 public abstract class AppDatabase extends RoomDatabase {
 
