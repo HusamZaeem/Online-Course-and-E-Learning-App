@@ -1,5 +1,6 @@
 package com.example.onlinecourseande_learningapp;
 
+import android.app.Application;
 import android.content.Context;
 import android.util.Log;
 
@@ -7,6 +8,7 @@ import androidx.annotation.NonNull;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
+import com.example.onlinecourseande_learningapp.room_database.AppRepository;
 import com.example.onlinecourseande_learningapp.room_database.AppViewModel;
 import com.example.onlinecourseande_learningapp.room_database.entities.Student;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -21,17 +23,19 @@ import java.util.Map;
 public class SyncWorker extends Worker {
 
     private final FirebaseFirestore firestore;
-    private final AppViewModel appViewModel;
+    private AppRepository repository;
 
-    public SyncWorker(@NonNull Context context, @NonNull WorkerParameters workerParams, AppViewModel appViewModel) {
+    public SyncWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
         this.firestore = FirebaseFirestore.getInstance();
-        this.appViewModel = appViewModel;
     }
 
     @NonNull
     @Override
     public Result doWork() {
+
+        repository = AppRepository.getInstance((Application) getApplicationContext());
+
         try {
             syncRoomToFirestore();
             syncFirestoreToRoom();
@@ -43,7 +47,7 @@ public class SyncWorker extends Worker {
     }
 
     private void syncRoomToFirestore() {
-        appViewModel.getUnsyncedStudents().observeForever(students -> {
+        repository.getUnsyncedStudents().observeForever(students -> {
             for (Student student : students) {
                 Map<String, Object> userMap = new HashMap<>();
                 userMap.put("student_id", student.getStudent_id());
@@ -54,7 +58,7 @@ public class SyncWorker extends Worker {
                         .set(userMap)
                         .addOnSuccessListener(aVoid -> {
                             student.setIs_synced(true); // Mark as synced in local DB
-                            appViewModel.updateStudent(student);
+                            repository.updateStudent(student);
                         })
                         .addOnFailureListener(e -> Log.e("SyncWorker", "Failed to sync student to Firestore", e));
             }
@@ -74,7 +78,7 @@ public class SyncWorker extends Worker {
                         student.setIs_synced(true); // Mark as synced in Room
                         studentsFromFirestore.add(student);
                     }
-                    appViewModel.insertStudents(studentsFromFirestore);
+                    repository.insertStudents(studentsFromFirestore);
                 })
                 .addOnFailureListener(e -> Log.e("SyncWorker", "Failed to fetch data from Firestore", e));
     }

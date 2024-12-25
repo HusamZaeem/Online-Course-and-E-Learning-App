@@ -47,28 +47,28 @@ import java.util.List;
 
 public class AppRepository {
 
-    private AppRepository appRepository;
+    private static AppRepository instance;
 
 
-    private AttachmentDao attachmentDao;
-    private BookmarkDao bookmarkDao;
-    private CallDao callDao;
-    private ChatDao chatDao;
-    private CourseDao courseDao;
-    private EnrollmentDao enrollmentDao;
-    private GroupDao groupDao;
-    private GroupMembershipDao groupMembershipDao;
-    private LessonDao lessonDao;
-    private MentorCourseDao mentorCourseDao;
-    private MentorDao mentorDao;
-    private MessageDao messageDao;
-    private ModuleDao moduleDao;
-    private NotificationDao notificationDao;
-    private ReviewDao reviewDao;
-    private StudentDao studentDao;
-    private StudentLessonDao studentLessonDao;
-    private StudentMentorDao studentMentorDao;
-    private StudentModuleDao studentModuleDao;
+    public AttachmentDao attachmentDao;
+    public BookmarkDao bookmarkDao;
+    public CallDao callDao;
+    public ChatDao chatDao;
+    public CourseDao courseDao;
+    public EnrollmentDao enrollmentDao;
+    public GroupDao groupDao;
+    public GroupMembershipDao groupMembershipDao;
+    public LessonDao lessonDao;
+    public MentorCourseDao mentorCourseDao;
+    public MentorDao mentorDao;
+    public MessageDao messageDao;
+    public ModuleDao moduleDao;
+    public NotificationDao notificationDao;
+    public ReviewDao reviewDao;
+    public StudentDao studentDao;
+    public StudentLessonDao studentLessonDao;
+    public StudentMentorDao studentMentorDao;
+    public StudentModuleDao studentModuleDao;
 
 
     AppRepository(Application application) {
@@ -94,47 +94,54 @@ public class AppRepository {
         studentModuleDao = db.studentModuleDao();
     }
 
+    public static synchronized AppRepository getInstance(Application application) {
+        if (instance == null) {
+            instance = new AppRepository(application);
+        }
+        return instance;
+    }
+
 
 
     // AttachmentDao --------------------------------------------
 
 
 
-    void insertAttachment (Attachment attachment){
+    public void insertAttachment (Attachment attachment){
         AppDatabase.databaseWriteExecutor.execute(() -> {
             attachmentDao.insertAttachment(attachment);
         });
     }
 
 
-    void updateAttachment (Attachment attachment){
+    public void updateAttachment (Attachment attachment){
         AppDatabase.databaseWriteExecutor.execute(() -> {
             attachmentDao.updateAttachment(attachment);
         });
     }
 
 
-    void deleteAttachment (Attachment attachment){
+    public void deleteAttachment (Attachment attachment){
         AppDatabase.databaseWriteExecutor.execute(() -> {
             attachmentDao.deleteAttachment(attachment);
         });
     }
 
 
-    LiveData<List<Attachment>> getAllAttachments (){
+    public LiveData<List<Attachment>> getAllAttachments (){
         return attachmentDao.getAllAttachments();
     }
 
 
 
-    List<Attachment> getStudentAttachmentsInChat(String student_id){
+    public List<Attachment> getStudentAttachmentsInChat(String student_id){
         return attachmentDao.getStudentAttachmentsInChat(student_id);
     }
 
 
 
 
-    List<Attachment> getStudentAttachmentsInAChat(String student_id, int chat_id){
+    public List<Attachment> getStudentAttachmentsInAChat(String student_id, int chat_id){
         return attachmentDao.getStudentAttachmentsInAChat(student_id,chat_id);
     }
 
@@ -147,38 +154,38 @@ public class AppRepository {
 
 
 
-    void insertBookmark (Bookmark bookmark){
+    public void insertBookmark (Bookmark bookmark){
         AppDatabase.databaseWriteExecutor.execute(() -> {
             bookmarkDao.insertBookmark(bookmark);
         });
     }
 
 
-    void updateBookmark (Bookmark bookmark){
+    public void updateBookmark (Bookmark bookmark){
         AppDatabase.databaseWriteExecutor.execute(() -> {
             bookmarkDao.updateBookmark(bookmark);
         });
     }
 
 
-    void deleteBookmark (Bookmark bookmark){
+    public void deleteBookmark (Bookmark bookmark){
         AppDatabase.databaseWriteExecutor.execute(() -> {
             bookmarkDao.deleteBookmark(bookmark);
         });
     }
 
 
-    LiveData<List<Bookmark>> getAllBookmarks (){
+    public LiveData<List<Bookmark>> getAllBookmarks (){
         return bookmarkDao.getAllBookmarks();
     }
 
 
-    LiveData<List<Bookmark>> getBookmarkById (int bookmark_id){
+    public LiveData<List<Bookmark>> getBookmarkById (int bookmark_id){
         return bookmarkDao.getBookmarkById(bookmark_id);
     }
 
 
-    LiveData<List<Bookmark>> getAllStudentBookmarks (String student_id){
+    public LiveData<List<Bookmark>> getAllStudentBookmarks (String student_id){
         return bookmarkDao.getAllStudentBookmarks(student_id);
     }
 
@@ -191,46 +198,46 @@ public class AppRepository {
 
 
 
-    void insertCall (Call call){
+    public void insertCall (Call call){
         AppDatabase.databaseWriteExecutor.execute(() -> {
             callDao.insertCall(call);
         });
     }
 
 
-    void updateCall (Call call){
+    public void updateCall (Call call){
         AppDatabase.databaseWriteExecutor.execute(() -> {
             callDao.updateCall(call);
         });
     }
 
 
-    void deleteCall (Call call){
+    public void deleteCall (Call call){
         AppDatabase.databaseWriteExecutor.execute(() -> {
             callDao.deleteCall(call);
         });
     }
 
 
-    LiveData<List<Call>> getAllCalls (){
+    public LiveData<List<Call>> getAllCalls (){
         return callDao.getAllCalls();
     }
 
 
-    Call getCallById (int call_id){
+    public Call getCallById (int call_id){
         return callDao.getCallById(call_id);
     }
 
 
 
 
-    LiveData<List<Call>> getAllStudentCalls (String student_id){
+    public LiveData<List<Call>> getAllStudentCalls (String student_id){
         return callDao.getAllStudentCalls(student_id);
     }
 
 
 
-    LiveData<List<Call>> getAllStudentCallsForAChat (String student_id, int chat_id){
+    public LiveData<List<Call>> getAllStudentCallsForAChat (String student_id, int chat_id){
         return callDao.getAllStudentCallsForAChat(student_id,chat_id);
     }
 
@@ -245,39 +252,39 @@ public class AppRepository {
 
 
 
-    void insertChat (Chat chat){
+    public void insertChat (Chat chat){
         AppDatabase.databaseWriteExecutor.execute(() -> {
             chatDao.insertChat(chat);
         });
     }
 
 
-    void updateChat (Chat chat){
+    public void updateChat (Chat chat){
         AppDatabase.databaseWriteExecutor.execute(() -> {
             chatDao.updateChat(chat);
         });
     }
 
 
-    void deleteChat (Chat chat){
+    public void deleteChat (Chat chat){
         AppDatabase.databaseWriteExecutor.execute(() -> {
             chatDao.deleteChat(chat);
         });
     }
 
 
-    LiveData<List<Chat>> getAllChats(){
+    public LiveData<List<Chat>> getAllChats(){
         return chatDao.getAllChats();
     }
 
 
-    Chat getChatById(int chat_id){
+    public Chat getChatById(int chat_id){
         return chatDao.getChatById(chat_id);
     }
 
 
 
-    LiveData<List<Chat>> getAllStudentChats(String student_id){
+    public LiveData<List<Chat>> getAllStudentChats(String student_id){
         return chatDao.getAllStudentChats(student_id);
     }
 
@@ -291,32 +298,32 @@ public class AppRepository {
 
 
 
-    void insertCourse (Course course){
+    public void insertCourse (Course course){
         AppDatabase.databaseWriteExecutor.execute(() -> {
             courseDao.insertCourse(course);
         });
     }
 
 
-    void updateCourse (Course course){
+    public void updateCourse (Course course){
         AppDatabase.databaseWriteExecutor.execute(() -> {
             courseDao.updateCourse(course);
         });
     }
 
 
-    void deleteCourse (Course course){
+    public void deleteCourse (Course course){
         AppDatabase.databaseWriteExecutor.execute(() -> {
             courseDao.deleteCourse(course);
         });
     }
 
 
-    LiveData<List<Course>> getAllCourses (){
+    public LiveData<List<Course>> getAllCourses (){
         return courseDao.getAllCourses();
     }
 
-    Course getCourseById (int course_id){
+    public Course getCourseById (int course_id){
         return courseDao.getCourseById(course_id);
     }
 
@@ -349,46 +356,46 @@ public class AppRepository {
         });
     }
 
-    LiveData<List<Enrollment>> getAllEnrollments(){
+    public LiveData<List<Enrollment>> getAllEnrollments(){
         return enrollmentDao.getAllEnrollments();
     }
 
-    LiveData<List<Enrollment>> getEnrollmentById(int enrollment_id){
+    public LiveData<List<Enrollment>> getEnrollmentById(int enrollment_id){
         return enrollmentDao.getEnrollmentById(enrollment_id);
     }
 
 
-    Enrollment getStudentEnrollmentInCourse(String student_id, int course_id){
+    public Enrollment getStudentEnrollmentInCourse(String student_id, int course_id){
         return enrollmentDao.getStudentEnrollmentInCourse(student_id,course_id);
     }
 
 
-    int getTotalLessonsForCourse(int course_id){
+    public int getTotalLessonsForCourse(int course_id){
         return enrollmentDao.getTotalLessonsForCourse(course_id);
     }
 
 
-    int getCompletedLessonsForStudentInCourse(String student_id, int course_id){
+    public int getCompletedLessonsForStudentInCourse(String student_id, int course_id){
         return enrollmentDao.getCompletedLessonsForStudentInCourse(student_id,course_id);
     }
 
 
 
-    void updateEnrollmentProgress(String student_id, int course_id){
+    public void updateEnrollmentProgress(String student_id, int course_id){
         AppDatabase.databaseWriteExecutor.execute(() -> {
             enrollmentDao.updateEnrollmentProgress(student_id,course_id);
         });
     }
 
 
-    LiveData<List<Enrollment>> getEnrollmentsForStudent(String student_id){
+    public LiveData<List<Enrollment>> getEnrollmentsForStudent(String student_id){
         return enrollmentDao.getEnrollmentsForStudent(student_id);
     }
 
 
 
 
-    void calculateFinalGrade(String student_id, int course_id){
+    public void calculateFinalGrade(String student_id, int course_id){
         AppDatabase.databaseWriteExecutor.execute(() -> {
             enrollmentDao.calculateFinalGrade(student_id,course_id);
         });
@@ -396,7 +403,7 @@ public class AppRepository {
 
 
 
-    void setCompletionDateIfAllLessonsCompleted(String student_id, int course_id){
+    public void setCompletionDateIfAllLessonsCompleted(String student_id, int course_id){
         AppDatabase.databaseWriteExecutor.execute(() -> {
             enrollmentDao.setCompletionDateIfAllLessonsCompleted(student_id,course_id);
         });
@@ -412,10 +419,10 @@ public class AppRepository {
             enrollmentDao.updateFeeStatusAndTimestamp(studentId, courseId, fee);
 
             // Create the group if it doesn't already exist
-            appRepository.createGroupForCourse(courseId, courseName);
+            instance.createGroupForCourse(courseId, courseName);
 
             // Add the student to the group
-            appRepository.addStudentToGroup(studentId, courseId);
+            instance.addStudentToGroup(studentId, courseId);
         });
     }
 
@@ -439,39 +446,39 @@ public class AppRepository {
 
 
 
-    void insertGroup (Group group){
+    public void insertGroup (Group group){
         AppDatabase.databaseWriteExecutor.execute(() -> {
             groupDao.insertGroup(group);
         });
     }
 
-    void updateGroup (Group group){
+    public void updateGroup (Group group){
         AppDatabase.databaseWriteExecutor.execute(() -> {
             groupDao.updateGroup(group);
         });
     }
 
-    void deleteGroup (Group group){
+    public void deleteGroup (Group group){
         AppDatabase.databaseWriteExecutor.execute(() -> {
             groupDao.deleteGroup(group);
         });
     }
 
-    LiveData<List<Group>> getAllGroups(){
+    public LiveData<List<Group>> getAllGroups(){
         return groupDao.getAllGroups();
     }
 
-    LiveData<List<Group>> getGroupById(int group_id){
+    public LiveData<List<Group>> getGroupById(int group_id){
         return groupDao.getGroupById(group_id);
     }
 
-    LiveData<List<Group>> getGroupByGroupName(String group_name){
+    public LiveData<List<Group>> getGroupByGroupName(String group_name){
         return groupDao.getGroupByGroupName(group_name);
     }
 
 
 
-    Group getGroupByCourseId(int course_id){
+    public Group getGroupByCourseId(int course_id){
         return groupDao.getGroupByCourseId(course_id);
     }
 
@@ -508,34 +515,34 @@ public class AppRepository {
 
 
 
-    void insertGroupMembership (GroupMembership groupMembership){
+    public void insertGroupMembership (GroupMembership groupMembership){
         AppDatabase.databaseWriteExecutor.execute(() -> {
             groupMembershipDao.insertGroupMembership(groupMembership);
         });
     }
 
-    void updateGroupMembership (GroupMembership groupMembership){
+    public void updateGroupMembership (GroupMembership groupMembership){
         AppDatabase.databaseWriteExecutor.execute(() -> {
             groupMembershipDao.updateGroupMembership(groupMembership);
         });
     }
 
-    void deleteGroupMembership (GroupMembership groupMembership){
+    public void deleteGroupMembership (GroupMembership groupMembership){
         AppDatabase.databaseWriteExecutor.execute(() -> {
             groupMembershipDao.deleteGroupMembership(groupMembership);
         });
     }
 
 
-    LiveData<List<GroupMembership>> getGroupMembershipById(int group_membership_id){
+    public LiveData<List<GroupMembership>> getGroupMembershipById(int group_membership_id){
         return groupMembershipDao.getGroupMembershipById(group_membership_id);
     }
 
-    LiveData<List<String>> getAllGroupStudents(int group_id){
+    public LiveData<List<String>> getAllGroupStudents(int group_id){
         return groupMembershipDao.getAllGroupStudents(group_id);
     }
 
-    LiveData<List<Integer>> getAllStudentGroups(String student_id){
+    public LiveData<List<Integer>> getAllStudentGroups(String student_id){
         return groupMembershipDao.getAllStudentGroups(student_id);
     }
 
@@ -633,11 +640,11 @@ public class AppRepository {
 
 
 
-    LiveData<List<Integer>> getAllCourseMentors(int course_id){
+    public LiveData<List<Integer>> getAllCourseMentors(int course_id){
         return mentorCourseDao.getAllCourseMentors(course_id);
     }
 
-    LiveData<List<Integer>> getAllMentorCourses(int mentor_id){
+    public LiveData<List<Integer>> getAllMentorCourses(int mentor_id){
         return mentorCourseDao.getAllMentorCourses(mentor_id);
     }
 
@@ -652,29 +659,29 @@ public class AppRepository {
 
 
 
-    void insertMentor (Mentor mentor){
+    public void insertMentor (Mentor mentor){
         AppDatabase.databaseWriteExecutor.execute(() -> {
             mentorDao.insertMentor(mentor);
         });
     }
 
-    void updateMentor (Mentor mentor){
+    public void updateMentor (Mentor mentor){
         AppDatabase.databaseWriteExecutor.execute(() -> {
             mentorDao.updateMentor(mentor);
         });
     }
 
-    void deleteMentor (Mentor mentor){
+    public void deleteMentor (Mentor mentor){
         AppDatabase.databaseWriteExecutor.execute(() -> {
             mentorDao.deleteMentor(mentor);
         });
     }
 
-    LiveData<List<Mentor>> getAllMentors(){
+    public LiveData<List<Mentor>> getAllMentors(){
         return mentorDao.getAllMentors();
     }
 
-    LiveData<List<Mentor>> getMentorById(int mentor_id){
+    public LiveData<List<Mentor>> getMentorById(int mentor_id){
         return mentorDao.getMentorById(mentor_id);
     }
 
@@ -688,46 +695,46 @@ public class AppRepository {
 
 
 
-    void insertMessage (Message message){
+    public void insertMessage (Message message){
         AppDatabase.databaseWriteExecutor.execute(() -> {
             messageDao.insertMessage(message);
         });
     }
 
-    void updateMessage (Message message){
+    public void updateMessage (Message message){
         AppDatabase.databaseWriteExecutor.execute(() -> {
             messageDao.updateMessage(message);
         });
     }
 
-    void deleteMessage (Message message){
+    public void deleteMessage (Message message){
         AppDatabase.databaseWriteExecutor.execute(() -> {
             messageDao.deleteMessage(message);
         });
     }
 
-    LiveData<List<Message>> getAllMessages(){
+    public LiveData<List<Message>> getAllMessages(){
         return messageDao.getAllMessages();
     }
 
-    LiveData<List<Message>> getMessageById(int message_id){
+    public LiveData<List<Message>> getMessageById(int message_id){
         return messageDao.getMessageById(message_id);
     }
 
-    LiveData<List<Message>> getGroupMessagesByGroupId(int group_id){
+    public LiveData<List<Message>> getGroupMessagesByGroupId(int group_id){
         return messageDao.getGroupMessagesByGroupId(group_id);
     }
 
-    LiveData<List<Message>> getChatMessagesByChatId(int chat_id){
+    public LiveData<List<Message>> getChatMessagesByChatId(int chat_id){
         return messageDao.getChatMessagesByChatId(chat_id);
     }
 
-    LiveData<List<Message>> getChatMessagesByMessageType(String message_type){
+    public LiveData<List<Message>> getChatMessagesByMessageType(String message_type){
         return messageDao.getChatMessagesByMessageType(message_type);
     }
 
 
-    LiveData<List<Message>> searchMessagesByContent(String content){
+    public LiveData<List<Message>> searchMessagesByContent(String content){
         return messageDao.searchMessagesByContent(content);
     }
 
@@ -741,47 +748,47 @@ public class AppRepository {
 
 
 
-    void insertModule (Module module){
+    public void insertModule (Module module){
         AppDatabase.databaseWriteExecutor.execute(() -> {
             moduleDao.insertModule(module);
         });
     }
 
-    void updateModule (Module module){
+    public void updateModule (Module module){
         AppDatabase.databaseWriteExecutor.execute(() -> {
             moduleDao.updateModule(module);
         });
     }
 
 
-    void deleteModule (Module module){
+    public void deleteModule (Module module){
         AppDatabase.databaseWriteExecutor.execute(() -> {
             moduleDao.deleteModule(module);
         });
     }
 
 
-    LiveData<List<Module>> getAllModules (){
+    public LiveData<List<Module>> getAllModules (){
         return moduleDao.getAllModules();
     }
 
 
-    LiveData<List<Module>> getModuleById (int module_id){
+    public LiveData<List<Module>> getModuleById (int module_id){
         return moduleDao.getModuleById(module_id);
     }
 
 
-    LiveData<List<Module>> getAllCourseModules (int course_id){
+    public LiveData<List<Module>> getAllCourseModules (int course_id){
         return moduleDao.getAllCourseModules(course_id);
     }
 
 
-    int getModuleDuration(int module_id){
+    public int getModuleDuration(int module_id){
         return moduleDao.getModuleDuration(module_id);
     }
 
 
-    void updateModuleDuration(int module_id){
+    public void updateModuleDuration(int module_id){
         AppDatabase.databaseWriteExecutor.execute(() -> {
             moduleDao.updateModuleDuration(module_id);
         });
@@ -798,39 +805,39 @@ public class AppRepository {
 
 
 
-    void insertNotification (Notification notification){
+    public void insertNotification (Notification notification){
         AppDatabase.databaseWriteExecutor.execute(() -> {
             notificationDao.insertNotification(notification);
         });
     }
 
 
-    void updateNotification (Notification notification){
+    public void updateNotification (Notification notification){
         AppDatabase.databaseWriteExecutor.execute(() -> {
             notificationDao.updateNotification(notification);
         });
     }
 
 
-    void deleteNotification (Notification notification){
+    public void deleteNotification (Notification notification){
         AppDatabase.databaseWriteExecutor.execute(() -> {
             notificationDao.deleteNotification(notification);
         });
     }
 
 
-    LiveData<List<Notification>> getAllNotifications(){
+    public LiveData<List<Notification>> getAllNotifications(){
         return notificationDao.getAllNotifications();
     }
 
 
-    LiveData<List<Notification>> getNotificationById(int notification_id){
+    public LiveData<List<Notification>> getNotificationById(int notification_id){
         return notificationDao.getNotificationById(notification_id);
     }
 
 
 
-    LiveData<List<Notification>> getAllStudentNotifications(String student_id){
+    public LiveData<List<Notification>> getAllStudentNotifications(String student_id){
         return notificationDao.getAllStudentNotifications(student_id);
     }
 
@@ -845,25 +852,25 @@ public class AppRepository {
 
 
 
-    void insertReview (Review review){
+    public void insertReview (Review review){
         AppDatabase.databaseWriteExecutor.execute(() -> {
             reviewDao.insertReview(review);
         });
     }
 
-    void updateReview (Review review){
+    public void updateReview (Review review){
         AppDatabase.databaseWriteExecutor.execute(() -> {
             reviewDao.updateReview(review);
         });
     }
 
-    void deleteReview (Review review){
+    public void deleteReview (Review review){
         AppDatabase.databaseWriteExecutor.execute(() -> {
             reviewDao.deleteReview(review);
         });
     }
 
-    void insertMentorReview(String student_id, int mentor_id, double rate, String comment) {
+    public void insertMentorReview(String student_id, int mentor_id, double rate, String comment) {
         AppDatabase.databaseWriteExecutor.execute(() -> {
             Review review = new Review(student_id, mentor_id, "Mentor", rate, comment);
             insertReview(review);
@@ -871,47 +878,47 @@ public class AppRepository {
     }
 
 
-    void insertCourseReview(String student_id, int course_id, double rate, String comment) {
+    public void insertCourseReview(String student_id, int course_id, double rate, String comment) {
         AppDatabase.databaseWriteExecutor.execute(() -> {
             Review review = new Review(student_id, course_id, "Course", rate, comment);
             insertReview(review);
         });
     }
 
-    LiveData<List<Review>> getAllReviews(){
+    public LiveData<List<Review>> getAllReviews(){
         return reviewDao.getAllReviews();
     }
 
-    LiveData<List<Review>> getReviewById(int review_id){
+    public LiveData<List<Review>> getReviewById(int review_id){
         return reviewDao.getReviewById(review_id);
     }
 
 
-    LiveData<List<Review>> getReviewsForCourse(int course_id){
+    public LiveData<List<Review>> getReviewsForCourse(int course_id){
         return reviewDao.getReviewsForCourse(course_id);
     }
 
 
-    LiveData<List<Review>> getReviewsForMentor(int mentor_id){
+    public LiveData<List<Review>> getReviewsForMentor(int mentor_id){
         return reviewDao.getReviewsForMentor(mentor_id);
     }
 
 
-    void deleteAllCourseReviews(int course_id){
+    public void deleteAllCourseReviews(int course_id){
         AppDatabase.databaseWriteExecutor.execute(() -> {
             reviewDao.deleteAllCourseReviews(course_id);
         });
     }
 
 
-    void deleteAllMentorReviews(int mentor_id){
+    public void deleteAllMentorReviews(int mentor_id){
         AppDatabase.databaseWriteExecutor.execute(() -> {
             reviewDao.deleteAllMentorReviews(mentor_id);
         });
     }
 
 
-    void deleteReviewForCourse(int course_id, int review_id){
+    public void deleteReviewForCourse(int course_id, int review_id){
         AppDatabase.databaseWriteExecutor.execute(() -> {
             reviewDao.deleteReviewForCourse(course_id,review_id);
         });
@@ -919,7 +926,7 @@ public class AppRepository {
 
 
 
-    void deleteReviewForMentor(int mentor_id, int review_id){
+    public void deleteReviewForMentor(int mentor_id, int review_id){
         AppDatabase.databaseWriteExecutor.execute(() -> {
             reviewDao.deleteReviewForMentor(mentor_id,review_id);
         });
@@ -935,48 +942,48 @@ public class AppRepository {
 
 
 
-    void insertStudent (Student student){
+    public void insertStudent (Student student){
         AppDatabase.databaseWriteExecutor.execute(() -> {
             studentDao.insertStudent(student);
         });
     }
 
 
-    void insertStudents(List<Student> students){
+    public void insertStudents(List<Student> students){
         AppDatabase.databaseWriteExecutor.execute(() -> {
             studentDao.insertStudents(students);
         });
     }
 
-    void updateStudent (Student student){
+    public void updateStudent (Student student){
         AppDatabase.databaseWriteExecutor.execute(() -> {
             studentDao.updateStudent(student);
         });
     }
 
-    void deleteStudent (Student student){
+    public void deleteStudent (Student student){
         AppDatabase.databaseWriteExecutor.execute(() -> {
             studentDao.deleteStudent(student);
         });
     }
 
-    LiveData<List<Student>> getAllStudents (){
+    public LiveData<List<Student>> getAllStudents (){
         return studentDao.getAllStudents();
     }
 
-    LiveData<List<Student>> getStudentById (String student_id){
+    public LiveData<List<Student>> getStudentById (String student_id){
         return studentDao.getStudentById(student_id);
     }
 
 
 
-    LiveData<List<Student>> getUnsyncedStudents(){
+    public LiveData<List<Student>> getUnsyncedStudents(){
         return studentDao.getUnsyncedStudents();
     }
 
 
 
-    LiveData<Student> getStudentByEmail (String email){
+    public LiveData<Student> getStudentByEmail (String email){
         return studentDao.getStudentByEmail(email);
     }
 
@@ -988,44 +995,44 @@ public class AppRepository {
 
 
 
-    void insertStudentLesson(StudentLesson studentLesson){
+    public void insertStudentLesson(StudentLesson studentLesson){
         AppDatabase.databaseWriteExecutor.execute(() -> {
             studentLessonDao.insertStudentLesson(studentLesson);
         });
     }
 
-    void updateStudentLesson(StudentLesson studentLesson){
+    public void updateStudentLesson(StudentLesson studentLesson){
         AppDatabase.databaseWriteExecutor.execute(() -> {
             studentLessonDao.insertStudentLesson(studentLesson);
         });
     }
 
-    void deleteStudentLesson(StudentLesson studentLesson){
+    public void deleteStudentLesson(StudentLesson studentLesson){
         AppDatabase.databaseWriteExecutor.execute(() -> {
             studentLessonDao.deleteStudentLesson(studentLesson);
         });
     }
 
 
-    void updateCompletionStatus(String student_id, int lesson_id, boolean completion_status){
+    public void updateCompletionStatus(String student_id, int lesson_id, boolean completion_status){
         AppDatabase.databaseWriteExecutor.execute(() -> {
             studentLessonDao.updateCompletionStatus(student_id,lesson_id,completion_status);
         });
     }
 
 
-    boolean getCompletionStatus(String student_id, int lesson_id){
+    public boolean getCompletionStatus(String student_id, int lesson_id){
         return studentLessonDao.getCompletionStatus(student_id,lesson_id);
     }
 
 
-    void updateLessonCompletionStatus(String student_id, int lesson_id, boolean completion_status){
+    public void updateLessonCompletionStatus(String student_id, int lesson_id, boolean completion_status){
         AppDatabase.databaseWriteExecutor.execute(() -> {
             studentLessonDao.updateLessonCompletionStatus(student_id,lesson_id,completion_status);
         });
     }
 
-    void updateLessonStatusAndProgress(String student_id, int lesson_id, boolean completion_status, EnrollmentDao enrollmentDao, int course_id) {
+    public void updateLessonStatusAndProgress(String student_id, int lesson_id, boolean completion_status, EnrollmentDao enrollmentDao, int course_id) {
         updateLessonCompletionStatus(student_id, lesson_id, completion_status);
         enrollmentDao.updateEnrollmentProgress(student_id, course_id);
 
@@ -1047,29 +1054,29 @@ public class AppRepository {
 
 
 
-    void insertStudentMentor(StudentMentor studentMentor){
+    public void insertStudentMentor(StudentMentor studentMentor){
         AppDatabase.databaseWriteExecutor.execute(() -> {
             studentMentorDao.insertStudentMentor(studentMentor);
         });
     }
 
-    void updateStudentMentor(StudentMentor studentMentor){
+    public void updateStudentMentor(StudentMentor studentMentor){
         AppDatabase.databaseWriteExecutor.execute(() -> {
             studentMentorDao.updateStudentMentor(studentMentor);
         });
     }
 
-    void deleteStudentMentor(StudentMentor studentMentor){
+    public void deleteStudentMentor(StudentMentor studentMentor){
         AppDatabase.databaseWriteExecutor.execute(() -> {
             studentMentorDao.deleteStudentMentor(studentMentor);
         });
     }
 
-    LiveData<List<String>> getAllMentorStudents(int mentor_id){
+    public LiveData<List<String>> getAllMentorStudents(int mentor_id){
         return studentMentorDao.getAllMentorStudents(mentor_id);
     }
 
-    LiveData<List<Integer>> getAllStudentMentors(String student_id){
+    public LiveData<List<Integer>> getAllStudentMentors(String student_id){
         return studentMentorDao.getAllStudentMentors(student_id);
     }
 
@@ -1084,34 +1091,34 @@ public class AppRepository {
 
 
 
-    void insertStudentModule(StudentModule studentModule){
+    public void insertStudentModule(StudentModule studentModule){
         AppDatabase.databaseWriteExecutor.execute(() -> {
             studentModuleDao.insertStudentModule(studentModule);
         });
     }
 
-    void updateStudentModule(StudentModule studentModule){
+    public void updateStudentModule(StudentModule studentModule){
         AppDatabase.databaseWriteExecutor.execute(() -> {
             studentModuleDao.updateStudentModule(studentModule);
         });
     }
 
-    void deleteStudentModule(StudentModule studentModule){
+    public void deleteStudentModule(StudentModule studentModule){
         AppDatabase.databaseWriteExecutor.execute(() -> {
             studentModuleDao.deleteStudentModule(studentModule);
         });
     }
 
-    LiveData<List<Double>> getAllStudentModuleGrade(String student_id){
+    public LiveData<List<Double>> getAllStudentModuleGrade(String student_id){
         return studentModuleDao.getAllStudentModuleGrade(student_id);
     }
 
-    LiveData<List<Double>> getStudentModuleGrade(String student_id, int module_id){
+    public LiveData<List<Double>> getStudentModuleGrade(String student_id, int module_id){
         return studentModuleDao.getStudentModuleGrade(student_id,module_id);
     }
 
 
-    void setModuleGrade(String student_id, int module_id, double module_grade){
+    public void setModuleGrade(String student_id, int module_id, double module_grade){
         AppDatabase.databaseWriteExecutor.execute(() -> {
             studentModuleDao.setModuleGrade(student_id,module_id,module_grade);
         });

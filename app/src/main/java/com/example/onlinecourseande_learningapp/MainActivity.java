@@ -28,13 +28,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
 
-        PeriodicWorkRequest syncWorkRequest = new PeriodicWorkRequest.Builder(SyncWorker.class, 1, TimeUnit.HOURS)
-                .setConstraints(new Constraints.Builder()
-                        .setRequiredNetworkType(NetworkType.CONNECTED)
-                        .build())
-                .build();
 
-        WorkManager.getInstance(getBaseContext()).enqueue(syncWorkRequest);
 
 
 

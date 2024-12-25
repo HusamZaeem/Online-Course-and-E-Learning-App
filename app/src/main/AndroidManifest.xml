@@ -45,6 +45,20 @@
         <activity
             android:name=".MainActivity"
             android:exported="true" />
+
+
+        <receiver
+            android:name=".AppStartReceiver"
+            android:exported="true">
+            <intent-filter>
+                <!-- Trigger on app installation or update -->
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+
+
+                <!-- Trigger when app launches -->
+                <action android:name="android.intent.action.MAIN" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>
