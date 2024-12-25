@@ -1,10 +1,15 @@
 package com.example.onlinecourseande_learningapp.room_database;
 
 import android.app.Application;
+import android.content.Context;
 
 import androidx.lifecycle.LiveData;
+import androidx.work.ExistingPeriodicWorkPolicy;
+import androidx.work.PeriodicWorkRequest;
+import androidx.work.WorkManager;
 
 import com.example.onlinecourseande_learningapp.AppExecutors;
+import com.example.onlinecourseande_learningapp.SyncWorker;
 import com.example.onlinecourseande_learningapp.room_database.DAOs.AttachmentDao;
 import com.example.onlinecourseande_learningapp.room_database.DAOs.BookmarkDao;
 import com.example.onlinecourseande_learningapp.room_database.DAOs.CallDao;
@@ -44,6 +49,7 @@ import com.example.onlinecourseande_learningapp.room_database.entities.StudentMe
 import com.example.onlinecourseande_learningapp.room_database.entities.StudentModule;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class AppRepository {
 
@@ -102,6 +108,17 @@ public class AppRepository {
     }
 
 
+    public void schedulePeriodicSyncWorker(Context context) {
+        PeriodicWorkRequest syncWorkRequest =
+                new PeriodicWorkRequest.Builder(SyncWorker.class, 12, TimeUnit.HOURS)
+                        .build(); // Change the interval as per your requirement.
+
+        WorkManager.getInstance(context).enqueueUniquePeriodicWork(
+                "SyncWorker", // Unique name to avoid duplicate workers
+                ExistingPeriodicWorkPolicy.KEEP, // Keeps the existing periodic work
+                syncWorkRequest
+        );
+    }
 
     // AttachmentDao --------------------------------------------
 
@@ -971,13 +988,13 @@ public class AppRepository {
         return studentDao.getAllStudents();
     }
 
-    public LiveData<List<Student>> getStudentById (String student_id){
+    public Student getStudentById (String student_id){
         return studentDao.getStudentById(student_id);
     }
 
 
 
-    public LiveData<List<Student>> getUnsyncedStudents(){
+    public List<Student> getUnsyncedStudents(){
         return studentDao.getUnsyncedStudents();
     }
 

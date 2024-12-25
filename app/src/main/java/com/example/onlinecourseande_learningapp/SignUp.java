@@ -113,6 +113,7 @@ public class SignUp extends AppCompatActivity {
         binding.btnSignUpNewAccount.setOnClickListener(v -> {
             String email = binding.etEmailSignUp.getText().toString();
             String password = binding.etPasswordSignUp.getText().toString();
+            String hashedPassword = PasswordHasher.hashPassword(password);
 
             if (isValidEmail(email) && isValidPassword(password)) {
                 if (isNetworkAvailable()) {
@@ -122,7 +123,7 @@ public class SignUp extends AppCompatActivity {
                                     FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
                                     if (firebaseUser != null) {
                                         String uid = firebaseUser.getUid();
-                                        saveUserToFirestore(uid, email, password);
+                                        saveUserToFirestore(uid, email, hashedPassword);
                                         syncData();
                                         startActivity(new Intent(getBaseContext(), MainActivity.class));
                                         finish();
@@ -132,7 +133,7 @@ public class SignUp extends AppCompatActivity {
                                 }
                             });
                 } else {
-                    saveUserLocally(email, password);
+                    saveUserLocally(email, hashedPassword);
                     showErrorMessage("You are offline. User will be saved locally.");
                 }
             } else {

@@ -17,5 +17,9 @@ public class MyApplication extends Application {
 
         // Enable logging to help with debugging Facebook SDK
         FacebookSdk.addLoggingBehavior(LoggingBehavior.APP_EVENTS);
+
+        // Schedule periodic syncing
+        SyncWorkerScheduler.schedulePeriodicSync(this);
+
     }
 }

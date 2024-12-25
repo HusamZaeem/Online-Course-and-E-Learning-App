@@ -113,7 +113,7 @@ public class SignIn extends AppCompatActivity {
                     } else {
                         // User is offline, observe the LiveData for student
                         appViewModel.getStudentByEmail(email).observe(SignIn.this, student -> {
-                            if (student != null && student.getPassword().equals(password)) {
+                            if (student != null && PasswordHasher.verifyPassword(password, student.getPassword())) {
                                 // User logged in successfully with local data
                                 startActivity(new Intent(getBaseContext(), MainActivity.class));
                                 finish();

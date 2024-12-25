@@ -33,12 +33,12 @@ public interface StudentDao {
     LiveData<List<Student>> getAllStudents ();
 
     @Query("SELECT * FROM Student WHERE student_id = :student_id")
-    LiveData<List<Student>> getStudentById (String student_id);
+    Student getStudentById (String student_id);
 
     @Query("SELECT * FROM Student WHERE email = :email LIMIT 1")
     LiveData<Student> getStudentByEmail (String email);
 
     @Query("SELECT * FROM Student WHERE is_synced = 0")
-    LiveData<List<Student>> getUnsyncedStudents();
+    List<Student> getUnsyncedStudents();
 
 }

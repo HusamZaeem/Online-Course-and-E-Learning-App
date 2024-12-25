@@ -779,12 +779,12 @@ public class AppViewModel extends AndroidViewModel {
         return appRepository.getAllStudents();
     }
 
-    public LiveData<List<Student>> getStudentById (String student_id){
+    public Student getStudentById (String student_id){
         return appRepository.getStudentById(student_id);
     }
 
 
-    public LiveData<List<Student>> getUnsyncedStudents(){
+    public List<Student> getUnsyncedStudents(){
         return appRepository.getUnsyncedStudents();
     }
 
