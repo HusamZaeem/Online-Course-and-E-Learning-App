@@ -15,6 +15,7 @@ roomRuntime = "2.3.0"
 firebaseAuth = "23.1.0"
 firebaseFirestore = "25.1.1"
 roomRuntimeVersion = "2.5.0"
+navigationFragment = "2.8.5"
 
 [libraries]
 core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "coreSplashscreen" }
@@ -35,6 +36,7 @@ room-runtime-v250 = { module = "androidx.room:room-runtime", version.ref = "room
 room-testing = { module = "androidx.room:room-testing", version.ref = "roomRuntime" }
 firebase-auth = { group = "com.google.firebase", name = "firebase-auth", version.ref = "firebaseAuth" }
 firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore", version.ref = "firebaseFirestore" }
+navigation-fragment = { group = "androidx.navigation", name = "navigation-fragment", version.ref = "navigationFragment" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

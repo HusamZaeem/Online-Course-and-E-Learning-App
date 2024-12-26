@@ -70,7 +70,14 @@ public class SignIn extends AppCompatActivity {
         });
 
 
+        binding.tvForgotPassSignIn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
+                startActivity(new Intent(getApplicationContext(), ForgotPasswordActivity.class));
+
+            }
+        });
 
 
         binding.btnSignUpNoAccount.setOnClickListener(new View.OnClickListener() {

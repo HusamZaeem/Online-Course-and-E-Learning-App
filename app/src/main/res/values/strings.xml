@@ -32,7 +32,7 @@
     <string name="forgot_pass">Forgot the password?</string>
     <string name="default_web_client_id">943534388733-jjsgre3hdgeu2uurg5n5qj8cq42k9mlf.apps.googleusercontent.com</string>
     <string name="tvForgotPassword">Forgot Password</string>
-    <string name="tvForgotPasswordEmail">Please enter the email address should we use to reset your password</string>
+    <string name="tvForgotPasswordEmail">Please enter the email address we should use to reset your password</string>
     <string name="btnContinue">Continue</string>
     <string name="resend_code">Resend code in 59s</string>
     <string name="btnVerify">Verify</string>

@@ -55,7 +55,8 @@ public class NewPasswordFragment extends Fragment {
             }
 
             if (isValidPassword(newPassword)){
-                resetPassword(newPassword);
+                String newHashedPassword = PasswordHasher.hashPassword(newPassword);
+                resetPassword(newHashedPassword);
             }
 
         });
