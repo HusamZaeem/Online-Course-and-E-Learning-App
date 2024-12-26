@@ -978,6 +978,12 @@ public class AppRepository {
         });
     }
 
+    public void updateStudentPassword(String email, String newPassword){
+        AppDatabase.databaseWriteExecutor.execute(() -> {
+            studentDao.updateStudentPassword(email,newPassword);
+        });
+    }
+
     public void deleteStudent (Student student){
         AppDatabase.databaseWriteExecutor.execute(() -> {
             studentDao.deleteStudent(student);

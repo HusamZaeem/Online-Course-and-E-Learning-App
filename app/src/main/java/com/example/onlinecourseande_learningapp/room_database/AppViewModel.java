@@ -771,6 +771,10 @@ public class AppViewModel extends AndroidViewModel {
             appRepository.updateStudent(student);
     }
 
+    public void updateStudentPassword(String email, String newPassword){
+            appRepository.updateStudentPassword(email,newPassword);
+    }
+
     public void deleteStudent (Student student){
         appRepository.deleteStudent(student);
     }

@@ -26,6 +26,9 @@ public interface StudentDao {
     @Update
     void updateStudent (Student student);
 
+    @Query("UPDATE Student SET password = :newPassword WHERE email = :email")
+    void updateStudentPassword(String email, String newPassword);
+
     @Delete
     void deleteStudent (Student student);
 
@@ -40,5 +43,7 @@ public interface StudentDao {
 
     @Query("SELECT * FROM Student WHERE is_synced = 0")
     List<Student> getUnsyncedStudents();
+
+
 
 }
