@@ -1,15 +1,20 @@
 const express = require('express');
+const cors = require('cors');
 const nodemailer = require('nodemailer');
 require('dotenv').config();
 
 const app = express();
+
+// Enable CORS for all origins
+app.use(cors());
+
 app.use(express.json());
 
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
-    user: 'onlinecoursesandelearning@gmail.com', // Environment variable for the email
-    pass: 'Online@Courses@E-Learning1997'  // Environment variable for the app password
+    user: 'onlinecoursesandelearning@gmail.com', // Use your Gmail email
+    pass: 'Online@Courses@E-Learning1997'  // Your Gmail app password
   }
 });
 
@@ -18,8 +23,8 @@ app.post('/send-otp', async (req, res) => {
   const { email, otp } = req.body;
 
   const mailOptions = {
-    from: 'onlinecoursesandelearning@gmail.com',  // Using environment variable for 'from' address
-    to: email,
+    from: 'onlinecoursesandelearning@gmail.com', // Sender's email
+    to: email,  // Recipient's email
     subject: 'Your OTP for Password Reset',
     text: `Dear User,\n\nYour OTP for password reset is: ${otp}.\n\nPlease do not share this code with anyone.\n\nBest regards,\nOnline Course & E-Learning App`
   };
