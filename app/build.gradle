@@ -34,7 +34,11 @@ android {
         sourceCompatibility JavaVersion.VERSION_11
         targetCompatibility JavaVersion.VERSION_11
     }
+
+
 }
+
+
 
 dependencies {
 
@@ -103,5 +107,8 @@ dependencies {
     implementation "androidx.navigation:navigation-fragment-ktx:2.7.3"
     implementation "androidx.navigation:navigation-ui-ktx:2.7.3"
 
+
+    //TOTP library and email service
+    implementation 'com.sun.mail:javax.mail:1.6.2' // For sending email
 
 }

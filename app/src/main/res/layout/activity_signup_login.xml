@@ -157,7 +157,7 @@
 
 
     <Button
-        android:id="@+id/btnSign_in"
+        android:id="@+id/btn_sign_in_with_password"
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:layout_marginStart="20dp"
@@ -184,7 +184,7 @@
         app:layout_constraintEnd_toStartOf="@+id/btnSignUp"
         app:layout_constraintHorizontal_bias="0.875"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnSign_in" />
+        app:layout_constraintTop_toBottomOf="@+id/btn_sign_in_with_password" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnSignUp"
@@ -202,7 +202,7 @@
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/tvNoAccount"
-        app:layout_constraintTop_toBottomOf="@+id/btnSign_in" />
+        app:layout_constraintTop_toBottomOf="@+id/btn_sign_in_with_password" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

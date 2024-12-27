@@ -16,6 +16,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.Collections;
+import java.util.Random;
 
 
 public class ForgotPasswordEmailFragment extends Fragment {
@@ -62,20 +63,32 @@ public class ForgotPasswordEmailFragment extends Fragment {
     }
 
     private void sendOtpToEmail(String email) {
-        // Generate OTP
-        String otp = String.valueOf((int) (Math.random() * 9000) + 1000);
+        // Generate a 4-digit OTP
+        String otp = String.format("%04d", new Random().nextInt(10000));
 
-        // Store OTP temporarily in Firestore
-        firestore.collection("OtpVerification").document(email)
-                .set(Collections.singletonMap("otp", otp))
-                .addOnSuccessListener(unused -> {
-                    // Redirect to FragmentVerifyCode
+        // Send the OTP email
+        new Thread(() -> {
+            try {
+                EmailSender.sendEmail(
+                        email,
+                        "Password Reset OTP",
+                        "Dear Student,\n\nYour OTP for password reset is: " + otp + "\n\nPlease do not share this code with anyone.\n\nBest Regards,\nOnline Course & E-Learning App"
+                );
+
+                // Navigate to VerifyCodeFragment with OTP
+                requireActivity().runOnUiThread(() -> {
                     Bundle bundle = new Bundle();
                     bundle.putString("email", email);
+                    bundle.putString("otp", otp); // Pass OTP to VerifyCodeFragment
                     bundle.putString("maskedEmail", maskEmail(email));
                     Navigation.findNavController(binding.getRoot()).navigate(R.id.action_to_fragmentVerifyCode, bundle);
-                })
-                .addOnFailureListener(e -> Toast.makeText(getContext(), "Failed to send OTP", Toast.LENGTH_SHORT).show());
+                });
+            } catch (Exception e) {
+                requireActivity().runOnUiThread(() ->
+                        Toast.makeText(getContext(), "Failed to send OTP: " + e.getMessage(), Toast.LENGTH_SHORT).show()
+                );
+            }
+        }).start();
     }
 
     private String maskEmail(String email) {

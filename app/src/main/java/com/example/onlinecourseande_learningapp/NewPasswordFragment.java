@@ -186,6 +186,8 @@ public class NewPasswordFragment extends Fragment {
 
 
                                     startActivity(new Intent(getContext(), SignIn.class));
+                                    getActivity().finish();
+
                                 })
                                 .addOnFailureListener(e -> Toast.makeText(getContext(), "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show());
                     }
@@ -206,15 +208,24 @@ public class NewPasswordFragment extends Fragment {
         AlertDialog dialog = builder.create();
         dialog.show();
 
+        // Record the start time of the dialog
+        long startTime = System.currentTimeMillis();
+
         // Observe WorkManager State
         WorkManager.getInstance(requireContext()).enqueue(syncWorkRequest);
         WorkManager.getInstance(requireContext())
                 .getWorkInfoByIdLiveData(syncWorkRequest.getId())
                 .observe(getViewLifecycleOwner(), workInfo -> {
                     if (workInfo != null && workInfo.getState() == WorkInfo.State.SUCCEEDED) {
-                        // Sync is complete
-                        dialog.dismiss(); // Dismiss the loading dialog
-                        startActivity(new Intent(getContext(), SignIn.class)); // Navigate to SignIn
+                        // Calculate elapsed time
+                        long elapsedTime = System.currentTimeMillis() - startTime;
+                        long delay = Math.max(0, 3000 - elapsedTime); // Ensure at least 3 seconds
+
+                        // Delay dismissal and redirection
+                        dialogView.postDelayed(() -> {
+                            dialog.dismiss(); // Dismiss the loading dialog
+                            startActivity(new Intent(getContext(), SignIn.class)); // Navigate to SignIn
+                        }, delay);
                     } else if (workInfo != null && workInfo.getState() == WorkInfo.State.FAILED) {
                         dialog.dismiss();
                         Toast.makeText(getContext(), "Sync failed. Please try again.", Toast.LENGTH_SHORT).show();
