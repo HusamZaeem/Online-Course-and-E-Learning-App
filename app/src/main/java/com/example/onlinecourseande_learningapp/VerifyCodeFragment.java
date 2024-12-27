@@ -3,8 +3,6 @@ package com.example.onlinecourseande_learningapp;
 import android.graphics.Typeface;
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
@@ -19,9 +17,8 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.example.onlinecourseande_learningapp.databinding.FragmentVerifyCodeBinding;
-import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.util.Collections;
+import java.io.IOException;
 import java.util.Random;
 
 
@@ -136,7 +133,8 @@ public class VerifyCodeFragment extends Fragment {
 
         new Thread(() -> {
             try {
-                EmailSender.sendEmail(
+                // Resend OTP email using SparkPost
+                SparkPostSender.sendEmail(
                         email,
                         "Password Reset OTP - Resend",
                         "Dear User,\n\nYour new OTP for password reset is: " + currentOtp + "\n\nPlease do not share this code with anyone.\n\nBest Regards,\nOnline Course & E-Learning App"
@@ -146,7 +144,7 @@ public class VerifyCodeFragment extends Fragment {
                     Toast.makeText(getContext(), "OTP resent successfully", Toast.LENGTH_SHORT).show();
                     startCountdownTimer();
                 });
-            } catch (Exception e) {
+            } catch (IOException e) {
                 requireActivity().runOnUiThread(() ->
                         Toast.makeText(getContext(), "Failed to resend OTP: " + e.getMessage(), Toast.LENGTH_SHORT).show()
                 );

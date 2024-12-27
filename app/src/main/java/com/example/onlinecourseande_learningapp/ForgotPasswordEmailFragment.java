@@ -12,10 +12,9 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.example.onlinecourseande_learningapp.databinding.FragmentForgotPasswordEmailBinding;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.util.Collections;
+import java.io.IOException;
 import java.util.Random;
 
 
@@ -67,7 +66,8 @@ public class ForgotPasswordEmailFragment extends Fragment {
 
         new Thread(() -> {
             try {
-                EmailSender.sendEmail(
+                // Send OTP email using SparkPost
+                SparkPostSender.sendEmail(
                         email,
                         "Password Reset OTP",
                         "Dear Student,\n\nYour OTP for password reset is: " + otp + "\n\nPlease do not share this code with anyone.\n\nBest Regards,\nOnline Course & E-Learning App"
@@ -80,7 +80,7 @@ public class ForgotPasswordEmailFragment extends Fragment {
                     bundle.putString("maskedEmail", maskEmail(email));
                     Navigation.findNavController(binding.getRoot()).navigate(R.id.action_to_fragmentVerifyCode, bundle);
                 });
-            } catch (Exception e) {
+            } catch (IOException e) {
                 requireActivity().runOnUiThread(() ->
                         Toast.makeText(getContext(), "Failed to send OTP: " + e.getMessage(), Toast.LENGTH_SHORT).show()
                 );

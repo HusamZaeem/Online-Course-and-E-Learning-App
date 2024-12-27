@@ -108,7 +108,9 @@ dependencies {
     implementation "androidx.navigation:navigation-ui-ktx:2.7.3"
 
 
-    //TOTP library and email service
-    implementation 'com.squareup.okhttp3:okhttp:4.11.0'
+
+
+
+    implementation 'com.squareup.okhttp3:okhttp:4.10.0'
 
 }
