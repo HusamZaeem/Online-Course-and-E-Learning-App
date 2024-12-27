@@ -1,9 +1,9 @@
 {
   "name": "email-sender",
   "version": "1.0.0",
-  "main": "functions/email-sender/index.js",
+  "main": "index.js",
   "scripts": {
-    "start": "node functions/email-sender/index.js"
+    "start": "node index.js"
   },
   "keywords": [],
   "author": "",

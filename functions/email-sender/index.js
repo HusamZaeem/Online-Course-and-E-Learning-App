@@ -7,8 +7,8 @@ app.use(express.json());
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
-    user: 'onlinecoursesandelearning@gmail.com', // Replace with your Gmail address
-    pass: 'Online@Courses@E-Learning1997' // Replace with your app password
+    user: process.env.EMAIL_USER, // Now using environment variables
+    pass: process.env.EMAIL_PASS// Replace with your app password
   }
 });
 
