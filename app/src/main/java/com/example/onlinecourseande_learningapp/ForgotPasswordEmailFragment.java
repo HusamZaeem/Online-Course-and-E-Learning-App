@@ -14,8 +14,16 @@ import android.widget.Toast;
 import com.example.onlinecourseande_learningapp.databinding.FragmentForgotPasswordEmailBinding;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.util.Random;
+import okhttp3.Response;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
 
 
 public class ForgotPasswordEmailFragment extends Fragment {
@@ -64,23 +72,49 @@ public class ForgotPasswordEmailFragment extends Fragment {
     private void sendOtpToEmail(String email) {
         String otp = String.format("%04d", new Random().nextInt(10000));
 
+        // Make an HTTP request to the Render server to send OTP
         new Thread(() -> {
             try {
-                // Send OTP email using SparkPost
-                SparkPostSender.sendEmail(
-                        email,
-                        "Password Reset OTP",
-                        "Dear Student,\n\nYour OTP for password reset is: " + otp + "\n\nPlease do not share this code with anyone.\n\nBest Regards,\nOnline Course & E-Learning App"
+                // Replace with your Render URL
+                String url = "https://online-course-and-e-learning-app.onrender.com"; // URL of your deployed service
+                OkHttpClient client = new OkHttpClient();
+
+                // Create the request payload
+                JSONObject jsonBody = new JSONObject();
+                jsonBody.put("email", email);
+                jsonBody.put("otp", otp);
+
+                // Create the request body
+                RequestBody body = RequestBody.create(
+                        jsonBody.toString(), MediaType.parse("application/json")
                 );
 
-                requireActivity().runOnUiThread(() -> {
-                    Bundle bundle = new Bundle();
-                    bundle.putString("email", email);
-                    bundle.putString("otp", otp); // Pass OTP to VerifyCodeFragment
-                    bundle.putString("maskedEmail", maskEmail(email));
-                    Navigation.findNavController(binding.getRoot()).navigate(R.id.action_to_fragmentVerifyCode, bundle);
-                });
-            } catch (IOException e) {
+                // Make the POST request
+                Request request = new Request.Builder()
+                        .url(url)
+                        .post(body)
+                        .addHeader("Content-Type", "application/json")
+                        .build();
+
+                // Send the request
+                try (Response response = client.newCall(request).execute()) {
+                    if (response.isSuccessful()) {
+                        // If OTP sent successfully, navigate to the next fragment
+                        requireActivity().runOnUiThread(() -> {
+                            Bundle bundle = new Bundle();
+                            bundle.putString("email", email);
+                            bundle.putString("otp", otp); // Pass OTP to VerifyCodeFragment
+                            bundle.putString("maskedEmail", maskEmail(email));
+                            Navigation.findNavController(binding.getRoot()).navigate(R.id.action_to_fragmentVerifyCode, bundle);
+                        });
+                    } else {
+                        // Handle failure
+                        requireActivity().runOnUiThread(() -> {
+                            Toast.makeText(getContext(), "Failed to send OTP: " + response.message(), Toast.LENGTH_SHORT).show();
+                        });
+                    }
+                }
+            } catch (IOException | JSONException e) {
                 requireActivity().runOnUiThread(() ->
                         Toast.makeText(getContext(), "Failed to send OTP: " + e.getMessage(), Toast.LENGTH_SHORT).show()
                 );

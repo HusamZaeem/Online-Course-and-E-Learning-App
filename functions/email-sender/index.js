@@ -1,6 +1,6 @@
 const express = require('express');
 const nodemailer = require('nodemailer');
-require('dotenv').config(); // Ensure you load environment variables from a .env file
+require('dotenv').config();
 
 const app = express();
 app.use(express.json());
@@ -8,8 +8,8 @@ app.use(express.json());
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
-    user: process.env.EMAIL_USER,  // Environment variable for the email
-    pass: process.env.EMAIL_PASS   // Environment variable for the app password
+    user: process.env.EMAIL_USER, // Environment variable for the email
+    pass: process.env.EMAIL_PASS  // Environment variable for the app password
   }
 });
 
@@ -20,8 +20,8 @@ app.post('/send-otp', async (req, res) => {
   const mailOptions = {
     from: process.env.EMAIL_USER,  // Using environment variable for 'from' address
     to: email,
-    subject: 'Your OTP Code',
-    text: `Your OTP code is: ${otp}`
+    subject: 'Your OTP for Password Reset',
+    text: `Dear User,\n\nYour OTP for password reset is: ${otp}.\n\nPlease do not share this code with anyone.\n\nBest regards,\nOnline Course & E-Learning App`
   };
 
   try {

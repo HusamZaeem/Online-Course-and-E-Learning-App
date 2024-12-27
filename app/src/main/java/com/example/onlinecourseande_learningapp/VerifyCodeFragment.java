@@ -18,8 +18,17 @@ import android.widget.Toast;
 
 import com.example.onlinecourseande_learningapp.databinding.FragmentVerifyCodeBinding;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.util.Random;
+
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 
 public class VerifyCodeFragment extends Fragment {
@@ -131,26 +140,62 @@ public class VerifyCodeFragment extends Fragment {
     private void resendOtp() {
         currentOtp = String.format("%04d", new Random().nextInt(10000));
 
+        // Show loading indication while resending OTP
+        binding.tvResendCode.setText("Sending OTP...");
+        binding.tvResendCode.setEnabled(false);
+
         new Thread(() -> {
             try {
-                // Resend OTP email using SparkPost
-                SparkPostSender.sendEmail(
-                        email,
-                        "Password Reset OTP - Resend",
-                        "Dear User,\n\nYour new OTP for password reset is: " + currentOtp + "\n\nPlease do not share this code with anyone.\n\nBest Regards,\nOnline Course & E-Learning App"
+                // Prepare the email content in the desired format
+                String messageBody = "Dear User,\n\nYour OTP for password reset is: " + currentOtp + ".\n\nPlease do not share this code with anyone.\n\nBest regards,\nOnline Course & E-Learning App";
+
+                // Define the server URL of your Render app or backend server that is using NodeMailer
+                String url = "https://online-course-and-e-learning-app.onrender.com"; // Replace with your actual server URL
+                OkHttpClient client = new OkHttpClient();
+
+                // Create the JSON body to send to the server
+                JSONObject jsonBody = new JSONObject();
+                jsonBody.put("email", email);
+                jsonBody.put("otp", currentOtp);
+
+                // Create the request body
+                RequestBody body = RequestBody.create(
+                        jsonBody.toString(), MediaType.parse("application/json")
                 );
 
-                requireActivity().runOnUiThread(() -> {
-                    Toast.makeText(getContext(), "OTP resent successfully", Toast.LENGTH_SHORT).show();
-                    startCountdownTimer();
-                });
+                // Create the HTTP request
+                Request request = new Request.Builder()
+                        .url(url)
+                        .post(body)
+                        .addHeader("Content-Type", "application/json")
+                        .build();
+
+                // Send the request and get the response
+                try (Response response = client.newCall(request).execute()) {
+                    if (response.isSuccessful()) {
+                        // If OTP sent successfully, show feedback and restart countdown
+                        requireActivity().runOnUiThread(() -> {
+                            Toast.makeText(getContext(), "OTP resent successfully", Toast.LENGTH_SHORT).show();
+                            startCountdownTimer();
+                        });
+                    } else {
+                        // Handle failure
+                        requireActivity().runOnUiThread(() -> {
+                            Toast.makeText(getContext(), "Failed to resend OTP: " + response.message(), Toast.LENGTH_SHORT).show();
+                        });
+                    }
+                }
             } catch (IOException e) {
-                requireActivity().runOnUiThread(() ->
-                        Toast.makeText(getContext(), "Failed to resend OTP: " + e.getMessage(), Toast.LENGTH_SHORT).show()
-                );
+                // Handle error during the network request
+                requireActivity().runOnUiThread(() -> {
+                    Toast.makeText(getContext(), "Failed to resend OTP: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                });
+            } catch (JSONException e) {
+                throw new RuntimeException(e);
             }
         }).start();
     }
+
 
     @Override
     public void onDestroyView() {
