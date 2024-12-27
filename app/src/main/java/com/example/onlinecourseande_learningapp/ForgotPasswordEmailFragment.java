@@ -63,10 +63,8 @@ public class ForgotPasswordEmailFragment extends Fragment {
     }
 
     private void sendOtpToEmail(String email) {
-        // Generate a 4-digit OTP
         String otp = String.format("%04d", new Random().nextInt(10000));
 
-        // Send the OTP email
         new Thread(() -> {
             try {
                 EmailSender.sendEmail(
@@ -75,7 +73,6 @@ public class ForgotPasswordEmailFragment extends Fragment {
                         "Dear Student,\n\nYour OTP for password reset is: " + otp + "\n\nPlease do not share this code with anyone.\n\nBest Regards,\nOnline Course & E-Learning App"
                 );
 
-                // Navigate to VerifyCodeFragment with OTP
                 requireActivity().runOnUiThread(() -> {
                     Bundle bundle = new Bundle();
                     bundle.putString("email", email);

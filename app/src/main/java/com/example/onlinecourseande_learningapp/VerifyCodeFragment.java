@@ -132,10 +132,8 @@ public class VerifyCodeFragment extends Fragment {
     }
 
     private void resendOtp() {
-        // Generate a new 4-digit OTP
         currentOtp = String.format("%04d", new Random().nextInt(10000));
 
-        // Resend the OTP email
         new Thread(() -> {
             try {
                 EmailSender.sendEmail(
@@ -146,7 +144,7 @@ public class VerifyCodeFragment extends Fragment {
 
                 requireActivity().runOnUiThread(() -> {
                     Toast.makeText(getContext(), "OTP resent successfully", Toast.LENGTH_SHORT).show();
-                    startCountdownTimer(); // Restart countdown timer on resend
+                    startCountdownTimer();
                 });
             } catch (Exception e) {
                 requireActivity().runOnUiThread(() ->

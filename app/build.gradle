@@ -109,6 +109,6 @@ dependencies {
 
 
     //TOTP library and email service
-    implementation 'com.sun.mail:javax.mail:1.6.2' // For sending email
+    implementation 'com.squareup.okhttp3:okhttp:4.11.0'
 
 }

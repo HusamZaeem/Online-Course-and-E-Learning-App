@@ -1,33 +1,31 @@
 package com.example.onlinecourseande_learningapp;
-import javax.mail.*;
-import javax.mail.internet.*;
-import java.util.Properties;
+import okhttp3.*;
 public class EmailSender {
 
-    public static void sendEmail(String to, String subject, String body) throws MessagingException {
-        final String from = "onlinecoursesandelearning@gmail.com";
-        final String password = "Online@Courses@E-Learning1997";
+    private static final String API_URL = "https://api.sendgrid.com/v3/mail/send";
+    private static final String API_KEY = "YOUR_SENDGRID_API_KEY";
 
-        Properties props = new Properties();
-        props.put("mail.smtp.host", "smtp.gmail.com");
-        props.put("mail.smtp.port", "587");
-        props.put("mail.smtp.auth", "true");
-        props.put("mail.smtp.starttls.enable", "true");
+    public static void sendEmail(String to, String subject, String body) throws Exception {
+        OkHttpClient client = new OkHttpClient();
 
-        Session session = Session.getInstance(props, new Authenticator() {
-            @Override
-            protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication(from, password);
-            }
-        });
+        String jsonPayload = "{"
+                + "\"personalizations\": [{\"to\": [{\"email\": \"" + to + "\"}]}],"
+                + "\"from\": {\"email\": \"your-email@example.com\"},"
+                + "\"subject\": \"" + subject + "\","
+                + "\"content\": [{\"type\": \"text/plain\", \"value\": \"" + body + "\"}]"
+                + "}";
 
-        Message message = new MimeMessage(session);
-        message.setFrom(new InternetAddress(from));
-        message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to));
-        message.setSubject(subject);
-        message.setText(body);
+        RequestBody requestBody = RequestBody.create(jsonPayload, MediaType.parse("application/json"));
+        Request request = new Request.Builder()
+                .url(API_URL)
+                .post(requestBody)
+                .addHeader("Authorization", "Bearer " + API_KEY)
+                .addHeader("Content-Type", "application/json")
+                .build();
 
-        Transport.send(message);
+        Response response = client.newCall(request).execute();
+        if (!response.isSuccessful()) {
+            throw new Exception("Failed to send email: " + response.body().string());
+        }
     }
-
 }
