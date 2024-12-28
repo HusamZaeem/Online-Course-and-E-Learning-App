@@ -11,7 +11,7 @@ app.use(cors());
 app.use(express.json());
 
 const transporter = nodemailer.createTransport({
-  service: process.env.EMAIL_SERVICE,
+  service: 'gmail',
   auth: {
     user: process.env.EMAIL_USER, // Use your Gmail email
     pass: process.env.EMAIL_PASS  // Your Gmail app password
