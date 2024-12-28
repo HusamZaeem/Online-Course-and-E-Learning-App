@@ -10,12 +10,24 @@ app.use(cors());
 
 app.use(express.json());
 
+// Set a global timeout for all requests (in milliseconds, 60 seconds here)
+app.use((req, res, next) => {
+  res.setTimeout(60000, () => {  // 60 seconds timeout
+    res.status(408).send('Request timed out.');
+  });
+  next();
+});
+
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
     user: process.env.EMAIL_USER, // Use your Gmail email
     pass: process.env.EMAIL_PASS  // Your Gmail app password
-  }
+  },
+  // Optionally, you can increase the connection timeout for the email transporter.
+  connectionTimeout: 60000,  // Timeout for the SMTP connection (in milliseconds)
+  greetingTimeout: 60000,    // Timeout for the initial greeting (in milliseconds)
+  socketTimeout: 60000       // Timeout for reading from or writing to the socket (in milliseconds)
 });
 
 // Endpoint to send OTP

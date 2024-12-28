@@ -92,14 +92,11 @@ dependencies {
     //WorkManager
     implementation "androidx.work:work-runtime:2.8.1"
 
-    // Facebook SDK (add in your build.gradle)
-    implementation 'com.facebook.android:facebook-login:12.3.0'
+    implementation libs.facebook.login
 
     // Google Sign-In SDK
-    implementation 'com.google.android.gms:play-services-auth:21.3.0'
+    implementation libs.play.services.auth
 
-    // Apple SignIn (via Firebase)
-    implementation 'com.google.firebase:firebase-auth:21.0.5'
 
 
 
