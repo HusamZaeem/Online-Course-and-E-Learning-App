@@ -11,10 +11,10 @@ app.use(cors());
 app.use(express.json());
 
 const transporter = nodemailer.createTransport({
-  service: 'gmail',
+  service: process.env.EMAIL_SERVICE,
   auth: {
-    user: 'onlinecoursesandelearning@gmail.com', // Use your Gmail email
-    pass: 'Online@Courses@E-Learning1997'  // Your Gmail app password
+    user: process.env.EMAIL_USER, // Use your Gmail email
+    pass: process.env.EMAIL_PASS  // Your Gmail app password
   }
 });
 
@@ -23,7 +23,7 @@ app.post('/send-otp', async (req, res) => {
   const { email, otp } = req.body;
 
   const mailOptions = {
-    from: 'onlinecoursesandelearning@gmail.com', // Sender's email
+    from: process.env.EMAIL_USER, // Sender's email
     to: email,  // Recipient's email
     subject: 'Your OTP for Password Reset',
     text: `Dear User,\n\nYour OTP for password reset is: ${otp}.\n\nPlease do not share this code with anyone.\n\nBest regards,\nOnline Course & E-Learning App`

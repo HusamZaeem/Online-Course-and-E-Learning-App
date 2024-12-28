@@ -140,58 +140,45 @@ public class VerifyCodeFragment extends Fragment {
     private void resendOtp() {
         currentOtp = String.format("%04d", new Random().nextInt(10000));
 
-        // Show loading indication while resending OTP
         binding.tvResendCode.setText("Sending OTP...");
         binding.tvResendCode.setEnabled(false);
 
         new Thread(() -> {
             try {
-                // Prepare the email content in the desired format
-                String messageBody = "Dear User,\n\nYour OTP for password reset is: " + currentOtp + ".\n\nPlease do not share this code with anyone.\n\nBest regards,\nOnline Course & E-Learning App";
-
-                // Define the server URL of your Render app or backend server that is using NodeMailer
-                String url = "https://online-course-and-e-learning-app.onrender.com"; // Replace with your actual server URL
+                String url = "https://online-course-and-e-learning-app.onrender.com/send-otp";
                 OkHttpClient client = new OkHttpClient();
 
-                // Create the JSON body to send to the server
                 JSONObject jsonBody = new JSONObject();
                 jsonBody.put("email", email);
                 jsonBody.put("otp", currentOtp);
 
-                // Create the request body
                 RequestBody body = RequestBody.create(
                         jsonBody.toString(), MediaType.parse("application/json")
                 );
 
-                // Create the HTTP request
                 Request request = new Request.Builder()
                         .url(url)
                         .post(body)
                         .addHeader("Content-Type", "application/json")
                         .build();
 
-                // Send the request and get the response
                 try (Response response = client.newCall(request).execute()) {
                     if (response.isSuccessful()) {
-                        // If OTP sent successfully, show feedback and restart countdown
                         requireActivity().runOnUiThread(() -> {
                             Toast.makeText(getContext(), "OTP resent successfully", Toast.LENGTH_SHORT).show();
                             startCountdownTimer();
                         });
                     } else {
-                        // Handle failure
-                        requireActivity().runOnUiThread(() -> {
-                            Toast.makeText(getContext(), "Failed to resend OTP: " + response.message(), Toast.LENGTH_SHORT).show();
-                        });
+                        String errorBody = response.body() != null ? response.body().string() : "Unknown error";
+                        requireActivity().runOnUiThread(() ->
+                                Toast.makeText(getContext(), "Failed to resend OTP: " + errorBody, Toast.LENGTH_SHORT).show()
+                        );
                     }
                 }
-            } catch (IOException e) {
-                // Handle error during the network request
-                requireActivity().runOnUiThread(() -> {
-                    Toast.makeText(getContext(), "Failed to resend OTP: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                });
-            } catch (JSONException e) {
-                throw new RuntimeException(e);
+            } catch (IOException | JSONException e) {
+                requireActivity().runOnUiThread(() ->
+                        Toast.makeText(getContext(), "Failed to resend OTP: " + e.getMessage(), Toast.LENGTH_SHORT).show()
+                );
             }
         }).start();
     }

@@ -72,46 +72,39 @@ public class ForgotPasswordEmailFragment extends Fragment {
     private void sendOtpToEmail(String email) {
         String otp = String.format("%04d", new Random().nextInt(10000));
 
-        // Make an HTTP request to the Render server to send OTP
         new Thread(() -> {
             try {
-                // Replace with your Render URL
-                String url = "https://online-course-and-e-learning-app.onrender.com"; // URL of your deployed service
+                String url = "https://online-course-and-e-learning-app.onrender.com/send-otp";
                 OkHttpClient client = new OkHttpClient();
 
-                // Create the request payload
                 JSONObject jsonBody = new JSONObject();
                 jsonBody.put("email", email);
                 jsonBody.put("otp", otp);
 
-                // Create the request body
                 RequestBody body = RequestBody.create(
                         jsonBody.toString(), MediaType.parse("application/json")
                 );
 
-                // Make the POST request
                 Request request = new Request.Builder()
                         .url(url)
                         .post(body)
                         .addHeader("Content-Type", "application/json")
                         .build();
 
-                // Send the request
                 try (Response response = client.newCall(request).execute()) {
                     if (response.isSuccessful()) {
-                        // If OTP sent successfully, navigate to the next fragment
                         requireActivity().runOnUiThread(() -> {
                             Bundle bundle = new Bundle();
                             bundle.putString("email", email);
-                            bundle.putString("otp", otp); // Pass OTP to VerifyCodeFragment
+                            bundle.putString("otp", otp); // Pass OTP for later verification
                             bundle.putString("maskedEmail", maskEmail(email));
                             Navigation.findNavController(binding.getRoot()).navigate(R.id.action_to_fragmentVerifyCode, bundle);
                         });
                     } else {
-                        // Handle failure
-                        requireActivity().runOnUiThread(() -> {
-                            Toast.makeText(getContext(), "Failed to send OTP: " + response.message(), Toast.LENGTH_SHORT).show();
-                        });
+                        String errorBody = response.body() != null ? response.body().string() : "Unknown error";
+                        requireActivity().runOnUiThread(() ->
+                                Toast.makeText(getContext(), "Failed to send OTP: " + errorBody, Toast.LENGTH_SHORT).show()
+                        );
                     }
                 }
             } catch (IOException | JSONException e) {
