@@ -185,16 +185,24 @@ public class NewPasswordFragment extends Fragment {
                         firestore.collection("Student").document(studentId)
                                 .update("password", newHashedPassword)
                                 .addOnSuccessListener(unused -> {
+                                    // Update Room Database
                                     repository.updateStudentPassword(email, newHashedPassword);
-                                    enqueueSyncWorkAndShowDialog();
+                                    // Show Dialog and Transition
+                                    enqueueSyncWorkAndShowDialog(newHashedPassword);
                                 })
-                                .addOnFailureListener(e -> Toast.makeText(getContext(), "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+                                .addOnFailureListener(e ->
+                                        Toast.makeText(getContext(), "Error updating password in Firebase: " + e.getMessage(), Toast.LENGTH_SHORT).show()
+                                );
+                    } else {
+                        Toast.makeText(getContext(), "No user found with the provided email.", Toast.LENGTH_SHORT).show();
                     }
                 })
-                .addOnFailureListener(e -> Toast.makeText(getContext(), "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+                .addOnFailureListener(e ->
+                        Toast.makeText(getContext(), "Error fetching user: " + e.getMessage(), Toast.LENGTH_SHORT).show()
+                );
     }
 
-    private void enqueueSyncWorkAndShowDialog() {
+    private void enqueueSyncWorkAndShowDialog(String newHashedPassword) {
         OneTimeWorkRequest syncWorkRequest = new OneTimeWorkRequest.Builder(SyncWorker.class).build();
         showCustomDialog();
 
@@ -206,17 +214,22 @@ public class NewPasswordFragment extends Fragment {
                         new Handler().postDelayed(() -> {
                             if (dialog != null && dialog.isShowing()) {
                                 dialog.dismiss();
-                                startActivity(new Intent(getContext(), SignIn.class));
-                                requireActivity().finish();
+                                redirectToLogin();
                             }
                         }, 3000);
                     } else if (workInfo != null && workInfo.getState() == WorkInfo.State.FAILED) {
                         if (dialog != null && dialog.isShowing()) {
                             dialog.dismiss();
                         }
-                        Toast.makeText(getContext(), "Sync failed. Please try again.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "Sync failed. Password updated locally but may not be synced online.", Toast.LENGTH_SHORT).show();
                     }
                 });
+    }
+
+    private void redirectToLogin() {
+        Intent intent = new Intent(getContext(), SignIn.class);
+        startActivity(intent);
+        requireActivity().finish();
     }
 
     private void showCustomDialog() {

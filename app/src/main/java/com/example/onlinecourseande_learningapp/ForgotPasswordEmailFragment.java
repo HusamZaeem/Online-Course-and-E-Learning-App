@@ -1,38 +1,40 @@
 package com.example.onlinecourseande_learningapp;
 
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-import androidx.navigation.Navigation;
-
-import android.util.Patterns;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
+
 import com.example.onlinecourseande_learningapp.databinding.FragmentForgotPasswordEmailBinding;
+import com.google.firebase.FirebaseException;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.PhoneAuthCredential;
+import com.google.firebase.auth.PhoneAuthProvider;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.Random;
-import okhttp3.Response;
+
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
-
+import okhttp3.Response;
 
 public class ForgotPasswordEmailFragment extends Fragment {
 
-    FragmentForgotPasswordEmailBinding binding;
+    private FragmentForgotPasswordEmailBinding binding;
     private FirebaseFirestore firestore;
-    private FirebaseAuth auth;
-
 
     public ForgotPasswordEmailFragment() {
         // Required empty public constructor
@@ -41,22 +43,44 @@ public class ForgotPasswordEmailFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        binding = FragmentForgotPasswordEmailBinding.inflate(inflater,container,false);
+        binding = FragmentForgotPasswordEmailBinding.inflate(inflater, container, false);
         firestore = FirebaseFirestore.getInstance();
-        auth = FirebaseAuth.getInstance();
+
+        // Show Email or Phone number field based on radio selection
+        binding.radioGroupMethod.setOnCheckedChangeListener((group, checkedId) -> {
+            if (checkedId == R.id.radioEmail) {
+                binding.etEmailForgotPassword.setVisibility(View.VISIBLE);
+                binding.etPhoneForgotPassword.setVisibility(View.GONE);
+            } else if (checkedId == R.id.radioSms) {
+                binding.etPhoneForgotPassword.setVisibility(View.VISIBLE);
+                binding.etEmailForgotPassword.setVisibility(View.GONE);
+            }
+        });
 
         binding.btnForgotPasswordContinue.setOnClickListener(v -> {
-            String email = binding.etEmailForgotPassword.getText().toString().trim();
-            if (email.isEmpty() || !Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-                binding.etEmailForgotPassword.setError("Enter a valid email");
-                return;
+            if (binding.radioEmail.isChecked()) {
+                String email = binding.etEmailForgotPassword.getText().toString().trim();
+                if (TextUtils.isEmpty(email)) {
+                    Toast.makeText(getContext(), "Please enter your email", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                checkEmailAndSendOtp(email);
+            } else if (binding.radioSms.isChecked()) {
+                String phone = binding.etPhoneForgotPassword.getText().toString().trim();
+                if (TextUtils.isEmpty(phone)) {
+                    Toast.makeText(getContext(), "Please enter your phone number", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                checkPhoneAndSendOtp(phone);
+            } else {
+                Toast.makeText(getContext(), "Please select a method (Email or SMS)", Toast.LENGTH_SHORT).show();
             }
-            checkEmailAndSendOtp(email);
         });
 
         return binding.getRoot();
     }
 
+    // Function to check if email exists in the Firestore collection and send OTP if found
     private void checkEmailAndSendOtp(String email) {
         firestore.collection("Student")
                 .whereEqualTo("email", email)
@@ -72,6 +96,23 @@ public class ForgotPasswordEmailFragment extends Fragment {
                 .addOnFailureListener(e -> Toast.makeText(getContext(), "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show());
     }
 
+    // Function to check if phone number exists in the Firestore collection and send OTP via SMS if found
+    private void checkPhoneAndSendOtp(String phone) {
+        firestore.collection("Student")
+                .whereEqualTo("phone", phone)
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    if (!queryDocumentSnapshots.isEmpty()) {
+                        // Phone number exists, send OTP
+                        sendOtpToPhone(phone);
+                    } else {
+                        Toast.makeText(getContext(), "No account registered for this phone number", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .addOnFailureListener(e -> Toast.makeText(getContext(), "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+    }
+
+    // Function to send OTP to email
     private void sendOtpToEmail(String email) {
         String otp = String.format("%04d", new Random().nextInt(10000));
 
@@ -118,6 +159,36 @@ public class ForgotPasswordEmailFragment extends Fragment {
         }).start();
     }
 
+    // Function to send OTP to phone number via SMS using Firebase Phone Auth
+    private void sendOtpToPhone(String phone) {
+        PhoneAuthProvider.getInstance().verifyPhoneNumber(
+                phone,
+                60, // Timeout in seconds
+                java.util.concurrent.TimeUnit.SECONDS,
+                getActivity(),
+                new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
+                    @Override
+                    public void onVerificationCompleted(PhoneAuthCredential phoneAuthCredential) {
+                        // No-op, handle verification completion if needed
+                    }
+
+                    @Override
+                    public void onVerificationFailed(FirebaseException e) {
+                        Toast.makeText(getContext(), "OTP sending failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onCodeSent(String verificationId, PhoneAuthProvider.ForceResendingToken forceResendingToken) {
+                        // Store the verificationId to verify the code later
+                        Bundle bundle = new Bundle();
+                        bundle.putString("phone", phone);
+                        bundle.putString("maskedPhone", maskPhone(phone));
+                        bundle.putString("verificationId", verificationId);
+                        Navigation.findNavController(binding.getRoot()).navigate(R.id.action_to_fragmentVerifyCode, bundle);
+                    }
+                });
+    }
+
     private String maskEmail(String email) {
         int atIndex = email.indexOf("@");
         if (atIndex <= 1) return email;
@@ -127,6 +198,20 @@ public class ForgotPasswordEmailFragment extends Fragment {
         maskedEmail.append(email.substring(atIndex - 1));
 
         return maskedEmail.toString();
+    }
+
+    private String maskPhone(String phone) {
+        if (phone.length() <= 4) {
+            return phone; // If phone number is too short, return it as is
+        }
+
+        // Mask everything except the last 4 digits
+        StringBuilder maskedPhone = new StringBuilder();
+        maskedPhone.append(phone.substring(0, phone.length() - 4));  // First part of the phone number
+        maskedPhone.append("****");  // Masked section
+        maskedPhone.append(phone.substring(phone.length() - 4));  // Last 4 digits
+
+        return maskedPhone.toString();
     }
 
 }

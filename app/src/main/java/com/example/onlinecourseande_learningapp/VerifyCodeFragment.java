@@ -18,6 +18,9 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.example.onlinecourseande_learningapp.databinding.FragmentVerifyCodeBinding;
+import com.google.firebase.FirebaseException;
+import com.google.firebase.auth.PhoneAuthCredential;
+import com.google.firebase.auth.PhoneAuthProvider;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -38,7 +41,9 @@ public class VerifyCodeFragment extends Fragment {
     private CountDownTimer countDownTimer;
     private boolean isResendEnabled = false;
     private String email;
+    private String phone;
     private String maskedEmail;
+    private String maskedPhone;
     private String currentOtp;
 
     public VerifyCodeFragment() {
@@ -55,11 +60,17 @@ public class VerifyCodeFragment extends Fragment {
 
         if (getArguments() != null) {
             email = getArguments().getString("email", "");
+            phone = getArguments().getString("phone", "");
             maskedEmail = getArguments().getString("maskedEmail", "");
+            maskedPhone = getArguments().getString("maskedPhone", "");
             currentOtp = getArguments().getString("otp", "");
         }
 
-        binding.tvForgotPasswordVerify.setText("Code has been sent to " + maskedEmail);
+        if (email != null && !email.isEmpty()) {
+            binding.tvForgotPasswordVerify.setText("Code has been sent to " + maskedEmail);
+        } else if (phone != null && !phone.isEmpty()) {
+            binding.tvForgotPasswordVerify.setText("Code has been sent to " + maskedPhone);
+        }
 
         setupOtpEditTexts();
         startCountdownTimer();
@@ -146,11 +157,14 @@ public class VerifyCodeFragment extends Fragment {
         if (enteredCode.equals(currentOtp)) {
             Bundle bundle = new Bundle();
             bundle.putString("email", email);
+            bundle.putString("phone", phone);
             Navigation.findNavController(binding.getRoot()).navigate(R.id.action_to_fragmentNewPassword, bundle);
         } else {
             Toast.makeText(getContext(), "Incorrect code", Toast.LENGTH_SHORT).show();
         }
     }
+
+
 
     private void resendOtp() {
         currentOtp = String.format("%04d", new Random().nextInt(10000));
@@ -158,14 +172,24 @@ public class VerifyCodeFragment extends Fragment {
         binding.tvResendCode.setText("Sending OTP...");
         binding.tvResendCode.setEnabled(false);
 
+        if (email != null && !email.isEmpty()) {
+            sendOtpToEmail(email);
+        } else if (phone != null && !phone.isEmpty()) {
+            sendOtpToPhone(phone);
+        }
+    }
+
+    private void sendOtpToEmail(String email) {
+        String otp = String.format("%04d", new Random().nextInt(10000));
+
         new Thread(() -> {
             try {
-                String url = "https://online-course-and-e-learning-app.onrender.com/send-otp"; 
+                String url = "https://online-course-and-e-learning-app.onrender.com/send-otp";
                 OkHttpClient client = new OkHttpClient();
 
                 JSONObject jsonBody = new JSONObject();
                 jsonBody.put("email", email);
-                jsonBody.put("otp", currentOtp);
+                jsonBody.put("otp", otp);
 
                 RequestBody body = RequestBody.create(
                         jsonBody.toString(), MediaType.parse("application/json")
@@ -180,23 +204,57 @@ public class VerifyCodeFragment extends Fragment {
                 try (Response response = client.newCall(request).execute()) {
                     if (response.isSuccessful()) {
                         requireActivity().runOnUiThread(() -> {
-                            Toast.makeText(getContext(), "OTP resent successfully", Toast.LENGTH_SHORT).show();
-                            startCountdownTimer();
+                            Bundle bundle = new Bundle();
+                            bundle.putString("email", email);
+                            bundle.putString("otp", otp);
+                            Navigation.findNavController(binding.getRoot()).navigate(R.id.action_to_fragmentVerifyCode, bundle);
                         });
                     } else {
                         String errorBody = response.body() != null ? response.body().string() : "Unknown error";
                         requireActivity().runOnUiThread(() ->
-                                Toast.makeText(getContext(), "Failed to resend OTP: " + errorBody, Toast.LENGTH_SHORT).show()
+                                Toast.makeText(getContext(), "Failed to send OTP: " + errorBody, Toast.LENGTH_SHORT).show()
                         );
                     }
                 }
             } catch (IOException | JSONException e) {
                 requireActivity().runOnUiThread(() ->
-                        Toast.makeText(getContext(), "Failed to resend OTP: " + e.getMessage(), Toast.LENGTH_SHORT).show()
+                        Toast.makeText(getContext(), "Failed to send OTP: " + e.getMessage(), Toast.LENGTH_SHORT).show()
                 );
             }
         }).start();
     }
+
+    // Function to send OTP to phone number via SMS using Firebase Phone Auth
+    private void sendOtpToPhone(String phone) {
+        PhoneAuthProvider.getInstance().verifyPhoneNumber(
+                phone,
+                60, // Timeout in seconds
+                java.util.concurrent.TimeUnit.SECONDS,
+                getActivity(),
+                new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
+                    @Override
+                    public void onVerificationCompleted(PhoneAuthCredential phoneAuthCredential) {
+                        // No-op, handle verification completion if needed
+                    }
+
+                    @Override
+                    public void onVerificationFailed(FirebaseException e) {
+                        Toast.makeText(getContext(), "OTP sending failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onCodeSent(String verificationId, PhoneAuthProvider.ForceResendingToken forceResendingToken) {
+                        // Store the verificationId to verify the code later
+                        Bundle bundle = new Bundle();
+                        bundle.putString("phone", phone);
+                        bundle.putString("verificationId", verificationId);
+                        Navigation.findNavController(binding.getRoot()).navigate(R.id.action_to_fragmentVerifyCode, bundle);
+                    }
+                });
+    }
+
+
+
 
 
     @Override
