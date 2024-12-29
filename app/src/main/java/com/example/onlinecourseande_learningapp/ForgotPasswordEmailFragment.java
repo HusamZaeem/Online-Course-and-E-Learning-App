@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.example.onlinecourseande_learningapp.databinding.FragmentForgotPasswordEmailBinding;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import org.json.JSONException;
@@ -30,6 +31,7 @@ public class ForgotPasswordEmailFragment extends Fragment {
 
     FragmentForgotPasswordEmailBinding binding;
     private FirebaseFirestore firestore;
+    private FirebaseAuth auth;
 
 
     public ForgotPasswordEmailFragment() {
@@ -41,6 +43,7 @@ public class ForgotPasswordEmailFragment extends Fragment {
                              Bundle savedInstanceState) {
         binding = FragmentForgotPasswordEmailBinding.inflate(inflater,container,false);
         firestore = FirebaseFirestore.getInstance();
+        auth = FirebaseAuth.getInstance();
 
         binding.btnForgotPasswordContinue.setOnClickListener(v -> {
             String email = binding.etEmailForgotPassword.getText().toString().trim();
@@ -116,9 +119,14 @@ public class ForgotPasswordEmailFragment extends Fragment {
     }
 
     private String maskEmail(String email) {
-        String[] parts = email.split("@");
-        String prefix = parts[0];
-        String domain = parts[1];
-        return prefix.charAt(0) + "******@" + domain;
+        int atIndex = email.indexOf("@");
+        if (atIndex <= 1) return email;
+
+        StringBuilder maskedEmail = new StringBuilder();
+        maskedEmail.append(email.charAt(0)).append("***");
+        maskedEmail.append(email.substring(atIndex - 1));
+
+        return maskedEmail.toString();
     }
+
 }

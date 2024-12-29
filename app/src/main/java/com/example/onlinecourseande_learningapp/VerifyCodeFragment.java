@@ -11,6 +11,7 @@ import android.os.CountDownTimer;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -52,9 +53,11 @@ public class VerifyCodeFragment extends Fragment {
         // Inflate the layout for this fragment
         binding=FragmentVerifyCodeBinding.inflate(inflater,container,false);
 
-        email = getArguments().getString("email");
-        maskedEmail = getArguments().getString("maskedEmail");
-        currentOtp = getArguments().getString("otp");
+        if (getArguments() != null) {
+            email = getArguments().getString("email", "");
+            maskedEmail = getArguments().getString("maskedEmail", "");
+            currentOtp = getArguments().getString("otp", "");
+        }
 
         binding.tvForgotPasswordVerify.setText("Code has been sent to " + maskedEmail);
 
@@ -87,6 +90,11 @@ public class VerifyCodeFragment extends Fragment {
     }
 
     private void startCountdownTimer() {
+        if (binding == null) {
+            Log.e("startCountdownTimer", "Binding is null. Timer not started.");
+            return;
+        }
+
         binding.tvResendCode.setEnabled(false);
         isResendEnabled = false;
 
@@ -100,22 +108,29 @@ public class VerifyCodeFragment extends Fragment {
                 int startIndex = text.indexOf(remainingTime);
                 int endIndex = startIndex + remainingTime.length();
 
-                spannableString.setSpan(
-                        new ForegroundColorSpan(ContextCompat.getColor(requireContext(), R.color.btn_color)),
-                        startIndex, endIndex,
-                        Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
-                );
+                // Check for null context to prevent crashes
+                if (getContext() != null) {
+                    spannableString.setSpan(
+                            new ForegroundColorSpan(ContextCompat.getColor(getContext(), R.color.btn_color)),
+                            startIndex, endIndex,
+                            Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+                    );
+                }
 
                 binding.tvResendCode.setText(spannableString);
             }
 
             @Override
             public void onFinish() {
-                binding.tvResendCode.setText("Resend code");
-                binding.tvResendCode.setTextColor(ContextCompat.getColor(requireContext(), R.color.btn_color));
-                binding.tvResendCode.setTypeface(null, Typeface.BOLD);
-                binding.tvResendCode.setEnabled(true);
-                isResendEnabled = true;
+                if (binding != null) {
+                    binding.tvResendCode.setText("Resend code");
+                    if (getContext() != null) {
+                        binding.tvResendCode.setTextColor(ContextCompat.getColor(getContext(), R.color.btn_color));
+                    }
+                    binding.tvResendCode.setTypeface(null, Typeface.BOLD);
+                    binding.tvResendCode.setEnabled(true);
+                    isResendEnabled = true;
+                }
             }
         }.start();
     }
@@ -145,7 +160,7 @@ public class VerifyCodeFragment extends Fragment {
 
         new Thread(() -> {
             try {
-                String url = "https://online-course-and-e-learning-app.onrender.com/send-otp";
+                String url = "https://online-course-and-e-learning-app.onrender.com/send-otp"; 
                 OkHttpClient client = new OkHttpClient();
 
                 JSONObject jsonBody = new JSONObject();
@@ -187,6 +202,9 @@ public class VerifyCodeFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        if (countDownTimer != null) {
+            countDownTimer.cancel();
+        }
         binding = null;
     }
 }
