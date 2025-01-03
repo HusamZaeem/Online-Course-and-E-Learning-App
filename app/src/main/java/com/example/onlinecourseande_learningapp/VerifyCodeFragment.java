@@ -55,7 +55,7 @@ public class VerifyCodeFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+
         binding=FragmentVerifyCodeBinding.inflate(inflater,container,false);
 
         if (getArguments() != null) {
@@ -97,7 +97,9 @@ public class VerifyCodeFragment extends Fragment {
         binding.codeDigit1.addTextChangedListener(new OtpTextWatcher(binding.codeDigit1, binding.codeDigit2));
         binding.codeDigit2.addTextChangedListener(new OtpTextWatcher(binding.codeDigit2, binding.codeDigit3));
         binding.codeDigit3.addTextChangedListener(new OtpTextWatcher(binding.codeDigit3, binding.codeDigit4));
-        binding.codeDigit4.addTextChangedListener(new OtpTextWatcher(binding.codeDigit4, null));
+        binding.codeDigit4.addTextChangedListener(new OtpTextWatcher(binding.codeDigit4, binding.codeDigit5));
+        binding.codeDigit5.addTextChangedListener(new OtpTextWatcher(binding.codeDigit5, binding.codeDigit6));
+        binding.codeDigit6.addTextChangedListener(new OtpTextWatcher(binding.codeDigit6, null));
     }
 
     private void startCountdownTimer() {
@@ -150,7 +152,9 @@ public class VerifyCodeFragment extends Fragment {
         return binding.codeDigit1.getText().toString().trim()
                 + binding.codeDigit2.getText().toString().trim()
                 + binding.codeDigit3.getText().toString().trim()
-                + binding.codeDigit4.getText().toString().trim();
+                + binding.codeDigit4.getText().toString().trim()
+                + binding.codeDigit5.getText().toString().trim()
+                + binding.codeDigit6.getText().toString().trim();
     }
 
     private void verifyOtp(String enteredCode) {
@@ -167,7 +171,7 @@ public class VerifyCodeFragment extends Fragment {
 
 
     private void resendOtp() {
-        currentOtp = String.format("%04d", new Random().nextInt(10000));
+        currentOtp = String.format("%06d", new Random().nextInt(1000000));
 
         binding.tvResendCode.setText("Sending OTP...");
         binding.tvResendCode.setEnabled(false);
@@ -177,10 +181,16 @@ public class VerifyCodeFragment extends Fragment {
         } else if (phone != null && !phone.isEmpty()) {
             sendOtpToPhone(phone);
         }
+
+        if (email != null && !email.isEmpty()) {
+            binding.tvForgotPasswordVerify.setText("A new code has been sent to " + maskedEmail);
+        } else if (phone != null && !phone.isEmpty()) {
+            binding.tvForgotPasswordVerify.setText("A new code has been sent to " + maskedPhone);
+        }
     }
 
     private void sendOtpToEmail(String email) {
-        String otp = String.format("%04d", new Random().nextInt(10000));
+        String otp = String.format("%06d", new Random().nextInt(1000000));
 
         new Thread(() -> {
             try {
@@ -204,10 +214,8 @@ public class VerifyCodeFragment extends Fragment {
                 try (Response response = client.newCall(request).execute()) {
                     if (response.isSuccessful()) {
                         requireActivity().runOnUiThread(() -> {
-                            Bundle bundle = new Bundle();
-                            bundle.putString("email", email);
-                            bundle.putString("otp", otp);
-                            Navigation.findNavController(binding.getRoot()).navigate(R.id.action_to_fragmentVerifyCode, bundle);
+                            Toast.makeText(getContext(), "New OTP sent to "+maskedEmail, Toast.LENGTH_SHORT).show();
+                            currentOtp = otp;
                         });
                     } else {
                         String errorBody = response.body() != null ? response.body().string() : "Unknown error";
@@ -245,10 +253,8 @@ public class VerifyCodeFragment extends Fragment {
                     @Override
                     public void onCodeSent(String verificationId, PhoneAuthProvider.ForceResendingToken forceResendingToken) {
                         // Store the verificationId to verify the code later
-                        Bundle bundle = new Bundle();
-                        bundle.putString("phone", phone);
-                        bundle.putString("verificationId", verificationId);
-                        Navigation.findNavController(binding.getRoot()).navigate(R.id.action_to_fragmentVerifyCode, bundle);
+                        Toast.makeText(getContext(), "New OTP sent to "+maskedPhone, Toast.LENGTH_SHORT).show();
+                        currentOtp = verificationId;
                     }
                 });
     }

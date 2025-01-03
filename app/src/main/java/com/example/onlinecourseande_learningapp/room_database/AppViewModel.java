@@ -9,6 +9,7 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.example.onlinecourseande_learningapp.AppExecutors;
 import com.example.onlinecourseande_learningapp.room_database.DAOs.EnrollmentDao;
+import com.example.onlinecourseande_learningapp.room_database.entities.Ad;
 import com.example.onlinecourseande_learningapp.room_database.entities.Attachment;
 import com.example.onlinecourseande_learningapp.room_database.entities.Bookmark;
 import com.example.onlinecourseande_learningapp.room_database.entities.Call;
@@ -221,6 +222,10 @@ public class AppViewModel extends AndroidViewModel {
             appRepository.insertCourse(course);
     }
 
+    public void insertCourseList(List<Course> courseList){
+            appRepository.insertCourseList(courseList);
+    }
+
 
     public void updateCourse (Course course){
         appRepository.updateCourse(course);
@@ -241,7 +246,9 @@ public class AppViewModel extends AndroidViewModel {
     }
 
 
-
+    Course getCoursesByCategory (String category){
+        return appRepository.getCoursesByCategory(category);
+    }
 
 
     // EnrollmentDao --------------------------------------------
@@ -522,6 +529,10 @@ public class AppViewModel extends AndroidViewModel {
 
     public void insertMentor (Mentor mentor){
             appRepository.insertMentor(mentor);
+    }
+
+    public void insertMentorList(List<Mentor> mentorList){
+            appRepository.insertMentorList(mentorList);
     }
 
     public void updateMentor (Mentor mentor){
@@ -923,7 +934,28 @@ public class AppViewModel extends AndroidViewModel {
     }
 
 
+//AdDao
 
+    public void insertAd(Ad ad){
+            appRepository.insertAd(ad);
+    }
+
+    public void insertAdList(List<Ad> adList){
+            appRepository.insertAdList(adList);
+    }
+
+    public void updateAd(Ad ad){
+            appRepository.updateAd(ad);
+    }
+
+    public void deleteAd(Ad ad){
+            appRepository.deleteAd(ad);
+    }
+
+
+    public LiveData<List<Ad>> getAllAds(){
+        return appRepository.getAllAds();
+    }
 
 
 }

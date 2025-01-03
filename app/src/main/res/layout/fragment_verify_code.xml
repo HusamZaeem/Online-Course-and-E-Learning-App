@@ -74,8 +74,8 @@
 
         <EditText
             android:id="@+id/code_digit_1"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:background="@drawable/et_bg_verify_password"
             android:gravity="center"
             android:inputType="number"
@@ -85,8 +85,8 @@
 
         <EditText
             android:id="@+id/code_digit_2"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:background="@drawable/et_bg_verify_password"
             android:gravity="center"
             android:inputType="number"
@@ -97,8 +97,8 @@
 
         <EditText
             android:id="@+id/code_digit_3"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:background="@drawable/et_bg_verify_password"
             android:gravity="center"
             android:inputType="number"
@@ -109,8 +109,30 @@
 
         <EditText
             android:id="@+id/code_digit_4"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@drawable/et_bg_verify_password"
+            android:gravity="center"
+            android:inputType="number"
+            android:maxLength="1"
+            android:layout_marginStart="10dp"
+            android:textSize="18sp" />
+
+        <EditText
+            android:id="@+id/code_digit_5"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@drawable/et_bg_verify_password"
+            android:gravity="center"
+            android:inputType="number"
+            android:maxLength="1"
+            android:layout_marginStart="10dp"
+            android:textSize="18sp" />
+
+        <EditText
+            android:id="@+id/code_digit_6"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:background="@drawable/et_bg_verify_password"
             android:gravity="center"
             android:inputType="number"

@@ -13,6 +13,7 @@ import androidx.work.WorkManager;
 
 import android.os.Handler;
 import android.text.InputType;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -56,6 +57,7 @@ public class NewPasswordFragment extends Fragment {
 
         binding.btnResetPassword.setOnClickListener(v -> {
             String newPassword = binding.etPasswordNew1.getText().toString().trim();
+            String hashedPassword = PasswordHasher.hashPassword(newPassword);
             String confirmPassword = binding.etPasswordNew2.getText().toString().trim();
 
             if (newPassword.isEmpty() || !newPassword.equals(confirmPassword)) {
@@ -65,7 +67,7 @@ public class NewPasswordFragment extends Fragment {
 
             if (isValidPassword(newPassword)){
 
-                resetPassword(newPassword);
+                resetPassword(hashedPassword);
             }
 
         });
@@ -175,7 +177,6 @@ public class NewPasswordFragment extends Fragment {
     }
 
     private void resetPassword(String newPassword) {
-        String newHashedPassword = PasswordHasher.hashPassword(newPassword);
         firestore.collection("Student")
                 .whereEqualTo("email", email)
                 .get()
@@ -183,15 +184,19 @@ public class NewPasswordFragment extends Fragment {
                     if (!queryDocumentSnapshots.isEmpty()) {
                         String studentId = queryDocumentSnapshots.getDocuments().get(0).getId();
                         firestore.collection("Student").document(studentId)
-                                .update("password", newHashedPassword)
+                                .update("password", newPassword)
                                 .addOnSuccessListener(unused -> {
+                                    Log.d("ResetPassword", "Password updated successfully in Firebase.");
                                     // Update Room Database
-                                    repository.updateStudentPassword(email, newHashedPassword);
+                                    repository.updateStudentPassword(email, newPassword);
                                     // Show Dialog and Transition
-                                    enqueueSyncWorkAndShowDialog(newHashedPassword);
+                                    enqueueSyncWorkAndShowDialog(newPassword);
                                 })
-                                .addOnFailureListener(e ->
-                                        Toast.makeText(getContext(), "Error updating password in Firebase: " + e.getMessage(), Toast.LENGTH_SHORT).show()
+                                .addOnFailureListener(e ->{
+                                    Log.e("ResetPassword", "Error updating password in Firebase: ", e);
+                                    Toast.makeText(getContext(), "Error updating password in Firebase: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                }
+
                                 );
                     } else {
                         Toast.makeText(getContext(), "No user found with the provided email.", Toast.LENGTH_SHORT).show();

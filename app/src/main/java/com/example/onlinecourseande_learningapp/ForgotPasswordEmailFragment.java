@@ -114,7 +114,8 @@ public class ForgotPasswordEmailFragment extends Fragment {
 
     // Function to send OTP to email
     private void sendOtpToEmail(String email) {
-        String otp = String.format("%04d", new Random().nextInt(10000));
+        showLoading();
+        String otp = String.format("%06d", new Random().nextInt(1000000));
 
         new Thread(() -> {
             try {
@@ -136,11 +137,12 @@ public class ForgotPasswordEmailFragment extends Fragment {
                         .build();
 
                 try (Response response = client.newCall(request).execute()) {
+                    hideLoading();
                     if (response.isSuccessful()) {
                         requireActivity().runOnUiThread(() -> {
                             Bundle bundle = new Bundle();
                             bundle.putString("email", email);
-                            bundle.putString("otp", otp); // Pass OTP for later verification
+                            bundle.putString("otp", otp);
                             bundle.putString("maskedEmail", maskEmail(email));
                             Navigation.findNavController(binding.getRoot()).navigate(R.id.action_to_fragmentVerifyCode, bundle);
                         });
@@ -152,8 +154,13 @@ public class ForgotPasswordEmailFragment extends Fragment {
                     }
                 }
             } catch (IOException | JSONException e) {
-                requireActivity().runOnUiThread(() ->
-                        Toast.makeText(getContext(), "Failed to send OTP: " + e.getMessage(), Toast.LENGTH_SHORT).show()
+                hideLoading();
+                requireActivity().runOnUiThread(() ->{
+                            Toast.makeText(getContext(), "Failed to send OTP: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                            startRetryTimer();
+
+                        }
+
                 );
             }
         }).start();
@@ -161,6 +168,7 @@ public class ForgotPasswordEmailFragment extends Fragment {
 
     // Function to send OTP to phone number via SMS using Firebase Phone Auth
     private void sendOtpToPhone(String phone) {
+        showLoading();
         PhoneAuthProvider.getInstance().verifyPhoneNumber(
                 phone,
                 60, // Timeout in seconds
@@ -174,12 +182,16 @@ public class ForgotPasswordEmailFragment extends Fragment {
 
                     @Override
                     public void onVerificationFailed(FirebaseException e) {
+                        hideLoading();
                         Toast.makeText(getContext(), "OTP sending failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        startRetryTimer();
+
                     }
 
                     @Override
                     public void onCodeSent(String verificationId, PhoneAuthProvider.ForceResendingToken forceResendingToken) {
                         // Store the verificationId to verify the code later
+                        hideLoading();
                         Bundle bundle = new Bundle();
                         bundle.putString("phone", phone);
                         bundle.putString("maskedPhone", maskPhone(phone));
@@ -201,17 +213,42 @@ public class ForgotPasswordEmailFragment extends Fragment {
     }
 
     private String maskPhone(String phone) {
-        if (phone.length() <= 4) {
-            return phone; // If phone number is too short, return it as is
-        }
+
 
         // Mask everything except the last 4 digits
         StringBuilder maskedPhone = new StringBuilder();
-        maskedPhone.append(phone.substring(0, phone.length() - 4));  // First part of the phone number
+        maskedPhone.append(phone.substring(0, phone.length() - 4));
         maskedPhone.append("****");  // Masked section
-        maskedPhone.append(phone.substring(phone.length() - 4));  // Last 4 digits
+        maskedPhone.append(phone.substring(phone.length() - 4));
 
         return maskedPhone.toString();
+    }
+
+    private void showLoading() {
+        requireActivity().runOnUiThread(() -> binding.loadingContainer.setVisibility(View.VISIBLE));
+    }
+
+    private void hideLoading() {
+        requireActivity().runOnUiThread(() -> binding.loadingContainer.setVisibility(View.GONE));
+    }
+
+
+    private void startRetryTimer() {
+        binding.btnForgotPasswordContinue.setEnabled(false);
+
+        // Countdown timer for 60 seconds
+        new android.os.CountDownTimer(60000, 1000) {
+            public void onTick(long millisUntilFinished) {
+                // Update button text to show the remaining seconds
+                binding.btnForgotPasswordContinue.setText("Retry again in " + (millisUntilFinished / 1000) + "s");
+            }
+
+            public void onFinish() {
+                // Re-enable the button and reset its text
+                binding.btnForgotPasswordContinue.setEnabled(true);
+                binding.btnForgotPasswordContinue.setText("Send Code");
+            }
+        }.start();
     }
 
 }

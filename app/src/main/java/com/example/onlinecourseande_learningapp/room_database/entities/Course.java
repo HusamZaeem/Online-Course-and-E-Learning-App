@@ -17,23 +17,42 @@ public class Course {
     private int mentor_id;
     private double price;
     private double hours;
+    private double course_rating;
     private String description;
     private String tools_used;
     private int students_count;
     private String photo_url;
+    private String category;
 
 
-    public Course(String course_name, int mentor_id, double price, double hours, String description, String tools_used, int students_count, String photo_url) {
+    public Course(String course_name, int mentor_id, double price, double hours, double course_rating, String description, String tools_used, int students_count, String photo_url, String category) {
         this.course_name = course_name;
         this.mentor_id = mentor_id;
         this.price = price;
         this.hours = hours;
+        this.course_rating=course_rating;
         this.description = description;
         this.tools_used = tools_used;
         this.students_count = students_count;
         this.photo_url = photo_url;
+        this.category = category;
     }
 
+    public double getCourse_rating() {
+        return course_rating;
+    }
+
+    public void setCourse_rating(double course_rating) {
+        this.course_rating = course_rating;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
 
     public int getCourse_id() {
         return course_id;

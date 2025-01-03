@@ -4,12 +4,15 @@ import android.app.Application;
 import android.content.Context;
 
 import androidx.lifecycle.LiveData;
+import androidx.room.Query;
+import androidx.room.Update;
 import androidx.work.ExistingPeriodicWorkPolicy;
 import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
 
 import com.example.onlinecourseande_learningapp.AppExecutors;
 import com.example.onlinecourseande_learningapp.SyncWorker;
+import com.example.onlinecourseande_learningapp.room_database.DAOs.AdDao;
 import com.example.onlinecourseande_learningapp.room_database.DAOs.AttachmentDao;
 import com.example.onlinecourseande_learningapp.room_database.DAOs.BookmarkDao;
 import com.example.onlinecourseande_learningapp.room_database.DAOs.CallDao;
@@ -29,6 +32,7 @@ import com.example.onlinecourseande_learningapp.room_database.DAOs.StudentDao;
 import com.example.onlinecourseande_learningapp.room_database.DAOs.StudentLessonDao;
 import com.example.onlinecourseande_learningapp.room_database.DAOs.StudentMentorDao;
 import com.example.onlinecourseande_learningapp.room_database.DAOs.StudentModuleDao;
+import com.example.onlinecourseande_learningapp.room_database.entities.Ad;
 import com.example.onlinecourseande_learningapp.room_database.entities.Attachment;
 import com.example.onlinecourseande_learningapp.room_database.entities.Bookmark;
 import com.example.onlinecourseande_learningapp.room_database.entities.Call;
@@ -75,6 +79,7 @@ public class AppRepository {
     public StudentLessonDao studentLessonDao;
     public StudentMentorDao studentMentorDao;
     public StudentModuleDao studentModuleDao;
+    public AdDao adDao;
 
 
     AppRepository(Application application) {
@@ -98,6 +103,7 @@ public class AppRepository {
         studentLessonDao = db.studentLessonDao();
         studentMentorDao = db.studentMentorDao();
         studentModuleDao = db.studentModuleDao();
+        adDao = db.adDao();
     }
 
     public static synchronized AppRepository getInstance(Application application) {
@@ -321,6 +327,11 @@ public class AppRepository {
         });
     }
 
+    public void insertCourseList(List<Course> courseList){
+        AppDatabase.databaseWriteExecutor.execute(() -> {
+            courseDao.insertCourseList(courseList);
+        });
+    }
 
     public void updateCourse (Course course){
         AppDatabase.databaseWriteExecutor.execute(() -> {
@@ -342,6 +353,11 @@ public class AppRepository {
 
     public Course getCourseById (int course_id){
         return courseDao.getCourseById(course_id);
+    }
+
+
+    Course getCoursesByCategory (String category){
+        return courseDao.getCoursesByCategory(category);
     }
 
 
@@ -679,6 +695,12 @@ public class AppRepository {
     public void insertMentor (Mentor mentor){
         AppDatabase.databaseWriteExecutor.execute(() -> {
             mentorDao.insertMentor(mentor);
+        });
+    }
+
+    public void insertMentorList(List<Mentor> mentorList){
+        AppDatabase.databaseWriteExecutor.execute(() -> {
+            mentorDao.insertMentorList(mentorList);
         });
     }
 
@@ -1147,6 +1169,39 @@ public class AppRepository {
         });
     }
 
+
+
+
+    //AdDao
+
+    public void insertAd(Ad ad){
+        AppDatabase.databaseWriteExecutor.execute(() -> {
+            adDao.insertAd(ad);
+        });
+    }
+
+    public void insertAdList(List<Ad> adList){
+        AppDatabase.databaseWriteExecutor.execute(() -> {
+            adDao.insertAdList(adList);
+        });
+    }
+
+    public void updateAd(Ad ad){
+        AppDatabase.databaseWriteExecutor.execute(() -> {
+            adDao.updateAd(ad);
+        });
+    }
+
+    public void deleteAd(Ad ad){
+        AppDatabase.databaseWriteExecutor.execute(() -> {
+            adDao.deleteAd(ad);
+        });
+    }
+
+
+    public LiveData<List<Ad>> getAllAds(){
+        return adDao.getAllAds();
+    }
 
 
 

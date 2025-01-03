@@ -17,7 +17,7 @@ public class SyncWorkerScheduler {
                 .build();
 
         // Schedule periodic work (e.g., every 15 minutes)
-        PeriodicWorkRequest syncWorkRequest = new PeriodicWorkRequest.Builder(SyncWorker.class, 15, TimeUnit.MINUTES)
+        PeriodicWorkRequest syncWorkRequest = new PeriodicWorkRequest.Builder(SyncWorker.class, 60, TimeUnit.MINUTES)
                 .setConstraints(constraints)
                 .build();
 
