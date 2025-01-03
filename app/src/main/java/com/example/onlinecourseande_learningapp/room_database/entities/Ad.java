@@ -1,12 +1,15 @@
 package com.example.onlinecourseande_learningapp.room_database.entities;
 
+import androidx.annotation.NonNull;
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 @Entity
 public class Ad {
 
-    @PrimaryKey(autoGenerate = true)
+    @NonNull
+    @PrimaryKey
     private String id;
     private String imageUrl;
     private String main_title;
@@ -14,6 +17,7 @@ public class Ad {
     private String description;
 
 
+    @Ignore
     public Ad() {
     }
 

@@ -38,6 +38,9 @@ public interface StudentDao {
     @Query("SELECT * FROM Student WHERE student_id = :student_id")
     Student getStudentById (String student_id);
 
+    @Query("SELECT * FROM Student WHERE student_id = :student_id")
+    LiveData<Student> getStudentByIdLive (String student_id);
+
     @Query("SELECT * FROM Student WHERE email = :email LIMIT 1")
     LiveData<Student> getStudentByEmail (String email);
 

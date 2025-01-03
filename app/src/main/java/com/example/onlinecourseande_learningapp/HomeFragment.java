@@ -1,6 +1,9 @@
 package com.example.onlinecourseande_learningapp;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -24,6 +27,7 @@ import com.example.onlinecourseande_learningapp.room_database.entities.Mentor;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -70,7 +74,7 @@ public class HomeFragment extends Fragment {
         appViewModel = new ViewModelProvider(this).get(AppViewModel.class);
 
         // Load data
-        loadUserProfilePicture();
+        loadProfilePhoto();
         setupViewPagerAds();
         setupMentorRecyclerView();
         setupTabLayoutCategories();
@@ -87,14 +91,77 @@ public class HomeFragment extends Fragment {
     }
 
 
-    private void loadUserProfilePicture() {
+    private void loadProfilePhoto() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if (user != null && user.getPhotoUrl() != null) {
-            Glide.with(this)
-                    .load(user.getPhotoUrl())
-                    .placeholder(R.drawable.head_icon)
-                    .into(ivHomeUserProfilePicture);
+        if (user != null) {
+            String userId = user.getUid();  // Get Firebase UID
+
+            if (isNetworkAvailable()) {
+                // Fetch the profile photo URL from Firebase Firestore when online
+                FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+                DocumentReference studentDocRef = firestore.collection("Student").document(userId);
+
+                studentDocRef.get().addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        DocumentSnapshot document = task.getResult();
+                        if (document.exists()) {
+                            String profilePhotoUrl = document.getString("profile_photo");
+
+                            if (profilePhotoUrl != null && !profilePhotoUrl.isEmpty()) {
+                                // Sync the profile photo URL to the Room database
+                                syncProfilePhotoToRoomDatabase(userId, profilePhotoUrl);
+
+                                // Load the profile picture using Glide from the URL
+                                Glide.with(getContext())
+                                        .load(profilePhotoUrl)
+                                        .placeholder(R.drawable.head_icon)  // Default placeholder image
+                                        .into(ivHomeUserProfilePicture);   // Set the image in ImageView
+                            } else {
+                                ivHomeUserProfilePicture.setImageResource(R.drawable.head_icon);  // Default image
+                            }
+                        }
+                    } else {
+                        // Handle error if needed
+                        Log.w("HomeFragment", "Error getting document: ", task.getException());
+                    }
+                });
+            } else {
+                // User is offline, fetch the profile photo URL from Room database
+                loadProfilePhotoFromRoomDatabase(userId);
+            }
         }
+    }
+
+    private void syncProfilePhotoToRoomDatabase(String userId, String profilePhotoUrl) {
+        appViewModel.getStudentByIdLive(userId).observe(getViewLifecycleOwner(), student -> {
+            if (student != null) {
+                student.setProfile_photo(profilePhotoUrl);  // Set the profile photo URL
+                appViewModel.updateStudent(student);  // Update in Room database
+            }
+        });
+    }
+
+    private void loadProfilePhotoFromRoomDatabase(String userId) {
+        appViewModel.getStudentByIdLive(userId).observe(getViewLifecycleOwner(), student -> {
+            if (student != null) {
+                String profilePhotoUrl = student.getProfile_photo();
+                if (profilePhotoUrl != null && !profilePhotoUrl.isEmpty()) {
+                    // Load the profile picture using Glide from the URL in Room database
+                    Glide.with(getContext())
+                            .load(profilePhotoUrl)
+                            .placeholder(R.drawable.head_icon)  // Default placeholder image
+                            .into(ivHomeUserProfilePicture);   // Set the image in ImageView
+                } else {
+                    ivHomeUserProfilePicture.setImageResource(R.drawable.head_icon);  // Default image if no URL is available
+                }
+            }
+        });
+    }
+
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+        return networkInfo != null && networkInfo.isConnected();
     }
 
 
@@ -114,7 +181,7 @@ public class HomeFragment extends Fragment {
 
 
     private void syncAdsFromFirebase() {
-        db.collection("ads").addSnapshotListener((snapshots, error) -> {
+        db.collection("Ad").addSnapshotListener((snapshots, error) -> {
             if (error != null) {
                 Log.e("FirestoreSync", "Error fetching ads", error);
                 return;
@@ -137,7 +204,7 @@ public class HomeFragment extends Fragment {
 
 
     private void syncMentorsFromFirebase() {
-        db.collection("mentors").addSnapshotListener((snapshots, error) -> {
+        db.collection("Mentor").addSnapshotListener((snapshots, error) -> {
             if (error != null) {
                 Log.e("FirestoreSync", "Error fetching mentors", error);
                 return;
@@ -215,7 +282,7 @@ public class HomeFragment extends Fragment {
 
 
     private void syncCoursesFromFirebase() {
-        db.collection("courses").addSnapshotListener((snapshots, error) -> {
+        db.collection("Course").addSnapshotListener((snapshots, error) -> {
             if (error != null) {
                 Log.e("FirestoreSync", "Error fetching courses", error);
                 return;

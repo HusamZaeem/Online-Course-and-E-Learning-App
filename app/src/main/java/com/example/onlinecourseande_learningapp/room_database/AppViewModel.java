@@ -798,6 +798,9 @@ public class AppViewModel extends AndroidViewModel {
         return appRepository.getStudentById(student_id);
     }
 
+    public LiveData<Student> getStudentByIdLive (String student_id){
+        return appRepository.getStudentByIdLive(student_id);
+    }
 
     public List<Student> getUnsyncedStudents(){
         return appRepository.getUnsyncedStudents();

@@ -1020,7 +1020,9 @@ public class AppRepository {
         return studentDao.getStudentById(student_id);
     }
 
-
+    public LiveData<Student> getStudentByIdLive (String student_id){
+        return studentDao.getStudentByIdLive(student_id);
+    }
 
     public List<Student> getUnsyncedStudents(){
         return studentDao.getUnsyncedStudents();
