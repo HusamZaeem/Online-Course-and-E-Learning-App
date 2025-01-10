@@ -1,17 +1,22 @@
 package com.example.onlinecourseande_learningapp;
 
+import static android.content.ContentValues.TAG;
+
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
 
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,6 +25,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.onlinecourseande_learningapp.room_database.AppViewModel;
 import com.example.onlinecourseande_learningapp.room_database.entities.Ad;
 import com.example.onlinecourseande_learningapp.room_database.entities.Course;
@@ -31,6 +37,8 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,23 +53,16 @@ public class HomeFragment extends Fragment {
     private ViewPager2 viewPagerAds;
     private RecyclerView mentorsRecyclerView, coursesRecyclerView;
     private TabLayout tabLayoutCategories;
-
-    private List<Mentor> mentorList = new ArrayList<>();
-    private List<Course> courseList = new ArrayList<>();
-    private FirebaseFirestore db;
-
+    private TextView tvUserFullName;
+    private Handler adHandler = new Handler();
 
     public HomeFragment() {
         // Required empty public constructor
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
-
-        // Initialize Firebase
-        db = FirebaseFirestore.getInstance();
 
         // UI Initialization
         ivHomeUserProfilePicture = view.findViewById(R.id.iv_home_user_profile_picture);
@@ -69,17 +70,17 @@ public class HomeFragment extends Fragment {
         mentorsRecyclerView = view.findViewById(R.id.mentorsRecyclerView);
         tabLayoutCategories = view.findViewById(R.id.tabLayoutCategories);
         coursesRecyclerView = view.findViewById(R.id.coursesRecyclerView);
+        tvUserFullName = view.findViewById(R.id.tv_home_user_name);
         TextView tvTopMentorSeeAll = view.findViewById(R.id.tv_top_mentor_see_all);
 
         appViewModel = new ViewModelProvider(this).get(AppViewModel.class);
 
         // Load data
-        loadProfilePhoto();
+        loadProfilePhotoAndName();
         setupViewPagerAds();
         setupMentorRecyclerView();
         setupTabLayoutCategories();
         setupCourseRecyclerView();
-
 
         // Handle "See All" Click
         tvTopMentorSeeAll.setOnClickListener(v -> {
@@ -90,164 +91,85 @@ public class HomeFragment extends Fragment {
         return view;
     }
 
-
-    private void loadProfilePhoto() {
+    private void loadProfilePhotoAndName() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
-            String userId = user.getUid();  // Get Firebase UID
+            String userId = user.getUid();
 
-            if (isNetworkAvailable()) {
-                // Fetch the profile photo URL from Firebase Firestore when online
-                FirebaseFirestore firestore = FirebaseFirestore.getInstance();
-                DocumentReference studentDocRef = firestore.collection("Student").document(userId);
-
-                studentDocRef.get().addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        DocumentSnapshot document = task.getResult();
-                        if (document.exists()) {
-                            String profilePhotoUrl = document.getString("profile_photo");
-
-                            if (profilePhotoUrl != null && !profilePhotoUrl.isEmpty()) {
-                                // Sync the profile photo URL to the Room database
-                                syncProfilePhotoToRoomDatabase(userId, profilePhotoUrl);
-
-                                // Load the profile picture using Glide from the URL
-                                Glide.with(getContext())
-                                        .load(profilePhotoUrl)
-                                        .placeholder(R.drawable.head_icon)  // Default placeholder image
-                                        .into(ivHomeUserProfilePicture);   // Set the image in ImageView
-                            } else {
-                                ivHomeUserProfilePicture.setImageResource(R.drawable.head_icon);  // Default image
-                            }
-                        }
+            // Observe Room database for profile photo
+            appViewModel.getStudentByIdLive(userId).observe(getViewLifecycleOwner(), student -> {
+                if (student != null) {
+                    String profilePhotoUrl = student.getProfile_photo();
+                    String fullName = student.getFirst_name() + " " + student.getLast_name();
+                    if (profilePhotoUrl != null && !profilePhotoUrl.isEmpty()) {
+                        ImageLoaderUtil.loadImageFromFirebaseStorage(getContext(),profilePhotoUrl,ivHomeUserProfilePicture);
                     } else {
-                        // Handle error if needed
-                        Log.w("HomeFragment", "Error getting document: ", task.getException());
+                        ivHomeUserProfilePicture.setImageResource(R.drawable.head_icon); // Default image
                     }
-                });
-            } else {
-                // User is offline, fetch the profile photo URL from Room database
-                loadProfilePhotoFromRoomDatabase(userId);
-            }
+                    if (fullName != null && !fullName.isEmpty()){
+                        tvUserFullName.setText(fullName);
+                    }
+                }
+            });
         }
     }
 
-    private void syncProfilePhotoToRoomDatabase(String userId, String profilePhotoUrl) {
-        appViewModel.getStudentByIdLive(userId).observe(getViewLifecycleOwner(), student -> {
-            if (student != null) {
-                student.setProfile_photo(profilePhotoUrl);  // Set the profile photo URL
-                appViewModel.updateStudent(student);  // Update in Room database
-            }
-        });
-    }
-
-    private void loadProfilePhotoFromRoomDatabase(String userId) {
-        appViewModel.getStudentByIdLive(userId).observe(getViewLifecycleOwner(), student -> {
-            if (student != null) {
-                String profilePhotoUrl = student.getProfile_photo();
-                if (profilePhotoUrl != null && !profilePhotoUrl.isEmpty()) {
-                    // Load the profile picture using Glide from the URL in Room database
-                    Glide.with(getContext())
-                            .load(profilePhotoUrl)
-                            .placeholder(R.drawable.head_icon)  // Default placeholder image
-                            .into(ivHomeUserProfilePicture);   // Set the image in ImageView
-                } else {
-                    ivHomeUserProfilePicture.setImageResource(R.drawable.head_icon);  // Default image if no URL is available
-                }
-            }
-        });
-    }
-
-    private boolean isNetworkAvailable() {
-        ConnectivityManager connectivityManager = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
-        return networkInfo != null && networkInfo.isConnected();
-    }
-
-
     private void setupViewPagerAds() {
-        // Check Firebase connectivity and sync data
-        syncAdsFromFirebase();
-
-        // Observe LiveData from Room
         appViewModel.getAllAds().observe(getViewLifecycleOwner(), adList -> {
-            if (adList != null) {
-                // Update ViewPager with ads
-                AdAdapter adAdapter = new AdAdapter(adList);
+            if (adList != null && !adList.isEmpty()) {
+                AdAdapter adAdapter = new AdAdapter(getContext(), adList);
                 viewPagerAds.setAdapter(adAdapter);
+                autoSlideAds(adList.size());
+                Log.d(TAG, "Ads loaded: " + adList.size());
+            } else {
+                Log.w(TAG, "No ads available to display.");
             }
         });
     }
 
+    private void autoSlideAds(int adCount) {
+        Runnable adSlider = new Runnable() {
+            int currentAd = 0;
 
-    private void syncAdsFromFirebase() {
-        db.collection("Ad").addSnapshotListener((snapshots, error) -> {
-            if (error != null) {
-                Log.e("FirestoreSync", "Error fetching ads", error);
-                return;
+            @Override
+            public void run() {
+                if (currentAd >= adCount) currentAd = 0;
+                viewPagerAds.setCurrentItem(currentAd++, true);
+                adHandler.postDelayed(this, 3000); // Slide every 3 seconds
             }
-
-            if (snapshots != null) {
-                List<Ad> adList = new ArrayList<>();
-                for (DocumentSnapshot document : snapshots.getDocuments()) {
-                    Ad ad = document.toObject(Ad.class);
-                    adList.add(ad);
-                }
-
-                // Save to Room database
-                appViewModel.insertAdList(adList);
-            }
-        });
-    }
-
-
-
-
-    private void syncMentorsFromFirebase() {
-        db.collection("Mentor").addSnapshotListener((snapshots, error) -> {
-            if (error != null) {
-                Log.e("FirestoreSync", "Error fetching mentors", error);
-                return;
-            }
-
-            if (snapshots != null) {
-                List<Mentor> mentorList = new ArrayList<>();
-                for (DocumentSnapshot document : snapshots.getDocuments()) {
-                    Mentor mentor = document.toObject(Mentor.class);
-                    mentorList.add(mentor);
-                }
-
-                // Save to Room database
-                 appViewModel.insertMentorList(mentorList);
-            }
-        });
+        };
+        adHandler.post(adSlider);
     }
 
     private void setupMentorRecyclerView() {
-        syncMentorsFromFirebase();
-
+        mentorsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
         appViewModel.getAllMentors().observe(getViewLifecycleOwner(), mentorList -> {
-            if (mentorList != null) {
-                MentorAdapter mentorAdapter = new MentorAdapter(mentorList);
+            Log.d(TAG, "Observer triggered with data: " + mentorList);
+            if (mentorList != null && !mentorList.isEmpty()) {
+                MentorAdapter mentorAdapter = new MentorAdapter(getContext(), mentorList);
                 mentorsRecyclerView.setAdapter(mentorAdapter);
+                Log.d(TAG, "Mentors loaded: " + mentorList.size());
+            } else {
+                Log.w(TAG, "No mentors available to display.");
             }
         });
     }
 
-
-
     private void setupTabLayoutCategories() {
         String[] categories = {"All", "Programming", "Design", "Marketing", "Finance", "Languages", "Health", "Business"};
-        int[] icons = {R.drawable.flame_hot_icon, R.drawable.programming_icon, R.drawable.design_draw_drawing_icon,
+        int[] icons = {R.drawable.icon_13, R.drawable.programming_icon, R.drawable.design_draw_drawing_icon,
                 R.drawable.marketing_icon, R.drawable.finance_icon, R.drawable.language_icon,
                 R.drawable.health_icon, R.drawable.business_icon};
 
         for (int i = 0; i < categories.length; i++) {
             TabLayout.Tab tab = tabLayoutCategories.newTab();
             tab.setText(categories[i]);
-            tab.setIcon(icons[i]);
+            Drawable icon = ContextCompat.getDrawable(getContext(), icons[i]);
+            tabLayoutCategories.setTabIconTint(null);
+            tab.setIcon(icon);
             tabLayoutCategories.addTab(tab);
         }
+
 
         tabLayoutCategories.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
@@ -275,42 +197,45 @@ public class HomeFragment extends Fragment {
                     }
                 }
             }
-            CourseAdapter courseAdapter = new CourseAdapter(filteredCourses);
+            CourseAdapter courseAdapter = new CourseAdapter(getContext(),filteredCourses);
             coursesRecyclerView.setAdapter(courseAdapter);
         });
     }
 
-
-    private void syncCoursesFromFirebase() {
-        db.collection("Course").addSnapshotListener((snapshots, error) -> {
-            if (error != null) {
-                Log.e("FirestoreSync", "Error fetching courses", error);
-                return;
-            }
-
-            if (snapshots != null) {
-                List<Course> courseList = new ArrayList<>();
-                for (DocumentSnapshot document : snapshots.getDocuments()) {
-                    Course course = document.toObject(Course.class);
-                    courseList.add(course);
-                }
-
-                // Save to Room database
-                appViewModel.insertCourseList(courseList);
-            }
-        });
-    }
-
     private void setupCourseRecyclerView() {
-        syncCoursesFromFirebase();
-
+        coursesRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         appViewModel.getAllCourses().observe(getViewLifecycleOwner(), courseList -> {
-            if (courseList != null) {
-                CourseAdapter courseAdapter = new CourseAdapter(courseList);
+            Log.d(TAG, "Observer triggered with data: " + courseList);
+            if (courseList != null && !courseList.isEmpty()) {
+                CourseAdapter courseAdapter = new CourseAdapter(getContext(),courseList);
                 coursesRecyclerView.setAdapter(courseAdapter);
+                Log.d(TAG, "Courses loaded: " + courseList.size());
+            } else {
+                Log.w(TAG, "No courses available to display.");
             }
         });
     }
 
+    /*private void loadImageFromFirebaseStorage(String firebaseStorageUrl, ImageView imageView) {
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        StorageReference storageRef = storage.getReferenceFromUrl(firebaseStorageUrl);
+
+        storageRef.getDownloadUrl().addOnSuccessListener(uri -> {
+            Glide.with(getContext())
+                    .load(uri)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .placeholder(R.drawable.head_icon)
+                    .into(imageView);
+        }).addOnFailureListener(exception -> {
+            Log.e("HomeFragment", "Error loading image: ", exception);
+            imageView.setImageResource(R.drawable.head_icon);
+        });
+    }*/
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        adHandler.removeCallbacksAndMessages(null); // Clear pending messages
+    }
 
 }

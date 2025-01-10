@@ -1,5 +1,6 @@
 package com.example.onlinecourseande_learningapp;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,9 +17,11 @@ import java.util.List;
 
 public class AdAdapter extends RecyclerView.Adapter<AdAdapter.AdViewHolder> {
     private List<Ad> adList;
+    private Context context;
 
-    public AdAdapter(List<Ad> adList) {
+    public AdAdapter(Context context, List<Ad> adList) {
         this.adList = adList;
+        this.context= context;
     }
 
     @NonNull
@@ -34,7 +37,7 @@ public class AdAdapter extends RecyclerView.Adapter<AdAdapter.AdViewHolder> {
         holder.mainTitle.setText(adItem.getMain_title());
         holder.subTitle.setText(adItem.getSub_title());
         holder.description.setText(adItem.getDescription());
-        Glide.with(holder.itemView.getContext()).load(adItem.getImageUrl()).into(holder.backgroundImage);
+        ImageLoaderUtil.loadImageFromFirebaseStorage(context, adItem.getImageUrl(), holder.backgroundImage);
     }
 
     @Override

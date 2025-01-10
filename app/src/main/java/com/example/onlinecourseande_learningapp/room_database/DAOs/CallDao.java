@@ -5,10 +5,12 @@ import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
+import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Update;
 
 import com.example.onlinecourseande_learningapp.room_database.entities.Call;
+import com.example.onlinecourseande_learningapp.room_database.entities.Chat;
 
 import java.util.List;
 
@@ -16,7 +18,7 @@ import java.util.List;
 public interface CallDao {
 
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertCall (Call call);
 
     @Update
@@ -29,7 +31,7 @@ public interface CallDao {
     LiveData<List<Call>> getAllCalls ();
 
     @Query("SELECT * FROM Call WHERE call_id = :call_id")
-    Call getCallById (int call_id);
+    Call getCallById (String call_id);
 
 
 
@@ -38,6 +40,10 @@ public interface CallDao {
 
 
     @Query("SELECT * FROM Call WHERE caller_id = :student_id AND chat_id = :chat_id")
-    LiveData<List<Call>> getAllStudentCallsForAChat (String student_id, int chat_id);
+    LiveData<List<Call>> getAllStudentCallsForAChat (String student_id, String chat_id);
+
+
+    @Query("SELECT * FROM Call WHERE is_synced = 0")
+    List<Call> getUnsyncedCall();
 
 }

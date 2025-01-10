@@ -4,6 +4,9 @@ compiler = "4.15.1"
 coreSplashscreen = "1.0.1"
 dotsindicator = "4.3"
 facebookLogin = "12.3.0"
+firebaseAppcheckRecaptcha = "16.0.0"
+firebaseAppcheckRecaptchaVersion = "17.0.1"
+firebaseUiStorage = "8.0.0"
 javaxMail = "1.6.2"
 junit = "4.13.2"
 junitVersion = "1.2.1"
@@ -28,6 +31,10 @@ compiler = { module = "com.github.bumptech.glide:compiler", version.ref = "compi
 core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "coreSplashscreen" }
 dotsindicator = { module = "com.tbuonomo:dotsindicator", version.ref = "dotsindicator" }
 facebook-login = { module = "com.facebook.android:facebook-login", version.ref = "facebookLogin" }
+firebase-appcheck-debug = { module = "com.google.firebase:firebase-appcheck-debug", version.ref = "firebaseAppcheckRecaptcha" }
+firebase-appcheck-recaptcha = { module = "com.google.firebase:firebase-appcheck-recaptcha", version.ref = "firebaseAppcheckRecaptcha" }
+firebase-appcheck-recaptcha-v1701 = { module = "com.google.firebase:firebase-appcheck-recaptcha", version.ref = "firebaseAppcheckRecaptchaVersion" }
+firebase-ui-storage = { module = "com.firebaseui:firebase-ui-storage", version.ref = "firebaseUiStorage" }
 glide = { module = "com.github.bumptech.glide:glide", version.ref = "compiler" }
 javax-mail = { module = "com.sun.mail:javax.mail", version.ref = "javaxMail" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }

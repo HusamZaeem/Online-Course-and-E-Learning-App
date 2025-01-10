@@ -63,13 +63,7 @@
             android:name=".MainActivity"
             android:exported="true" />
 
-        <receiver
-            android:name=".NetworkChangeReceiver"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
-            </intent-filter>
-        </receiver>
+
     </application>
 
 </manifest>

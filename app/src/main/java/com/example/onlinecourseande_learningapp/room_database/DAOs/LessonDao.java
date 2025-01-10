@@ -5,11 +5,13 @@ import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
+import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Transaction;
 import androidx.room.Update;
 
 import com.example.onlinecourseande_learningapp.room_database.entities.Lesson;
+import com.example.onlinecourseande_learningapp.room_database.entities.MentorCourse;
 
 import java.util.List;
 
@@ -17,7 +19,7 @@ import java.util.List;
 public interface LessonDao {
 
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertLesson (Lesson lesson);
 
     @Update
@@ -30,17 +32,17 @@ public interface LessonDao {
     LiveData<List<Lesson>> getAllLessons ();
 
     @Query("SELECT * FROM Lesson WHERE lesson_id = :lesson_id")
-    LiveData<List<Lesson>> getLessonById (int lesson_id);
+    LiveData<List<Lesson>> getLessonById (String lesson_id);
 
     @Query("SELECT * FROM Lesson WHERE module_id = :module_id")
-    LiveData<List<Lesson>> getAllLessonsByModuleId (int module_id);
+    LiveData<List<Lesson>> getAllLessonsByModuleId (String module_id);
 
     @Query("SELECT * FROM Lesson WHERE module_id = :module_id AND is_exam = 1")
-    LiveData<List<Lesson>> getModuleExamByModuleId (int module_id);
+    LiveData<List<Lesson>> getModuleExamByModuleId (String module_id);
 
 
     @Query("UPDATE Lesson SET is_exam = CASE WHEN lesson_id = (SELECT MAX(lesson_id) FROM Lesson WHERE module_id = :module_id) THEN 1 ELSE 0 END WHERE module_id = :module_id")
-    void setLastLessonAsExam(int module_id);
+    void setLastLessonAsExam(String module_id);
 
 
     @Transaction
@@ -56,5 +58,11 @@ public interface LessonDao {
         moduleDao.updateModuleDuration(lesson.getModule_id());
     }
 
+
+    @Query("SELECT * FROM Lesson WHERE lesson_id = :lesson_id")
+    Lesson getLessonByLessonId(String lesson_id);
+
+    @Query("SELECT * FROM Lesson WHERE is_synced = 0")
+    List<Lesson> getUnsyncedLesson();
 
 }

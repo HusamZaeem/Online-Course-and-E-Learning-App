@@ -1,5 +1,6 @@
 package com.example.onlinecourseande_learningapp;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,9 +17,11 @@ import java.util.List;
 
 public class MentorAdapter extends RecyclerView.Adapter<MentorAdapter.MentorViewHolder> {
     private List<Mentor> mentorList;
+    private Context context;
 
-    public MentorAdapter(List<Mentor> mentorList) {
+    public MentorAdapter(Context context, List<Mentor> mentorList) {
         this.mentorList = mentorList;
+        this.context=context;
     }
 
     @NonNull
@@ -33,7 +36,7 @@ public class MentorAdapter extends RecyclerView.Adapter<MentorAdapter.MentorView
     public void onBindViewHolder(@NonNull MentorViewHolder holder, int position) {
         Mentor mentor = mentorList.get(position);
         holder.firstName.setText(mentor.getMentor_fName());
-        Glide.with(holder.itemView.getContext()).load(mentor.getMentor_photo()).into(holder.photo);
+        ImageLoaderUtil.loadImageFromFirebaseStorage(context, mentor.getMentor_photo(), holder.photo);
     }
 
     @Override

@@ -1,10 +1,21 @@
 package com.example.onlinecourseande_learningapp.room_database.entities;
 
 
+import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
+import androidx.room.Ignore;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
+
+import com.example.onlinecourseande_learningapp.room_database.AppRepository;
+import com.example.onlinecourseande_learningapp.room_database.Converter;
+import com.example.onlinecourseande_learningapp.room_database.Syncable;
+
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 @Entity(
         tableName = "Call",
@@ -19,12 +30,13 @@ import androidx.room.PrimaryKey;
                 @Index(value = "receiver_id")
         }
 )
-public class Call {
+public class Call implements Syncable {
 
-    @PrimaryKey(autoGenerate = true)
-    private int call_id;
+    @PrimaryKey
+    @NonNull
+    private String call_id="";
 
-    private int chat_id;
+    private String chat_id;
 
     private String caller_id;
 
@@ -32,14 +44,21 @@ public class Call {
 
     private String callType; // "Voice", "Video"
 
-    private String startTime; // Store as ISO 8601 formatted string
+    private Date startTime;
 
-    private String endTime; // Store as ISO 8601 formatted string
+    private Date endTime;
 
     private String callStatus;
+    private Date timestamp;
+    private boolean is_synced;
+    private Date last_updated;
 
 
-    public Call(int chat_id, String caller_id, String receiver_id, String callType, String startTime, String endTime, String callStatus) {
+    @Ignore
+    public Call(){}
+
+    public Call(@NonNull String call_id, String chat_id, String caller_id, String receiver_id, String callType, Date startTime, Date endTime, String callStatus, Date timestamp, boolean is_synced,Date last_updated ) {
+        this.call_id=call_id;
         this.chat_id = chat_id;
         this.caller_id = caller_id;
         this.receiver_id = receiver_id;
@@ -47,21 +66,91 @@ public class Call {
         this.startTime = startTime;
         this.endTime = endTime;
         this.callStatus = callStatus;
+        this.timestamp = timestamp;
+        this.is_synced = is_synced;
     }
 
-    public int getCall_id() {
+    public boolean isIs_synced() {
+        return is_synced;
+    }
+
+    public void setIs_synced(boolean is_synced) {
+        this.is_synced = is_synced;
+    }
+
+    @Override
+    public void markAsSynced() {
+        this.is_synced=true;
+        this.last_updated=new Date(System.currentTimeMillis());
+    }
+
+    @Override
+    public void updateInRepository(AppRepository repository) {
+        repository.updateCall(this);
+    }
+
+    @Override
+    public void insertInRepository(AppRepository repository) {
+        repository.insertCall(this);
+    }
+
+    public Date getLast_updated() {
+        return last_updated;
+    }
+
+    @Override
+    public String getId() {
         return call_id;
     }
 
-    public void setCall_id(int call_id) {
+    @Override
+    public void setPrimaryKey(String documentId) {
+        this.call_id=documentId;
+    }
+
+    @Override
+    public Map<String, Object> toMap() {
+        Map<String, Object> map = new HashMap<>();
+        map.put("call_id", call_id);
+        map.put("chat_id", chat_id);
+        map.put("caller_id", caller_id);
+        map.put("receiver_id", receiver_id);
+        map.put("callType", callType);
+        map.put("startTime", Converter.toFirestoreTimestamp(startTime));
+        map.put("endTime", Converter.toFirestoreTimestamp(endTime));
+        map.put("callStatus", callStatus);
+        map.put("timestamp", Converter.toFirestoreTimestamp(timestamp));
+        map.put("is_synced", is_synced);
+        map.put("last_updated", Converter.toFirestoreTimestamp(last_updated));
+        return map;
+    }
+
+    public void setLast_updated(Date last_updated) {
+        this.last_updated = last_updated;
+    }
+
+    public Date getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(Date timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    @NonNull
+    public String getCall_id() {
+        return call_id;
+    }
+
+    public void setCall_id(@NonNull String call_id) {
         this.call_id = call_id;
     }
 
-    public int getChat_id() {
+    public String getChat_id() {
         return chat_id;
     }
 
-    public void setChat_id(int chat_id) {
+    public void setChat_id(String chat_id) {
         this.chat_id = chat_id;
     }
 
@@ -90,19 +179,19 @@ public class Call {
         this.callType = callType;
     }
 
-    public String getStartTime() {
+    public Date getStartTime() {
         return startTime;
     }
 
-    public void setStartTime(String startTime) {
+    public void setStartTime(Date startTime) {
         this.startTime = startTime;
     }
 
-    public String getEndTime() {
+    public Date getEndTime() {
         return endTime;
     }
 
-    public void setEndTime(String endTime) {
+    public void setEndTime(Date endTime) {
         this.endTime = endTime;
     }
 

@@ -24,6 +24,7 @@ import androidx.work.WorkManager;
 
 import com.example.onlinecourseande_learningapp.databinding.ActivitySignUpBinding;
 import com.example.onlinecourseande_learningapp.room_database.AppViewModel;
+import com.example.onlinecourseande_learningapp.room_database.PeriodicSyncWorker;
 import com.example.onlinecourseande_learningapp.room_database.entities.Student;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
@@ -341,7 +342,7 @@ public class SignUp extends AppCompatActivity {
 
     private void syncData() {
         // Enqueue a one-time sync worker to sync data between Firestore and Room
-        OneTimeWorkRequest syncWorkRequest = new OneTimeWorkRequest.Builder(SyncWorker.class)
+        OneTimeWorkRequest syncWorkRequest = new OneTimeWorkRequest.Builder(PeriodicSyncWorker.class)
                 .setConstraints(new Constraints.Builder()
                         .setRequiredNetworkType(NetworkType.CONNECTED) // Sync only if there's internet
                         .build())

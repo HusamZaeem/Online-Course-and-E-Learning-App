@@ -1,12 +1,21 @@
 package com.example.onlinecourseande_learningapp.room_database.entities;
 
 
+import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
+import androidx.room.Ignore;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
+import com.example.onlinecourseande_learningapp.room_database.AppRepository;
+import com.example.onlinecourseande_learningapp.room_database.Converter;
+import com.example.onlinecourseande_learningapp.room_database.Syncable;
+
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 @Entity(tableName = "Enrollment",
         foreignKeys = {@ForeignKey(entity = Student.class, parentColumns = "student_id", childColumns = "student_id", onDelete = ForeignKey.CASCADE),
@@ -17,23 +26,31 @@ import java.util.Date;
             @Index(value = "course_id")
         }
     )
-public class Enrollment {
+public class Enrollment implements Syncable {
 
 
-    @PrimaryKey(autoGenerate = true)
-    private int enrollment_id;
+    @PrimaryKey
+    @NonNull
+    private String enrollment_id="";
     private String student_id;
-    private int course_id;
+    private String course_id;
     private int progress;
     private String status;
     private Date completion_date;
     private String certificate_url;
-    private double final_grade;
+    private Double final_grade;
     private Date timestamp;
     private double fee;
+    private boolean is_synced;
+    private Date last_updated;
 
 
-    public Enrollment(String student_id, int course_id, int progress, String status, Date completion_date, String certificate_url, double final_grade, Date timestamp, double fee) {
+    @Ignore
+    public Enrollment(){
+    }
+
+    public Enrollment(@NonNull String enrollment_id, String student_id, String course_id, int progress, String status, Date completion_date, String certificate_url, Double final_grade, Date timestamp, double fee, boolean is_synced,Date last_updated ) {
+        this.enrollment_id=enrollment_id;
         this.student_id = student_id;
         this.course_id = course_id;
         this.progress = progress;
@@ -43,13 +60,77 @@ public class Enrollment {
         this.final_grade = final_grade;
         this.timestamp = timestamp;
         this.fee = fee;
+        this.is_synced=is_synced;
+        this.last_updated=last_updated;
     }
 
-    public int getEnrollment_id() {
+    public boolean isIs_synced() {
+        return is_synced;
+    }
+
+    public void setIs_synced(boolean is_synced) {
+        this.is_synced = is_synced;
+    }
+
+    @Override
+    public void markAsSynced() {
+        this.is_synced=true;
+        this.last_updated=new Date(System.currentTimeMillis());
+    }
+
+    @Override
+    public void updateInRepository(AppRepository repository) {
+        repository.updateEnrollment(this);
+    }
+
+    @Override
+    public void insertInRepository(AppRepository repository) {
+        repository.insertEnrollment(this);
+    }
+
+    public Date getLast_updated() {
+        return last_updated;
+    }
+
+    @Override
+    public String getId() {
         return enrollment_id;
     }
 
-    public void setEnrollment_id(int enrollment_id) {
+    @Override
+    public void setPrimaryKey(String documentId) {
+        this.enrollment_id=documentId;
+    }
+
+    @Override
+    public Map<String, Object> toMap() {
+        Map<String, Object> map = new HashMap<>();
+        map.put("enrollment_id", enrollment_id);
+        map.put("student_id", student_id);
+        map.put("course_id", course_id);
+        map.put("progress", progress);
+        map.put("status", status);
+        map.put("completion_date", Converter.toFirestoreTimestamp(completion_date));
+        map.put("certificate_url", certificate_url);
+        map.put("final_grade", final_grade);
+        map.put("fee", fee);
+        map.put("timestamp", Converter.toFirestoreTimestamp(timestamp));
+        map.put("is_synced", is_synced);
+        map.put("last_updated", Converter.toFirestoreTimestamp(last_updated));
+        return map;
+    }
+
+
+    public void setLast_updated(Date last_updated) {
+        this.last_updated = last_updated;
+    }
+
+    @NonNull
+    public String getEnrollment_id() {
+        return enrollment_id;
+    }
+
+    public void setEnrollment_id(@NonNull String enrollment_id) {
         this.enrollment_id = enrollment_id;
     }
 
@@ -61,11 +142,11 @@ public class Enrollment {
         this.student_id = student_id;
     }
 
-    public int getCourse_id() {
+    public String getCourse_id() {
         return course_id;
     }
 
-    public void setCourse_id(int course_id) {
+    public void setCourse_id(String course_id) {
         this.course_id = course_id;
     }
 
@@ -101,11 +182,11 @@ public class Enrollment {
         this.certificate_url = certificate_url;
     }
 
-    public double getFinal_grade() {
+    public Double getFinal_grade() {
         return final_grade;
     }
 
-    public void setFinal_grade(double final_grade) {
+    public void setFinal_grade(Double final_grade) {
         this.final_grade = final_grade;
     }
 

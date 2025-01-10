@@ -1,13 +1,21 @@
 package com.example.onlinecourseande_learningapp.room_database.entities;
 
 
+import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
 import androidx.room.Ignore;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
+import com.example.onlinecourseande_learningapp.room_database.AppRepository;
+import com.example.onlinecourseande_learningapp.room_database.Converter;
+import com.example.onlinecourseande_learningapp.room_database.Syncable;
 
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 
 @Entity(
@@ -32,36 +40,97 @@ import androidx.room.PrimaryKey;
                 @Index(value = "student_id"),
         }
 )
-public class GroupMembership {
+public class GroupMembership implements Syncable {
 
     @PrimaryKey
-    private int group_membership_id;
-    private int group_id;
+    @NonNull
+    private String group_membership_id="";
+    private String group_id;
     private String student_id;
-
+    private boolean is_synced;
+    private Date last_updated;
 
     public GroupMembership() {
     }
 
     @Ignore
-    public GroupMembership(int group_id, String student_id) {
+    public GroupMembership(@NonNull String group_membership_id, String group_id, String student_id, boolean is_synced,Date last_updated ) {
+        this.group_membership_id=group_membership_id;
         this.group_id = group_id;
         this.student_id = student_id;
+        this.is_synced=is_synced;
+        this.last_updated=last_updated;
     }
 
-    public int getGroup_membership_id() {
+    @Override
+    public void markAsSynced() {
+        this.is_synced=true;
+        this.last_updated=new Date(System.currentTimeMillis());
+    }
+
+    @Override
+    public void updateInRepository(AppRepository repository) {
+        repository.updateGroupMembership(this);
+    }
+
+    @Override
+    public void insertInRepository(AppRepository repository) {
+        repository.insertGroupMembership(this);
+    }
+
+    public Date getLast_updated() {
+        return last_updated;
+    }
+
+    @Override
+    public String getId() {
         return group_membership_id;
     }
 
-    public void setGroup_membership_id(int group_membership_id) {
+    @Override
+    public void setPrimaryKey(String documentId) {
+        this.group_membership_id=documentId;
+    }
+
+    @Override
+    public Map<String, Object> toMap() {
+        Map<String, Object> map = new HashMap<>();
+        map.put("group_membership_id", group_membership_id);
+        map.put("group_id", group_id);
+        map.put("student_id", student_id);
+        map.put("is_synced", is_synced);
+        map.put("last_updated", Converter.toFirestoreTimestamp(last_updated));
+        return map;
+    }
+
+
+
+    public void setLast_updated(Date last_updated) {
+        this.last_updated = last_updated;
+    }
+
+    public boolean isIs_synced() {
+        return is_synced;
+    }
+
+    public void setIs_synced(boolean is_synced) {
+        this.is_synced = is_synced;
+    }
+
+    @NonNull
+    public String getGroup_membership_id() {
+        return group_membership_id;
+    }
+
+    public void setGroup_membership_id(@NonNull String group_membership_id) {
         this.group_membership_id = group_membership_id;
     }
 
-    public int getGroup_id() {
+    public String getGroup_id() {
         return group_id;
     }
 
-    public void setGroup_id(int group_id) {
+    public void setGroup_id(String group_id) {
         this.group_id = group_id;
     }
 

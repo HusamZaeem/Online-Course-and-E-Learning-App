@@ -1,11 +1,14 @@
 package com.example.onlinecourseande_learningapp.room_database;
 
 import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
 
+import androidx.annotation.NonNull;
 import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import androidx.room.TypeConverters;
+import androidx.sqlite.db.SupportSQLiteDatabase;
 
 import com.example.onlinecourseande_learningapp.room_database.DAOs.AdDao;
 import com.example.onlinecourseande_learningapp.room_database.DAOs.AttachmentDao;
@@ -52,7 +55,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 @Database(entities = {Attachment.class, Bookmark.class, Call.class, Chat.class, Course.class, Enrollment.class, Group.class, GroupMembership.class, Lesson.class, MentorCourse.class, Mentor.class, Message.class, Module.class, Notification.class, Review.class, Student.class, StudentLesson.class, StudentMentor.class, StudentModule.class, Ad.class}, version = 1 , exportSchema = false)
-@TypeConverters({Converter.class})
+@TypeConverters(Converter.class)
 public abstract class AppDatabase extends RoomDatabase {
 
 
@@ -89,12 +92,20 @@ public abstract class AppDatabase extends RoomDatabase {
                     INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
                                     AppDatabase.class, "e_learning_database")
                             .fallbackToDestructiveMigration()
+                            .addCallback(new RoomDatabase.Callback() {
+                                @Override
+                                public void onOpen(@NonNull SupportSQLiteDatabase db) {
+                                    super.onOpen(db);
+                                    db.execSQL("PRAGMA foreign_keys=ON;");
+                                }
+                            })
                             .build();
                 }
             }
         }
         return INSTANCE;
     }
+
 
 
     public static ExecutorService getDatabaseWriteExecutor() {

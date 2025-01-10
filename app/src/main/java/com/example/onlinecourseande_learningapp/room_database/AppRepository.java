@@ -1,17 +1,12 @@
 package com.example.onlinecourseande_learningapp.room_database;
 
 import android.app.Application;
-import android.content.Context;
 
 import androidx.lifecycle.LiveData;
-import androidx.room.Query;
+import androidx.room.Delete;
 import androidx.room.Update;
-import androidx.work.ExistingPeriodicWorkPolicy;
-import androidx.work.PeriodicWorkRequest;
-import androidx.work.WorkManager;
 
 import com.example.onlinecourseande_learningapp.AppExecutors;
-import com.example.onlinecourseande_learningapp.SyncWorker;
 import com.example.onlinecourseande_learningapp.room_database.DAOs.AdDao;
 import com.example.onlinecourseande_learningapp.room_database.DAOs.AttachmentDao;
 import com.example.onlinecourseande_learningapp.room_database.DAOs.BookmarkDao;
@@ -43,6 +38,7 @@ import com.example.onlinecourseande_learningapp.room_database.entities.Group;
 import com.example.onlinecourseande_learningapp.room_database.entities.GroupMembership;
 import com.example.onlinecourseande_learningapp.room_database.entities.Lesson;
 import com.example.onlinecourseande_learningapp.room_database.entities.Mentor;
+import com.example.onlinecourseande_learningapp.room_database.entities.MentorCourse;
 import com.example.onlinecourseande_learningapp.room_database.entities.Message;
 import com.example.onlinecourseande_learningapp.room_database.entities.Module;
 import com.example.onlinecourseande_learningapp.room_database.entities.Notification;
@@ -53,7 +49,6 @@ import com.example.onlinecourseande_learningapp.room_database.entities.StudentMe
 import com.example.onlinecourseande_learningapp.room_database.entities.StudentModule;
 
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 public class AppRepository {
 
@@ -114,17 +109,18 @@ public class AppRepository {
     }
 
 
-    public void schedulePeriodicSyncWorker(Context context) {
-        PeriodicWorkRequest syncWorkRequest =
-                new PeriodicWorkRequest.Builder(SyncWorker.class, 12, TimeUnit.HOURS)
-                        .build(); // Change the interval as per your requirement.
 
-        WorkManager.getInstance(context).enqueueUniquePeriodicWork(
-                "SyncWorker", // Unique name to avoid duplicate workers
-                ExistingPeriodicWorkPolicy.KEEP, // Keeps the existing periodic work
-                syncWorkRequest
-        );
+    public <T extends Syncable> void updateEntity(T entity) {
+        if (entity instanceof Student) {
+            studentDao.updateStudent((Student) entity);
+        } else if (entity instanceof Mentor) {
+            mentorDao.updateMentor((Mentor) entity);
+        }
+        // Add similar conditions for other entities.
     }
+
+
+
 
     // AttachmentDao --------------------------------------------
 
@@ -164,12 +160,15 @@ public class AppRepository {
 
 
 
-    public List<Attachment> getStudentAttachmentsInAChat(String student_id, int chat_id){
+    public List<Attachment> getStudentAttachmentsInAChat(String student_id, String chat_id){
         return attachmentDao.getStudentAttachmentsInAChat(student_id,chat_id);
     }
 
 
 
+    public Attachment getAttachmentByAttachmentId(String attachment_id){
+        return attachmentDao.getAttachmentByAttachmentId(attachment_id);
+    }
 
 
     // BookmarkDao --------------------------------------------
@@ -203,7 +202,7 @@ public class AppRepository {
     }
 
 
-    public LiveData<List<Bookmark>> getBookmarkById (int bookmark_id){
+    public LiveData<List<Bookmark>> getBookmarkById (String bookmark_id){
         return bookmarkDao.getBookmarkById(bookmark_id);
     }
 
@@ -214,6 +213,9 @@ public class AppRepository {
 
 
 
+    public Bookmark getBookmarkByBookmarkId(String bookmark_id){
+        return bookmarkDao.getBookmarkByBookmarkId(bookmark_id);
+    }
 
 
     // CallDao --------------------------------------------
@@ -247,7 +249,7 @@ public class AppRepository {
     }
 
 
-    public Call getCallById (int call_id){
+    public Call getCallById (String call_id){
         return callDao.getCallById(call_id);
     }
 
@@ -260,7 +262,7 @@ public class AppRepository {
 
 
 
-    public LiveData<List<Call>> getAllStudentCallsForAChat (String student_id, int chat_id){
+    public LiveData<List<Call>> getAllStudentCallsForAChat (String student_id, String chat_id){
         return callDao.getAllStudentCallsForAChat(student_id,chat_id);
     }
 
@@ -301,7 +303,7 @@ public class AppRepository {
     }
 
 
-    public Chat getChatById(int chat_id){
+    public Chat getChatById(String chat_id){
         return chatDao.getChatById(chat_id);
     }
 
@@ -351,17 +353,19 @@ public class AppRepository {
         return courseDao.getAllCourses();
     }
 
-    public Course getCourseById (int course_id){
+    public Course getCourseById (String course_id){
         return courseDao.getCourseById(course_id);
     }
 
 
-    Course getCoursesByCategory (String category){
+    public Course getCoursesByCategory (String category){
         return courseDao.getCoursesByCategory(category);
     }
 
 
-
+    public List<Course> getUnsyncedCourses(){
+        return courseDao.getUnsyncedCourses();
+    }
 
 
     // EnrollmentDao --------------------------------------------
@@ -393,28 +397,28 @@ public class AppRepository {
         return enrollmentDao.getAllEnrollments();
     }
 
-    public LiveData<List<Enrollment>> getEnrollmentById(int enrollment_id){
+    public LiveData<List<Enrollment>> getEnrollmentById(String enrollment_id){
         return enrollmentDao.getEnrollmentById(enrollment_id);
     }
 
 
-    public Enrollment getStudentEnrollmentInCourse(String student_id, int course_id){
+    public Enrollment getStudentEnrollmentInCourse(String student_id, String course_id){
         return enrollmentDao.getStudentEnrollmentInCourse(student_id,course_id);
     }
 
 
-    public int getTotalLessonsForCourse(int course_id){
+    public int getTotalLessonsForCourse(String course_id){
         return enrollmentDao.getTotalLessonsForCourse(course_id);
     }
 
 
-    public int getCompletedLessonsForStudentInCourse(String student_id, int course_id){
+    public int getCompletedLessonsForStudentInCourse(String student_id, String course_id){
         return enrollmentDao.getCompletedLessonsForStudentInCourse(student_id,course_id);
     }
 
 
 
-    public void updateEnrollmentProgress(String student_id, int course_id){
+    public void updateEnrollmentProgress(String student_id, String course_id){
         AppDatabase.databaseWriteExecutor.execute(() -> {
             enrollmentDao.updateEnrollmentProgress(student_id,course_id);
         });
@@ -428,7 +432,7 @@ public class AppRepository {
 
 
 
-    public void calculateFinalGrade(String student_id, int course_id){
+    public void calculateFinalGrade(String student_id, String course_id){
         AppDatabase.databaseWriteExecutor.execute(() -> {
             enrollmentDao.calculateFinalGrade(student_id,course_id);
         });
@@ -436,7 +440,7 @@ public class AppRepository {
 
 
 
-    public void setCompletionDateIfAllLessonsCompleted(String student_id, int course_id){
+    public void setCompletionDateIfAllLessonsCompleted(String student_id, String course_id){
         AppDatabase.databaseWriteExecutor.execute(() -> {
             enrollmentDao.setCompletionDateIfAllLessonsCompleted(student_id,course_id);
         });
@@ -446,7 +450,7 @@ public class AppRepository {
 
 
     // Enroll in a paid course
-    public void completeEnrollment(String studentId, int courseId, double fee, String courseName) {
+    public void completeEnrollment(String studentId, String courseId, double fee, String courseName) {
         AppExecutors.getInstance().diskIO().execute(() -> {
             // Update enrollment status
             enrollmentDao.updateFeeStatusAndTimestamp(studentId, courseId, fee);
@@ -462,17 +466,20 @@ public class AppRepository {
 
 
     // Enroll in a free course
-    public void enrollInFreeCourse(String studentId, int courseId) {
+    public void enrollInFreeCourse(String studentId, String courseId) {
         AppExecutors.getInstance().diskIO().execute(() -> {
             enrollmentDao.enrollInFreeCourse(studentId, courseId);
         });
     }
 
-    public Enrollment checkEnrollment(String student_id, int course_id) {
+    public Enrollment checkEnrollment(String student_id, String course_id) {
         return enrollmentDao.checkEnrollment(student_id, course_id);
     }
 
 
+    public Enrollment getEnrollmentByEnrollmentId(String enrollment_id){
+        return enrollmentDao.getEnrollmentByEnrollmentId(enrollment_id);
+    }
 
 
     // GroupDao --------------------------------------------
@@ -501,7 +508,7 @@ public class AppRepository {
         return groupDao.getAllGroups();
     }
 
-    public LiveData<List<Group>> getGroupById(int group_id){
+    public LiveData<List<Group>> getGroupById(String group_id){
         return groupDao.getGroupById(group_id);
     }
 
@@ -511,13 +518,13 @@ public class AppRepository {
 
 
 
-    public Group getGroupByCourseId(int course_id){
+    public Group getGroupByCourseId(String course_id){
         return groupDao.getGroupByCourseId(course_id);
     }
 
 
 
-    public void createGroupForCourse(int courseId, String courseName) {
+    public void createGroupForCourse(String courseId, String courseName) {
         AppExecutors.getInstance().diskIO().execute(() -> {
             if (groupDao.getGroupByCourseId(courseId) == null){
                 Group group = new Group(courseName,courseId);
@@ -528,7 +535,7 @@ public class AppRepository {
     }
 
     // Add a student to a group
-    public void addStudentToGroup(String studentId, int courseId) {
+    public void addStudentToGroup(String studentId, String courseId) {
         AppExecutors.getInstance().diskIO().execute(() -> {
             Group group = groupDao.getGroupByCourseId(courseId);
             if (group != null) {
@@ -540,6 +547,10 @@ public class AppRepository {
         });
     }
 
+
+    public Group getGroupByGroupId(String group_id){
+        return groupDao.getGroupByGroupId(group_id);
+    }
 
 
     // GroupMembershipDao --------------------------------------------
@@ -567,21 +578,24 @@ public class AppRepository {
     }
 
 
-    public LiveData<List<GroupMembership>> getGroupMembershipById(int group_membership_id){
+    public LiveData<List<GroupMembership>> getGroupMembershipById(String group_membership_id){
         return groupMembershipDao.getGroupMembershipById(group_membership_id);
     }
 
-    public LiveData<List<String>> getAllGroupStudents(int group_id){
+    public LiveData<List<String>> getAllGroupStudents(String group_id){
         return groupMembershipDao.getAllGroupStudents(group_id);
     }
 
-    public LiveData<List<Integer>> getAllStudentGroups(String student_id){
+    public LiveData<List<String>> getAllStudentGroups(String student_id){
         return groupMembershipDao.getAllStudentGroups(student_id);
     }
 
 
 
 
+    public GroupMembership getGroupMembershipByGroupMembershipId(String group_membership_id){
+        return groupMembershipDao.getGroupMembershipByGroupMembershipId(group_membership_id);
+    }
 
 
 
@@ -614,22 +628,22 @@ public class AppRepository {
     }
 
 
-    public LiveData<List<Lesson>> getLessonById(int lessonId) {
+    public LiveData<List<Lesson>> getLessonById(String lessonId) {
         return lessonDao.getLessonById(lessonId);
     }
 
 
-    public LiveData<List<Lesson>> getAllLessonsByModuleId(int moduleId) {
+    public LiveData<List<Lesson>> getAllLessonsByModuleId(String moduleId) {
         return lessonDao.getAllLessonsByModuleId(moduleId);
     }
 
 
-    public LiveData<List<Lesson>> getModuleExamByModuleId(int moduleId) {
+    public LiveData<List<Lesson>> getModuleExamByModuleId(String moduleId) {
         return lessonDao.getModuleExamByModuleId(moduleId);
     }
 
 
-    public void setLastLessonAsExam(int moduleId) {
+    public void setLastLessonAsExam(String moduleId) {
         AppExecutors.getInstance().diskIO().execute(() -> {
             lessonDao.setLastLessonAsExam(moduleId);
         });
@@ -651,7 +665,7 @@ public class AppRepository {
 
 
 
-    public void finishExam(String studentId, int lessonId, int moduleId, int courseId, double grade) {
+    public void finishExam(String studentId, String lessonId, String moduleId, String courseId, double grade) {
         AppExecutors.getInstance().diskIO().execute(() -> {
             // Set module grade
             studentModuleDao.setModuleGrade(studentId, moduleId, grade);
@@ -666,23 +680,46 @@ public class AppRepository {
 
 
 
+    public Lesson getLessonByLessonId(String lesson_id){
+        return lessonDao.getLessonByLessonId(lesson_id);
+    }
+
 
 
     // MentorCourseDao --------------------------------------------
 
 
+    public void insertMentorCourse(MentorCourse mentorCourse){
+        AppDatabase.databaseWriteExecutor.execute(() -> {
+            mentorCourseDao.insertMentorCourse(mentorCourse);
+        });
+    }
 
+    public void updateMentorCourse(MentorCourse mentorCourse){
+        AppDatabase.databaseWriteExecutor.execute(() -> {
+            mentorCourseDao.updateMentorCourse(mentorCourse);
+        });
+    }
 
-    public LiveData<List<Integer>> getAllCourseMentors(int course_id){
+    public void deleteMentorCourse(MentorCourse mentorCourse){
+        AppDatabase.databaseWriteExecutor.execute(() -> {
+            mentorCourseDao.deleteMentorCourse(mentorCourse);
+        });
+    }
+
+    public LiveData<List<String>> getAllCourseMentors(String course_id){
         return mentorCourseDao.getAllCourseMentors(course_id);
     }
 
-    public LiveData<List<Integer>> getAllMentorCourses(int mentor_id){
+    public LiveData<List<String>> getAllMentorCourses(String mentor_id){
         return mentorCourseDao.getAllMentorCourses(mentor_id);
     }
 
 
 
+    public MentorCourse getMentorCourseByMentorCourseId(String mentor_course_id){
+        return mentorCourseDao.getMentorCourseByMentorCourseId(mentor_course_id);
+    }
 
 
     // MentorDao --------------------------------------------
@@ -720,12 +757,14 @@ public class AppRepository {
         return mentorDao.getAllMentors();
     }
 
-    public LiveData<List<Mentor>> getMentorById(int mentor_id){
+    public Mentor getMentorById(String mentor_id){
         return mentorDao.getMentorById(mentor_id);
     }
 
 
-
+    public List<Mentor> getUnsyncedMentors(){
+        return mentorDao.getUnsyncedMentors();
+    }
 
 
     // MessageDao --------------------------------------------
@@ -756,15 +795,15 @@ public class AppRepository {
         return messageDao.getAllMessages();
     }
 
-    public LiveData<List<Message>> getMessageById(int message_id){
+    public LiveData<List<Message>> getMessageById(String message_id){
         return messageDao.getMessageById(message_id);
     }
 
-    public LiveData<List<Message>> getGroupMessagesByGroupId(int group_id){
+    public LiveData<List<Message>> getGroupMessagesByGroupId(String group_id){
         return messageDao.getGroupMessagesByGroupId(group_id);
     }
 
-    public LiveData<List<Message>> getChatMessagesByChatId(int chat_id){
+    public LiveData<List<Message>> getChatMessagesByChatId(String chat_id){
         return messageDao.getChatMessagesByChatId(chat_id);
     }
 
@@ -779,6 +818,9 @@ public class AppRepository {
 
 
 
+    public Message getMessageByMessageId(String message_id){
+        return messageDao.getMessageByMessageId(message_id);
+    }
 
 
 
@@ -812,22 +854,22 @@ public class AppRepository {
     }
 
 
-    public LiveData<List<Module>> getModuleById (int module_id){
+    public LiveData<List<Module>> getModuleById (String module_id){
         return moduleDao.getModuleById(module_id);
     }
 
 
-    public LiveData<List<Module>> getAllCourseModules (int course_id){
+    public LiveData<List<Module>> getAllCourseModules (String course_id){
         return moduleDao.getAllCourseModules(course_id);
     }
 
 
-    public int getModuleDuration(int module_id){
+    public int getModuleDuration(String module_id){
         return moduleDao.getModuleDuration(module_id);
     }
 
 
-    public void updateModuleDuration(int module_id){
+    public void updateModuleDuration(String module_id){
         AppDatabase.databaseWriteExecutor.execute(() -> {
             moduleDao.updateModuleDuration(module_id);
         });
@@ -835,6 +877,9 @@ public class AppRepository {
 
 
 
+    public Module getModuleByModuleId(String module_id){
+        return moduleDao.getModuleByModuleId(module_id);
+    }
 
 
 
@@ -870,7 +915,7 @@ public class AppRepository {
     }
 
 
-    public LiveData<List<Notification>> getNotificationById(int notification_id){
+    public LiveData<List<Notification>> getNotificationById(String notification_id){
         return notificationDao.getNotificationById(notification_id);
     }
 
@@ -881,7 +926,9 @@ public class AppRepository {
     }
 
 
-
+    public Notification getNotificationByNotificationId(String notification_id){
+        return notificationDao.getNotificationByNotificationId(notification_id);
+    }
 
 
 
@@ -909,7 +956,7 @@ public class AppRepository {
         });
     }
 
-    public void insertMentorReview(String student_id, int mentor_id, double rate, String comment) {
+    public void insertMentorReview(String student_id, String mentor_id, double rate, String comment) {
         AppDatabase.databaseWriteExecutor.execute(() -> {
             Review review = new Review(student_id, mentor_id, "Mentor", rate, comment);
             insertReview(review);
@@ -917,7 +964,7 @@ public class AppRepository {
     }
 
 
-    public void insertCourseReview(String student_id, int course_id, double rate, String comment) {
+    public void insertCourseReview(String student_id, String course_id, double rate, String comment) {
         AppDatabase.databaseWriteExecutor.execute(() -> {
             Review review = new Review(student_id, course_id, "Course", rate, comment);
             insertReview(review);
@@ -928,36 +975,36 @@ public class AppRepository {
         return reviewDao.getAllReviews();
     }
 
-    public LiveData<List<Review>> getReviewById(int review_id){
+    public LiveData<List<Review>> getReviewById(String review_id){
         return reviewDao.getReviewById(review_id);
     }
 
 
-    public LiveData<List<Review>> getReviewsForCourse(int course_id){
+    public LiveData<List<Review>> getReviewsForCourse(String course_id){
         return reviewDao.getReviewsForCourse(course_id);
     }
 
 
-    public LiveData<List<Review>> getReviewsForMentor(int mentor_id){
+    public LiveData<List<Review>> getReviewsForMentor(String mentor_id){
         return reviewDao.getReviewsForMentor(mentor_id);
     }
 
 
-    public void deleteAllCourseReviews(int course_id){
+    public void deleteAllCourseReviews(String course_id){
         AppDatabase.databaseWriteExecutor.execute(() -> {
             reviewDao.deleteAllCourseReviews(course_id);
         });
     }
 
 
-    public void deleteAllMentorReviews(int mentor_id){
+    public void deleteAllMentorReviews(String mentor_id){
         AppDatabase.databaseWriteExecutor.execute(() -> {
             reviewDao.deleteAllMentorReviews(mentor_id);
         });
     }
 
 
-    public void deleteReviewForCourse(int course_id, int review_id){
+    public void deleteReviewForCourse(String course_id, String review_id){
         AppDatabase.databaseWriteExecutor.execute(() -> {
             reviewDao.deleteReviewForCourse(course_id,review_id);
         });
@@ -965,7 +1012,7 @@ public class AppRepository {
 
 
 
-    public void deleteReviewForMentor(int mentor_id, int review_id){
+    public void deleteReviewForMentor(String mentor_id, String review_id){
         AppDatabase.databaseWriteExecutor.execute(() -> {
             reviewDao.deleteReviewForMentor(mentor_id,review_id);
         });
@@ -973,7 +1020,9 @@ public class AppRepository {
 
 
 
-
+    public Review getReviewByReviewId(String review_id){
+        return reviewDao.getReviewByReviewId(review_id);
+    }
 
 
     // StudentDao --------------------------------------------
@@ -1061,37 +1110,41 @@ public class AppRepository {
     }
 
 
-    public void updateCompletionStatus(String student_id, int lesson_id, boolean completion_status){
+    public void updateCompletionStatus(String student_id, String lesson_id, boolean completion_status){
         AppDatabase.databaseWriteExecutor.execute(() -> {
             studentLessonDao.updateCompletionStatus(student_id,lesson_id,completion_status);
         });
     }
 
 
-    public boolean getCompletionStatus(String student_id, int lesson_id){
+    public boolean getCompletionStatus(String student_id, String lesson_id){
         return studentLessonDao.getCompletionStatus(student_id,lesson_id);
     }
 
 
-    public void updateLessonCompletionStatus(String student_id, int lesson_id, boolean completion_status){
+    public void updateLessonCompletionStatus(String student_id, String lesson_id, boolean completion_status){
         AppDatabase.databaseWriteExecutor.execute(() -> {
             studentLessonDao.updateLessonCompletionStatus(student_id,lesson_id,completion_status);
         });
     }
 
-    public void updateLessonStatusAndProgress(String student_id, int lesson_id, boolean completion_status, EnrollmentDao enrollmentDao, int course_id) {
+    public void updateLessonStatusAndProgress(String student_id, String lesson_id, boolean completion_status, EnrollmentDao enrollmentDao, String course_id) {
         updateLessonCompletionStatus(student_id, lesson_id, completion_status);
         enrollmentDao.updateEnrollmentProgress(student_id, course_id);
 
     }
 
 
-    public void markLessonAsCompleted(String studentId, int lessonId, int courseId) {
+    public void markLessonAsCompleted(String studentId, String lessonId, String courseId) {
         AppExecutors.getInstance().diskIO().execute(() -> {
             studentLessonDao.updateLessonStatusAndProgress(studentId, lessonId, true, enrollmentDao, courseId);
         });
     }
 
+
+    public StudentLesson getStudentLessonById(String student_lesson_id){
+        return studentLessonDao.getStudentLessonById(student_lesson_id);
+    }
 
 
     // StudentMentorDao --------------------------------------------
@@ -1119,16 +1172,19 @@ public class AppRepository {
         });
     }
 
-    public LiveData<List<String>> getAllMentorStudents(int mentor_id){
+    public LiveData<List<String>> getAllMentorStudents(String mentor_id){
         return studentMentorDao.getAllMentorStudents(mentor_id);
     }
 
-    public LiveData<List<Integer>> getAllStudentMentors(String student_id){
+    public LiveData<List<String>> getAllStudentMentors(String student_id){
         return studentMentorDao.getAllStudentMentors(student_id);
     }
 
 
 
+    public StudentMentor getStudentMentorById(String student_mentor_id){
+        return studentMentorDao.getStudentMentorById(student_mentor_id);
+    }
 
 
 
@@ -1160,18 +1216,20 @@ public class AppRepository {
         return studentModuleDao.getAllStudentModuleGrade(student_id);
     }
 
-    public LiveData<List<Double>> getStudentModuleGrade(String student_id, int module_id){
+    public LiveData<List<Double>> getStudentModuleGrade(String student_id, String module_id){
         return studentModuleDao.getStudentModuleGrade(student_id,module_id);
     }
 
 
-    public void setModuleGrade(String student_id, int module_id, double module_grade){
+    public void setModuleGrade(String student_id, String module_id, double module_grade){
         AppDatabase.databaseWriteExecutor.execute(() -> {
             studentModuleDao.setModuleGrade(student_id,module_id,module_grade);
         });
     }
 
-
+    public StudentModule getStudentModuleById(String student_module_id){
+        return studentModuleDao.getStudentModuleById(student_module_id);
+    }
 
 
     //AdDao
@@ -1206,7 +1264,92 @@ public class AppRepository {
     }
 
 
+    public Ad getAdById(String ad_id){
+        return adDao.getAdById(ad_id);
+    }
 
 
+
+    //getUnsyncedData
+
+
+
+    public List<StudentModule> getUnsyncedStudentModule(){
+        return studentModuleDao.getUnsyncedStudentModule();
+    }
+
+
+    public List<StudentMentor> getUnsyncedStudentMentor(){
+        return studentMentorDao.getUnsyncedStudentMentor();
+    }
+
+    public List<StudentLesson> getUnsyncedStudentLesson(){
+        return studentLessonDao.getUnsyncedStudentLesson();
+    }
+
+    public List<Review> getUnsyncedReview(){
+        return reviewDao.getUnsyncedReview();
+    }
+
+    public List<Notification> getUnsyncedNotification(){
+        return notificationDao.getUnsyncedNotification();
+    }
+
+    public List<Module> getUnsyncedModule(){
+        return moduleDao.getUnsyncedModule();
+    }
+
+    public List<Message> getUnsyncedMessage(){
+        return messageDao.getUnsyncedMessage();
+    }
+
+
+    public List<MentorCourse> getUnsyncedMentorCourse(){
+        return mentorCourseDao.getUnsyncedMentorCourse();
+    }
+
+
+    public List<Lesson> getUnsyncedLesson(){
+        return lessonDao.getUnsyncedLesson();
+    }
+
+    public List<GroupMembership> getUnsyncedGroupMembership(){
+        return groupMembershipDao.getUnsyncedGroupMembership();
+    }
+
+
+    public List<Group> getUnsyncedGroup(){
+        return groupDao.getUnsyncedGroup();
+    }
+
+
+    public List<Enrollment> getUnsyncedEnrollment(){
+        return enrollmentDao.getUnsyncedEnrollment();
+    }
+
+
+    public List<Chat> getUnsyncedChat(){
+        return chatDao.getUnsyncedChat();
+    }
+
+
+    public List<Call> getUnsyncedCall(){
+        return callDao.getUnsyncedCall();
+    }
+
+
+    public List<Bookmark> getUnsyncedBookmark(){
+        return bookmarkDao.getUnsyncedBookmark();
+    }
+
+
+    public List<Attachment> getUnsyncedAttachment(){
+        return attachmentDao.getUnsyncedAttachment();
+    }
+
+
+    public List<Ad> getUnsyncedAd(){
+        return adDao.getUnsyncedAd();
+    }
 
 }

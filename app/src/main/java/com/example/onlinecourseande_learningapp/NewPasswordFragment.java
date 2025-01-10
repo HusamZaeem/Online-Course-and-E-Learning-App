@@ -24,6 +24,7 @@ import android.widget.Toast;
 
 import com.example.onlinecourseande_learningapp.databinding.FragmentNewPasswordBinding;
 import com.example.onlinecourseande_learningapp.room_database.AppRepository;
+import com.example.onlinecourseande_learningapp.room_database.PeriodicSyncWorker;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 public class NewPasswordFragment extends Fragment {
@@ -208,7 +209,7 @@ public class NewPasswordFragment extends Fragment {
     }
 
     private void enqueueSyncWorkAndShowDialog(String newHashedPassword) {
-        OneTimeWorkRequest syncWorkRequest = new OneTimeWorkRequest.Builder(SyncWorker.class).build();
+        OneTimeWorkRequest syncWorkRequest = new OneTimeWorkRequest.Builder(PeriodicSyncWorker.class).build();
         showCustomDialog();
 
         WorkManager.getInstance(requireContext()).enqueue(syncWorkRequest);

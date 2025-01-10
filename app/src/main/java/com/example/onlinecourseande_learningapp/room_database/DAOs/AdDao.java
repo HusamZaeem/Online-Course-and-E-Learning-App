@@ -11,6 +11,7 @@ import androidx.room.Query;
 import androidx.room.Update;
 
 import com.example.onlinecourseande_learningapp.room_database.entities.Ad;
+import com.example.onlinecourseande_learningapp.room_database.entities.Attachment;
 
 import java.util.List;
 
@@ -34,5 +35,10 @@ public interface AdDao {
     @Query("SELECT * FROM Ad")
     LiveData<List<Ad>> getAllAds();
 
+    @Query("SELECT * FROM Ad WHERE id = :ad_id")
+    Ad getAdById(String ad_id);
+
+    @Query("SELECT * FROM Ad WHERE is_synced = 0")
+    List<Ad> getUnsyncedAd();
 
 }

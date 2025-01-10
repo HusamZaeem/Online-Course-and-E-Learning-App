@@ -5,11 +5,13 @@ import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
+import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Update;
 
 
 import com.example.onlinecourseande_learningapp.room_database.entities.Attachment;
+import com.example.onlinecourseande_learningapp.room_database.entities.Bookmark;
 
 import java.util.List;
 
@@ -18,7 +20,7 @@ public interface AttachmentDao {
 
 
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertAttachment (Attachment attachment);
 
     @Update
@@ -49,8 +51,14 @@ public interface AttachmentDao {
                     "INNER JOIN Chat ON Message.chat_id = Chat.chat_id " +
                     "WHERE Chat.sender_id = :student_id AND Chat.chat_id = :chat_id"
     )
-    List<Attachment> getStudentAttachmentsInAChat(String student_id, int chat_id);
+    List<Attachment> getStudentAttachmentsInAChat(String student_id, String chat_id);
 
+
+    @Query("SELECT * FROM Attachment WHERE attachment_id = :attachment_id")
+    Attachment getAttachmentByAttachmentId(String attachment_id);
+
+    @Query("SELECT * FROM Attachment WHERE is_synced = 0")
+    List<Attachment> getUnsyncedAttachment();
 
 
 }

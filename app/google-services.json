@@ -40,6 +40,9 @@
             }
           ]
         }
+      },
+      "auth": {
+        "reCAPTCHAKey": "6LdBObIqAAAAAF8Oe1WhG0qunD0tLTcNB1DU-1-B"
       }
     }
   ],

@@ -11,6 +11,7 @@ import androidx.room.Update;
 
 import com.example.onlinecourseande_learningapp.room_database.entities.Course;
 import com.example.onlinecourseande_learningapp.room_database.entities.Mentor;
+import com.example.onlinecourseande_learningapp.room_database.entities.Student;
 
 import java.util.List;
 
@@ -18,7 +19,7 @@ import java.util.List;
 public interface CourseDao {
 
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertCourse (Course course);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -34,11 +35,12 @@ public interface CourseDao {
     LiveData<List<Course>> getAllCourses ();
 
     @Query("SELECT * FROM Course WHERE course_id = :course_id")
-    Course getCourseById (int course_id);
+    Course getCourseById (String course_id);
 
     @Query("SELECT * FROM Course WHERE category = :category")
     Course getCoursesByCategory (String category);
 
-
+    @Query("SELECT * FROM Course WHERE is_synced = 0")
+    List<Course> getUnsyncedCourses();
 
 }

@@ -10,6 +10,7 @@ import androidx.room.Query;
 import androidx.room.Update;
 
 import com.example.onlinecourseande_learningapp.room_database.entities.Mentor;
+import com.example.onlinecourseande_learningapp.room_database.entities.Student;
 
 import java.util.List;
 
@@ -33,7 +34,9 @@ public interface MentorDao {
     LiveData<List<Mentor>> getAllMentors();
 
     @Query("SELECT * FROM Mentor WHERE mentor_id = :mentor_id")
-    LiveData<List<Mentor>> getMentorById(int mentor_id);
+    Mentor getMentorById(String mentor_id);
 
+    @Query("SELECT * FROM Mentor WHERE is_synced = 0")
+    List<Mentor> getUnsyncedMentors();
 
 }

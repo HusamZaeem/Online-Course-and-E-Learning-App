@@ -1,5 +1,6 @@
 package com.example.onlinecourseande_learningapp;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,9 +17,11 @@ import java.util.List;
 
 public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.CourseViewHolder> {
     private List<Course> courseList;
+    private Context context;
 
-    public CourseAdapter(List<Course> courseList) {
+    public CourseAdapter(Context context, List<Course> courseList) {
         this.courseList = courseList;
+        this.context=context;
     }
 
     @NonNull
@@ -39,7 +42,7 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.CourseView
         holder.courseCurrentPrice.setText(String.format("$%.2f",courseDiscountPrice));
         holder.courseRating.setText(String.valueOf(course.getCourse_rating()));
         holder.courseStudentsCount.setText(String.valueOf(course.getStudents_count()) + " students");
-        Glide.with(holder.itemView.getContext()).load(course.getPhoto_url()).into(holder.photo);
+        ImageLoaderUtil.loadImageFromFirebaseStorage(context, course.getPhoto_url(), holder.photo);
     }
 
     @Override

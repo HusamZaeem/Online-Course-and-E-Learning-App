@@ -5,10 +5,12 @@ import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
+import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Update;
 
 import com.example.onlinecourseande_learningapp.room_database.entities.Message;
+import com.example.onlinecourseande_learningapp.room_database.entities.Module;
 
 import java.util.List;
 
@@ -16,7 +18,7 @@ import java.util.List;
 public interface MessageDao {
 
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertMessage (Message message);
 
     @Update
@@ -29,13 +31,13 @@ public interface MessageDao {
     LiveData<List<Message>> getAllMessages();
 
     @Query("SELECT * FROM Message WHERE message_id = :message_id")
-    LiveData<List<Message>> getMessageById(int message_id);
+    LiveData<List<Message>> getMessageById(String message_id);
 
     @Query("SELECT * FROM Message WHERE group_id = :group_id")
-    LiveData<List<Message>> getGroupMessagesByGroupId(int group_id);
+    LiveData<List<Message>> getGroupMessagesByGroupId(String group_id);
 
     @Query("SELECT * FROM Message WHERE chat_id = :chat_id")
-    LiveData<List<Message>> getChatMessagesByChatId(int chat_id);
+    LiveData<List<Message>> getChatMessagesByChatId(String chat_id);
 
     @Query("SELECT * FROM Message WHERE message_type = :message_type")
     LiveData<List<Message>> getChatMessagesByMessageType(String message_type);
@@ -43,5 +45,14 @@ public interface MessageDao {
 
     @Query("SELECT * FROM Message WHERE content LIKE '%' || :content || '%'")
     LiveData<List<Message>> searchMessagesByContent(String content);
+
+
+
+    @Query("SELECT * FROM Message WHERE message_id = :message_id")
+    Message getMessageByMessageId(String message_id);
+
+    @Query("SELECT * FROM Message WHERE is_synced = 0")
+    List<Message> getUnsyncedMessage();
+
 
 }

@@ -20,6 +20,7 @@ import com.example.onlinecourseande_learningapp.room_database.entities.Group;
 import com.example.onlinecourseande_learningapp.room_database.entities.GroupMembership;
 import com.example.onlinecourseande_learningapp.room_database.entities.Lesson;
 import com.example.onlinecourseande_learningapp.room_database.entities.Mentor;
+import com.example.onlinecourseande_learningapp.room_database.entities.MentorCourse;
 import com.example.onlinecourseande_learningapp.room_database.entities.Message;
 import com.example.onlinecourseande_learningapp.room_database.entities.Module;
 import com.example.onlinecourseande_learningapp.room_database.entities.Notification;
@@ -79,7 +80,7 @@ public class AppViewModel extends AndroidViewModel {
 
 
 
-    public List<Attachment> getStudentAttachmentsInAChat(String student_id, int chat_id){
+    public List<Attachment> getStudentAttachmentsInAChat(String student_id, String chat_id){
         return appRepository.getStudentAttachmentsInAChat(student_id,chat_id);
     }
 
@@ -112,7 +113,7 @@ public class AppViewModel extends AndroidViewModel {
     }
 
 
-    public LiveData<List<Bookmark>> getBookmarkById (int bookmark_id){
+    public LiveData<List<Bookmark>> getBookmarkById (String bookmark_id){
         return appRepository.getBookmarkById(bookmark_id);
     }
 
@@ -150,7 +151,7 @@ public class AppViewModel extends AndroidViewModel {
     }
 
 
-    Call getCallById (int call_id){
+    Call getCallById (String call_id){
         return appRepository.getCallById(call_id);
     }
 
@@ -163,7 +164,7 @@ public class AppViewModel extends AndroidViewModel {
 
 
 
-    public LiveData<List<Call>> getAllStudentCallsForAChat (String student_id, int chat_id){
+    public LiveData<List<Call>> getAllStudentCallsForAChat (String student_id, String chat_id){
         return appRepository.getAllStudentCallsForAChat(student_id,chat_id);
     }
 
@@ -198,7 +199,7 @@ public class AppViewModel extends AndroidViewModel {
     }
 
 
-    Chat getChatById(int chat_id){
+    Chat getChatById(String chat_id){
         return appRepository.getChatById(chat_id);
     }
 
@@ -241,7 +242,7 @@ public class AppViewModel extends AndroidViewModel {
         return appRepository.getAllCourses();
     }
 
-    Course getCourseById (int course_id){
+    Course getCourseById (String course_id){
         return appRepository.getCourseById(course_id);
     }
 
@@ -274,28 +275,28 @@ public class AppViewModel extends AndroidViewModel {
         return appRepository.getAllEnrollments();
     }
 
-    public LiveData<List<Enrollment>> getEnrollmentById(int enrollment_id){
+    public LiveData<List<Enrollment>> getEnrollmentById(String enrollment_id){
         return appRepository.getEnrollmentById(enrollment_id);
     }
 
 
-    public Enrollment getStudentEnrollmentInCourse(String student_id, int course_id){
+    public Enrollment getStudentEnrollmentInCourse(String student_id, String course_id){
         return appRepository.getStudentEnrollmentInCourse(student_id,course_id);
     }
 
 
-    public int getTotalLessonsForCourse(int course_id){
+    public int getTotalLessonsForCourse(String course_id){
         return appRepository.getTotalLessonsForCourse(course_id);
     }
 
 
-    public int getCompletedLessonsForStudentInCourse(String student_id, int course_id){
+    public int getCompletedLessonsForStudentInCourse(String student_id, String course_id){
         return appRepository.getCompletedLessonsForStudentInCourse(student_id,course_id);
     }
 
 
 
-    public void updateEnrollmentProgress(String student_id, int course_id){
+    public void updateEnrollmentProgress(String student_id, String course_id){
             appRepository.updateEnrollmentProgress(student_id,course_id);
     }
 
@@ -307,13 +308,13 @@ public class AppViewModel extends AndroidViewModel {
 
 
 
-    public void calculateFinalGrade(String student_id, int course_id){
+    public void calculateFinalGrade(String student_id, String course_id){
             appRepository.calculateFinalGrade(student_id,course_id);
     }
 
 
 
-    public void setCompletionDateIfAllLessonsCompleted(String student_id, int course_id){
+    public void setCompletionDateIfAllLessonsCompleted(String student_id, String course_id){
         appRepository.setCompletionDateIfAllLessonsCompleted(student_id,course_id);
     }
 
@@ -321,18 +322,18 @@ public class AppViewModel extends AndroidViewModel {
 
 
     // Enroll in a paid course
-    public void completeEnrollment(String studentId, int courseId, double fee, String courseName) {
+    public void completeEnrollment(String studentId, String courseId, double fee, String courseName) {
         appRepository.completeEnrollment(studentId, courseId, fee, courseName);
     }
 
 
 
     // Enroll in a free course
-    public void enrollInFreeCourse(String studentId, int courseId) {
+    public void enrollInFreeCourse(String studentId, String courseId) {
             appRepository.enrollInFreeCourse(studentId, courseId);
     }
 
-    public Enrollment checkEnrollment(String student_id, int course_id) {
+    public Enrollment checkEnrollment(String student_id, String course_id) {
         return appRepository.checkEnrollment(student_id, course_id);
     }
 
@@ -359,7 +360,7 @@ public class AppViewModel extends AndroidViewModel {
         return appRepository.getAllGroups();
     }
 
-    public LiveData<List<Group>> getGroupById(int group_id){
+    public LiveData<List<Group>> getGroupById(String group_id){
         return appRepository.getGroupById(group_id);
     }
 
@@ -369,13 +370,13 @@ public class AppViewModel extends AndroidViewModel {
 
 
 
-    Group getGroupByCourseId(int course_id){
+    Group getGroupByCourseId(String course_id){
         return appRepository.getGroupByCourseId(course_id);
     }
 
 
 
-    public void createGroupForCourse(int courseId, String courseName) {
+    public void createGroupForCourse(String courseId, String courseName) {
             if (appRepository.getGroupByCourseId(courseId) == null){
                 Group group = new Group(courseName,courseId);
                 appRepository.insertGroup(group);
@@ -383,7 +384,7 @@ public class AppViewModel extends AndroidViewModel {
     }
 
     // Add a student to a group
-    public void addStudentToGroup(String studentId, int courseId) {
+    public void addStudentToGroup(String studentId, String courseId) {
             Group group = appRepository.getGroupByCourseId(courseId);
             if (group != null) {
                 GroupMembership groupMembership = new GroupMembership();
@@ -414,15 +415,15 @@ public class AppViewModel extends AndroidViewModel {
     }
 
 
-    public LiveData<List<GroupMembership>> getGroupMembershipById(int group_membership_id){
+    public LiveData<List<GroupMembership>> getGroupMembershipById(String group_membership_id){
         return appRepository.getGroupMembershipById(group_membership_id);
     }
 
-    public LiveData<List<String>> getAllGroupStudents(int group_id){
+    public LiveData<List<String>> getAllGroupStudents(String group_id){
         return appRepository.getAllGroupStudents(group_id);
     }
 
-    public LiveData<List<Integer>> getAllStudentGroups(String student_id){
+    public LiveData<List<String>> getAllStudentGroups(String student_id){
         return appRepository.getAllStudentGroups(student_id);
     }
 
@@ -457,22 +458,22 @@ public class AppViewModel extends AndroidViewModel {
     }
 
 
-    public LiveData<List<Lesson>> getLessonById(int lessonId) {
+    public LiveData<List<Lesson>> getLessonById(String lessonId) {
         return appRepository.getLessonById(lessonId);
     }
 
 
-    public LiveData<List<Lesson>> getAllLessonsByModuleId(int moduleId) {
+    public LiveData<List<Lesson>> getAllLessonsByModuleId(String moduleId) {
         return appRepository.getAllLessonsByModuleId(moduleId);
     }
 
 
-    public LiveData<List<Lesson>> getModuleExamByModuleId(int moduleId) {
+    public LiveData<List<Lesson>> getModuleExamByModuleId(String moduleId) {
         return appRepository.getModuleExamByModuleId(moduleId);
     }
 
 
-    public void setLastLessonAsExam(int moduleId) {
+    public void setLastLessonAsExam(String moduleId) {
         appRepository.setLastLessonAsExam(moduleId);
     }
 
@@ -488,7 +489,7 @@ public class AppViewModel extends AndroidViewModel {
 
 
 
-    public void finishExam(String studentId, int lessonId, int moduleId, int courseId, double grade) {
+    public void finishExam(String studentId, String lessonId, String moduleId, String courseId, double grade) {
             // Set module grade
             appRepository.setModuleGrade(studentId, moduleId, grade);
 
@@ -508,11 +509,11 @@ public class AppViewModel extends AndroidViewModel {
 
 
 
-    public LiveData<List<Integer>> getAllCourseMentors(int course_id){
+    public LiveData<List<String>> getAllCourseMentors(String course_id){
         return appRepository.getAllCourseMentors(course_id);
     }
 
-    public LiveData<List<Integer>> getAllMentorCourses(int mentor_id){
+    public LiveData<List<String>> getAllMentorCourses(String mentor_id){
         return appRepository.getAllMentorCourses(mentor_id);
     }
 
@@ -547,12 +548,32 @@ public class AppViewModel extends AndroidViewModel {
         return appRepository.getAllMentors();
     }
 
-    public LiveData<List<Mentor>> getMentorById(int mentor_id){
+    public Mentor getMentorById(String mentor_id){
         return appRepository.getMentorById(mentor_id);
     }
 
 
+    public List<Mentor> getUnsyncedMentors(){
+        return appRepository.getUnsyncedMentors();
+    }
 
+
+
+
+
+    //MentorCourseDao
+
+    public void insertMentorCourse(MentorCourse mentorCourse){
+            appRepository.insertMentorCourse(mentorCourse);
+    }
+
+    public void updateMentorCourse(MentorCourse mentorCourse){
+            appRepository.updateMentorCourse(mentorCourse);
+    }
+
+    public void deleteMentorCourse(MentorCourse mentorCourse){
+            appRepository.deleteMentorCourse(mentorCourse);
+    }
 
 
     // MessageDao --------------------------------------------
@@ -577,15 +598,15 @@ public class AppViewModel extends AndroidViewModel {
         return appRepository.getAllMessages();
     }
 
-    public LiveData<List<Message>> getMessageById(int message_id){
+    public LiveData<List<Message>> getMessageById(String message_id){
         return appRepository.getMessageById(message_id);
     }
 
-    public LiveData<List<Message>> getGroupMessagesByGroupId(int group_id){
+    public LiveData<List<Message>> getGroupMessagesByGroupId(String group_id){
         return appRepository.getGroupMessagesByGroupId(group_id);
     }
 
-    public LiveData<List<Message>> getChatMessagesByChatId(int chat_id){
+    public LiveData<List<Message>> getChatMessagesByChatId(String chat_id){
         return appRepository.getChatMessagesByChatId(chat_id);
     }
 
@@ -627,22 +648,22 @@ public class AppViewModel extends AndroidViewModel {
     }
 
 
-    public LiveData<List<Module>> getModuleById (int module_id){
+    public LiveData<List<Module>> getModuleById (String module_id){
         return appRepository.getModuleById(module_id);
     }
 
 
-    public LiveData<List<Module>> getAllCourseModules (int course_id){
+    public LiveData<List<Module>> getAllCourseModules (String course_id){
         return appRepository.getAllCourseModules(course_id);
     }
 
 
-    int getModuleDuration(int module_id){
+    int getModuleDuration(String module_id){
         return appRepository.getModuleDuration(module_id);
     }
 
 
-    public void updateModuleDuration(int module_id){
+    public void updateModuleDuration(String module_id){
             appRepository.updateModuleDuration(module_id);
     }
 
@@ -677,7 +698,7 @@ public class AppViewModel extends AndroidViewModel {
     }
 
 
-    public LiveData<List<Notification>> getNotificationById(int notification_id){
+    public LiveData<List<Notification>> getNotificationById(String notification_id){
         return appRepository.getNotificationById(notification_id);
     }
 
@@ -710,13 +731,13 @@ public class AppViewModel extends AndroidViewModel {
             appRepository.deleteReview(review);
     }
 
-    public void insertMentorReview(String student_id, int mentor_id, double rate, String comment) {
+    public void insertMentorReview(String student_id, String mentor_id, double rate, String comment) {
             Review review = new Review(student_id, mentor_id, "Mentor", rate, comment);
             insertReview(review);
     }
 
 
-    public void insertCourseReview(String student_id, int course_id, double rate, String comment) {
+    public void insertCourseReview(String student_id, String course_id, double rate, String comment) {
             Review review = new Review(student_id, course_id, "Course", rate, comment);
             insertReview(review);
     }
@@ -725,38 +746,38 @@ public class AppViewModel extends AndroidViewModel {
         return appRepository.getAllReviews();
     }
 
-    public LiveData<List<Review>> getReviewById(int review_id){
+    public LiveData<List<Review>> getReviewById(String review_id){
         return appRepository.getReviewById(review_id);
     }
 
 
-    public LiveData<List<Review>> getReviewsForCourse(int course_id){
+    public LiveData<List<Review>> getReviewsForCourse(String course_id){
         return appRepository.getReviewsForCourse(course_id);
     }
 
 
-    public LiveData<List<Review>> getReviewsForMentor(int mentor_id){
+    public LiveData<List<Review>> getReviewsForMentor(String mentor_id){
         return appRepository.getReviewsForMentor(mentor_id);
     }
 
 
-    public void deleteAllCourseReviews(int course_id){
+    public void deleteAllCourseReviews(String course_id){
             appRepository.deleteAllCourseReviews(course_id);
     }
 
 
-    public void deleteAllMentorReviews(int mentor_id){
+    public void deleteAllMentorReviews(String mentor_id){
         appRepository.deleteAllMentorReviews(mentor_id);
     }
 
 
-    public void deleteReviewForCourse(int course_id, int review_id){
+    public void deleteReviewForCourse(String course_id, String review_id){
         appRepository.deleteReviewForCourse(course_id,review_id);
     }
 
 
 
-    public void deleteReviewForMentor(int mentor_id, int review_id){
+    public void deleteReviewForMentor(String mentor_id, String review_id){
             appRepository.deleteReviewForMentor(mentor_id,review_id);
     }
 
@@ -839,28 +860,28 @@ public class AppViewModel extends AndroidViewModel {
     }
 
 
-    public void updateCompletionStatus(String student_id, int lesson_id, boolean completion_status){
+    public void updateCompletionStatus(String student_id, String lesson_id, boolean completion_status){
             appRepository.updateCompletionStatus(student_id,lesson_id,completion_status);
     }
 
 
-    boolean getCompletionStatus(String student_id, int lesson_id){
+    boolean getCompletionStatus(String student_id, String lesson_id){
         return appRepository.getCompletionStatus(student_id,lesson_id);
     }
 
 
-    public void updateLessonCompletionStatus(String student_id, int lesson_id, boolean completion_status){
+    public void updateLessonCompletionStatus(String student_id, String lesson_id, boolean completion_status){
             appRepository.updateLessonCompletionStatus(student_id,lesson_id,completion_status);
     }
 
-    public void updateLessonStatusAndProgress(String student_id, int lesson_id, boolean completion_status, EnrollmentDao enrollmentDao, int course_id) {
+    public void updateLessonStatusAndProgress(String student_id, String lesson_id, boolean completion_status, EnrollmentDao enrollmentDao, String course_id) {
         updateLessonCompletionStatus(student_id, lesson_id, completion_status);
         enrollmentDao.updateEnrollmentProgress(student_id, course_id);
 
     }
 
 
-    public void markLessonAsCompleted(String studentId, int lessonId, int courseId) {
+    public void markLessonAsCompleted(String studentId, String lessonId, String courseId) {
         AppExecutors.getInstance().diskIO().execute(() -> {
             try {
                 appRepository.markLessonAsCompleted(studentId, lessonId, courseId);
@@ -892,11 +913,11 @@ public class AppViewModel extends AndroidViewModel {
             appRepository.deleteStudentMentor(studentMentor);
     }
 
-    public LiveData<List<String>> getAllMentorStudents(int mentor_id){
+    public LiveData<List<String>> getAllMentorStudents(String mentor_id){
         return appRepository.getAllMentorStudents(mentor_id);
     }
 
-    public LiveData<List<Integer>> getAllStudentMentors(String student_id){
+    public LiveData<List<String>> getAllStudentMentors(String student_id){
         return appRepository.getAllStudentMentors(student_id);
     }
 
@@ -927,12 +948,12 @@ public class AppViewModel extends AndroidViewModel {
         return appRepository.getAllStudentModuleGrade(student_id);
     }
 
-    public LiveData<List<Double>> getStudentModuleGrade(String student_id, int module_id){
+    public LiveData<List<Double>> getStudentModuleGrade(String student_id, String module_id){
         return appRepository.getStudentModuleGrade(student_id,module_id);
     }
 
 
-    public void setModuleGrade(String student_id, int module_id, double module_grade){
+    public void setModuleGrade(String student_id, String module_id, double module_grade){
             appRepository.setModuleGrade(student_id,module_id,module_grade);
     }
 
