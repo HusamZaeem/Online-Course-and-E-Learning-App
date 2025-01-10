@@ -72,6 +72,7 @@ public class HomeFragment extends Fragment {
         coursesRecyclerView = view.findViewById(R.id.coursesRecyclerView);
         tvUserFullName = view.findViewById(R.id.tv_home_user_name);
         TextView tvTopMentorSeeAll = view.findViewById(R.id.tv_top_mentor_see_all);
+        TextView tvMostPopularCoursesSeeAll = view.findViewById(R.id.tv_most_popular_courses_see_all);
 
         appViewModel = new ViewModelProvider(this).get(AppViewModel.class);
 
@@ -82,9 +83,14 @@ public class HomeFragment extends Fragment {
         setupTabLayoutCategories();
         setupCourseRecyclerView();
 
-        // Handle "See All" Click
+
         tvTopMentorSeeAll.setOnClickListener(v -> {
             Intent intent = new Intent(getActivity(), MentorsActivity.class);
+            startActivity(intent);
+        });
+
+        tvMostPopularCoursesSeeAll.setOnClickListener(v -> {
+            Intent intent = new Intent(getActivity(), AllCoursesActivity.class);
             startActivity(intent);
         });
 
@@ -102,11 +108,11 @@ public class HomeFragment extends Fragment {
                     String profilePhotoUrl = student.getProfile_photo();
                     String fullName = student.getFirst_name() + " " + student.getLast_name();
                     if (profilePhotoUrl != null && !profilePhotoUrl.isEmpty()) {
-                        ImageLoaderUtil.loadImageFromFirebaseStorage(getContext(),profilePhotoUrl,ivHomeUserProfilePicture);
+                        ImageLoaderUtil.loadImageFromFirebaseStorage(getContext(), profilePhotoUrl, ivHomeUserProfilePicture);
                     } else {
                         ivHomeUserProfilePicture.setImageResource(R.drawable.head_icon); // Default image
                     }
-                    if (fullName != null && !fullName.isEmpty()){
+                    if (fullName != null && !fullName.isEmpty()) {
                         tvUserFullName.setText(fullName);
                     }
                 }
@@ -178,10 +184,12 @@ public class HomeFragment extends Fragment {
             }
 
             @Override
-            public void onTabUnselected(TabLayout.Tab tab) {}
+            public void onTabUnselected(TabLayout.Tab tab) {
+            }
 
             @Override
-            public void onTabReselected(TabLayout.Tab tab) {}
+            public void onTabReselected(TabLayout.Tab tab) {
+            }
         });
     }
 
@@ -197,7 +205,7 @@ public class HomeFragment extends Fragment {
                     }
                 }
             }
-            CourseAdapter courseAdapter = new CourseAdapter(getContext(),filteredCourses);
+            CourseAdapter courseAdapter = new CourseAdapter(getContext(), filteredCourses);
             coursesRecyclerView.setAdapter(courseAdapter);
         });
     }
@@ -207,7 +215,7 @@ public class HomeFragment extends Fragment {
         appViewModel.getAllCourses().observe(getViewLifecycleOwner(), courseList -> {
             Log.d(TAG, "Observer triggered with data: " + courseList);
             if (courseList != null && !courseList.isEmpty()) {
-                CourseAdapter courseAdapter = new CourseAdapter(getContext(),courseList);
+                CourseAdapter courseAdapter = new CourseAdapter(getContext(), courseList);
                 coursesRecyclerView.setAdapter(courseAdapter);
                 Log.d(TAG, "Courses loaded: " + courseList.size());
             } else {
@@ -216,21 +224,6 @@ public class HomeFragment extends Fragment {
         });
     }
 
-    /*private void loadImageFromFirebaseStorage(String firebaseStorageUrl, ImageView imageView) {
-        FirebaseStorage storage = FirebaseStorage.getInstance();
-        StorageReference storageRef = storage.getReferenceFromUrl(firebaseStorageUrl);
-
-        storageRef.getDownloadUrl().addOnSuccessListener(uri -> {
-            Glide.with(getContext())
-                    .load(uri)
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .placeholder(R.drawable.head_icon)
-                    .into(imageView);
-        }).addOnFailureListener(exception -> {
-            Log.e("HomeFragment", "Error loading image: ", exception);
-            imageView.setImageResource(R.drawable.head_icon);
-        });
-    }*/
 
     @Override
     public void onDestroyView() {

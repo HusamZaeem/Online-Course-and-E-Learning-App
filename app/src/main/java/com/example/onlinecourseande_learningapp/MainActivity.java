@@ -34,9 +34,16 @@ public class MainActivity extends AppCompatActivity {
 
 
         if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.main, new HomeFragment())
-                    .commit();
+            String fragment = getIntent().getStringExtra("FRAGMENT");
+            if (fragment != null && fragment.equals("HOME")) {
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.main, new HomeFragment())
+                        .commit();
+            } else {
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.main, new HomeFragment())
+                        .commit();
+            }
         }
 
         // Setup BottomNavigationView
