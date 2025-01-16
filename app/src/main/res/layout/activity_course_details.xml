@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".CourseDetailsActivity">
+
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/main"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+    tools:context=".CourseDetailsActivity">
+
+
+
+    <FrameLayout
+        android:id="@+id/CoursePhotoFrame"
+        android:layout_width="match_parent"
+        android:layout_height="250dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+
+        <ImageView
+            android:id="@+id/iv_course_details_course_photo"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+
+            />
+
+
+        <ImageButton
+            android:id="@+id/backButton"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_gravity="start|top"
+            android:src="@drawable/baseline_arrow_back_24"
+            android:background="?android:attr/selectableItemBackgroundBorderless" />
+
+    </FrameLayout>
+
+
+    <TextView
+        android:id="@+id/tv_course_details_course_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:maxWidth="300dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="16dp"
+        android:textColor="@color/primary_color"
+        android:textStyle="bold"
+        android:textSize="24sp"
+        android:text="@string/tv_course_name"
+        app:layout_constraintTop_toBottomOf="@+id/CoursePhotoFrame"
+        app:layout_constraintStart_toStartOf="parent"
+        />
+
+
+    <ImageView
+        android:id="@+id/iv_course_details_bookmark"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="16dp"
+        android:src="@drawable/baseline_bookmark_add_24"
+        app:layout_constraintTop_toBottomOf="@+id/CoursePhotoFrame"
+        app:layout_constraintEnd_toEndOf="parent"
+        />
+
+    <TextView
+        android:id="@+id/tv_course_details_course_category"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="16dp"
+        android:text="@string/tv_course_category"
+        android:textSize="14sp"
+        android:layout_margin="16dp"
+        android:textColor="@color/btn_color"
+        app:layout_constraintTop_toBottomOf="@+id/tv_course_details_course_name"
+        app:layout_constraintStart_toStartOf="parent"
+        />
+
+    <ImageView
+        android:id="@+id/iv_course_details_rating_star"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="16dp"
+        android:contentDescription="rating star"
+        android:src="@drawable/rating_star_half_icon"
+        app:layout_constraintStart_toEndOf="@+id/tv_course_details_course_category"
+        app:layout_constraintTop_toBottomOf="@+id/tv_course_details_course_name"
+        />
+
+    <TextView
+        android:id="@+id/tv_course_details_course_rating"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:text="@string/tv_course_rating"
+        android:textColor="@color/gray"
+        android:textSize="16sp"
+        app:layout_constraintStart_toEndOf="@+id/iv_course_details_rating_star"
+        app:layout_constraintTop_toBottomOf="@+id/tv_course_details_course_name"/>
+
+
+    <TextView
+        android:id="@+id/tv_course_details_course_reviews_no"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="16dp"
+        android:text="@string/tv_course_reviews_no"
+        android:textColor="@color/gray"
+        android:textSize="16sp"
+        app:layout_constraintTop_toBottomOf="@+id/tv_course_details_course_name"
+        app:layout_constraintStart_toEndOf="@+id/tv_course_details_course_rating"
+        />
+
+
+    <TextView
+        android:id="@+id/tv_course_details_course_current_price"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="16dp"
+        android:text="@string/tv_course_current_price"
+        android:textSize="24sp"
+        android:layout_margin="16dp"
+        android:textColor="@color/btn_color"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@+id/tv_course_details_course_category"
+        app:layout_constraintStart_toStartOf="parent"
+        />
+
+
+    <TextView
+        android:id="@+id/tv_course_details_course_actual_price"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="20dp"
+        android:text="@string/tv_course_actual_price"
+        android:textColor="@color/gray"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toEndOf="@+id/tv_course_details_course_current_price"
+        app:layout_constraintTop_toBottomOf="@+id/tv_course_details_course_category" />
+
+
+    <ImageView
+        android:id="@+id/iv_course_details_student_numbers"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:contentDescription="student_numbers"
+        android:src="@drawable/baseline_groups_2_24"
+        app:layout_constraintTop_toBottomOf="@+id/tv_course_details_course_current_price"
+        app:layout_constraintStart_toStartOf="parent"
+        />
+
+    <TextView
+        android:id="@+id/tv_course_details_course_students_no"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="8dp"
+        android:text="@string/tv_course_students_no"
+        android:textColor="@color/primary_color"
+        android:textSize="14sp"
+        app:layout_constraintTop_toBottomOf="@+id/tv_course_details_course_current_price"
+        app:layout_constraintStart_toEndOf="@+id/iv_course_details_student_numbers"
+        />
+
+    <ImageView
+        android:id="@+id/iv_course_details_clock"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:contentDescription="clock"
+        android:src="@drawable/baseline_access_time_filled_24"
+        app:layout_constraintTop_toBottomOf="@+id/tv_course_details_course_current_price"
+        app:layout_constraintStart_toEndOf="@+id/tv_course_details_course_students_no"
+        />
+
+    <TextView
+        android:id="@+id/tv_course_details_course_hours"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="8dp"
+        android:text="@string/tv_course_hours"
+        android:textColor="@color/primary_color"
+        android:textSize="14sp"
+        app:layout_constraintTop_toBottomOf="@+id/tv_course_details_course_current_price"
+        app:layout_constraintStart_toEndOf="@+id/iv_course_details_clock"
+        />
+
+    <ImageView
+        android:id="@+id/iv_course_details_certificate_icon"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:contentDescription="Certificate icon"
+        android:src="@drawable/baseline_verified_user_24"
+        app:layout_constraintTop_toBottomOf="@+id/tv_course_details_course_current_price"
+        app:layout_constraintStart_toEndOf="@+id/tv_course_details_course_hours"
+        />
+
+    <TextView
+        android:id="@+id/tv_course_details_certificate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="8dp"
+        android:text="@string/tv_certificate"
+        android:textColor="@color/primary_color"
+        android:textSize="14sp"
+        app:layout_constraintTop_toBottomOf="@+id/tv_course_details_course_current_price"
+        app:layout_constraintStart_toEndOf="@+id/iv_course_details_certificate_icon"
+        />
+
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/course_details_tabLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/iv_course_details_student_numbers"
+        app:layout_constraintEnd_toEndOf="parent"
+        />
+
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/vb_course_details"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/course_details_tabLayout"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+
+        />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</ScrollView>

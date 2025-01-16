@@ -54,13 +54,16 @@ public class GroupMembership implements Syncable {
     }
 
     @Ignore
-    public GroupMembership(@NonNull String group_membership_id, String group_id, String student_id, boolean is_synced,Date last_updated ) {
-        this.group_membership_id=group_membership_id;
+    public GroupMembership(@NonNull String group_membership_id, String group_id, String student_id, boolean is_synced, Date last_updated) {
+        this.group_membership_id = group_membership_id;
         this.group_id = group_id;
         this.student_id = student_id;
-        this.is_synced=is_synced;
-        this.last_updated=last_updated;
+        this.is_synced = is_synced;
+        this.last_updated = last_updated;
     }
+
+
+
 
     @Override
     public void markAsSynced() {
@@ -95,10 +98,8 @@ public class GroupMembership implements Syncable {
     @Override
     public Map<String, Object> toMap() {
         Map<String, Object> map = new HashMap<>();
-        map.put("group_membership_id", group_membership_id);
         map.put("group_id", group_id);
         map.put("student_id", student_id);
-        map.put("is_synced", is_synced);
         map.put("last_updated", Converter.toFirestoreTimestamp(last_updated));
         return map;
     }

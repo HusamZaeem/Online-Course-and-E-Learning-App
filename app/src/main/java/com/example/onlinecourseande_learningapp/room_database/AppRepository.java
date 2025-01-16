@@ -49,6 +49,7 @@ import com.example.onlinecourseande_learningapp.room_database.entities.StudentMe
 import com.example.onlinecourseande_learningapp.room_database.entities.StudentModule;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 public class AppRepository {
 
@@ -108,16 +109,183 @@ public class AppRepository {
         return instance;
     }
 
-
-
-    public <T extends Syncable> void updateEntity(T entity) {
-        if (entity instanceof Student) {
-            studentDao.updateStudent((Student) entity);
-        } else if (entity instanceof Mentor) {
-            mentorDao.updateMentor((Mentor) entity);
-        }
-        // Add similar conditions for other entities.
+    public <T extends Syncable> CompletableFuture<List<T>> getAllEntitiesAsync(Class<T> entityClass) {
+        return CompletableFuture.supplyAsync(() -> getAllEntities(entityClass), AppDatabase.getDatabaseWriteExecutor());
     }
+
+    public <T extends Syncable> CompletableFuture<T> getEntityByIdAsync(String id, Class<T> entityClass) {
+        return CompletableFuture.supplyAsync(() -> getEntityById(id, entityClass), AppDatabase.getDatabaseWriteExecutor());
+    }
+
+    private <T extends Syncable> List<T> getAllEntities(Class<T> entityClass) {
+        if (entityClass == Student.class) {
+            return (List<T>) studentDao.getAllStudentsList();
+        }
+        if (entityClass == Course.class) {
+            return (List<T>) courseDao.getAllCoursesList();
+        }
+        if (entityClass == Mentor.class) {
+            return (List<T>) mentorDao.getAllMentorsList();
+        }
+        if (entityClass == Module.class) {
+            return (List<T>) moduleDao.getAllModulesList();
+        }
+        if (entityClass == Lesson.class) {
+            return (List<T>) lessonDao.getAllLessonsList();
+        }
+        if (entityClass == MentorCourse.class) {
+            return (List<T>) mentorCourseDao.getAllMentorsCourses();
+        }
+        if (entityClass == Enrollment.class) {
+            return (List<T>) enrollmentDao.getAllEnrollmentsList();
+        }
+        if (entityClass == Chat.class) {
+            return (List<T>) chatDao.getAllChatsList();
+        }
+        if (entityClass == Call.class) {
+            return (List<T>) callDao.getAllCallsList();
+        }
+        if (entityClass == Group.class) {
+            return (List<T>) groupDao.getAllGroupsList();
+        }
+        if (entityClass == Message.class) {
+            return (List<T>) messageDao.getAllMessagesList();
+        }
+        if (entityClass == GroupMembership.class) {
+            return (List<T>) groupMembershipDao.getAllGroupMemberships();
+        }
+        if (entityClass == Review.class) {
+            return (List<T>) reviewDao.getAllReviewsList();
+        }
+        if (entityClass == Attachment.class) {
+            return (List<T>) attachmentDao.getAllAttachmentsList();
+        }
+        if (entityClass == Ad.class) {
+            return (List<T>) adDao.getAllAdsList();
+        }
+        if (entityClass == StudentLesson.class) {
+            return (List<T>) studentLessonDao.getAllStudentLesson();
+        }
+        if (entityClass == StudentMentor.class) {
+            return (List<T>) studentMentorDao.getAllStudentMentor();
+        }
+        if (entityClass == StudentModule.class) {
+            return (List<T>) studentModuleDao.getAllStudentModule();
+        }
+        if (entityClass == Bookmark.class) {
+            return (List<T>) bookmarkDao.getAllBookmarksList();
+        }
+        if (entityClass == Notification.class) {
+            return (List<T>) notificationDao.getAllNotificationsList();
+        }
+
+        throw new IllegalArgumentException("Unsupported entity class: " + entityClass.getName());
+    }
+
+    // Add generic method to get entity by ID
+    @SuppressWarnings("unchecked")
+    public <T extends Syncable> T getEntityById(String id, Class<T> entityClass) {
+        if (entityClass == Student.class) {
+            return (T) studentDao.getStudentById(id);
+        } else if (entityClass == Course.class) {
+            return (T) courseDao.getCourseById(id);
+        } else if (entityClass == Mentor.class) {
+            return (T) mentorDao.getMentorById(id);
+        } else if (entityClass == Module.class) {
+            return (T) moduleDao.getModuleByModuleId(id);
+        } else if (entityClass == Lesson.class) {
+            return (T) lessonDao.getLessonByLessonId(id);
+        } else if (entityClass == MentorCourse.class) {
+            return (T) mentorCourseDao.getMentorCourseByMentorCourseId(id);
+        } else if (entityClass == Enrollment.class) {
+            return (T) enrollmentDao.getEnrollmentByEnrollmentId(id);
+        } else if (entityClass == Chat.class) {
+            return (T) chatDao.getChatById(id);
+        } else if (entityClass == Call.class) {
+            return (T) callDao.getCallById(id);
+        } else if (entityClass == Group.class) {
+            return (T) groupDao.getGroupByGroupId(id);
+        } else if (entityClass == Message.class) {
+            return (T) messageDao.getMessageByMessageId(id);
+        } else if (entityClass == GroupMembership.class) {
+            return (T) groupMembershipDao.getGroupMembershipByGroupMembershipId(id);
+        } else if (entityClass == Review.class) {
+            return (T) reviewDao.getReviewByReviewId(id);
+        } else if (entityClass == Attachment.class) {
+            return (T) attachmentDao.getAttachmentByAttachmentId(id);
+        } else if (entityClass == StudentLesson.class) {
+            return (T) studentLessonDao.getStudentLessonById(id);
+        } else if (entityClass == StudentMentor.class) {
+            return (T) studentMentorDao.getStudentMentorById(id);
+        } else if (entityClass == StudentModule.class) {
+            return (T) studentModuleDao.getStudentModuleById(id);
+        } else if (entityClass == Ad.class) {
+            return (T) adDao.getAdById(id);
+        } else if (entityClass == Bookmark.class) {
+            return (T) bookmarkDao.getBookmarkByBookmarkId(id);
+        } else if (entityClass == Notification.class) {
+            return (T) notificationDao.getNotificationByNotificationId(id);
+        }
+
+
+        throw new IllegalArgumentException("Unsupported entity class: " + entityClass.getName());
+    }
+
+
+    public <T extends Syncable> CompletableFuture<List<T>> getUnsyncedEntitiesAsync(Class<T> entityClass) {
+        return CompletableFuture.supplyAsync(() -> getUnsyncedEntities(entityClass), AppDatabase.getDatabaseWriteExecutor());
+    }
+
+
+    // Add method to get all unsynced entities of a type
+    @SuppressWarnings("unchecked")
+    public <T extends Syncable> List<T> getUnsyncedEntities(Class<T> entityClass) {
+        if (entityClass == Student.class) {
+            return (List<T>) studentDao.getUnsyncedStudents();
+        } else if (entityClass == Course.class) {
+            return (List<T>) courseDao.getUnsyncedCourses();
+        } else if (entityClass == Ad.class) {
+            return (List<T>) adDao.getUnsyncedAd();
+        } else if (entityClass == Attachment.class) {
+            return (List<T>) attachmentDao.getUnsyncedAttachment();
+        } else if (entityClass == Bookmark.class) {
+            return (List<T>) bookmarkDao.getUnsyncedBookmark();
+        } else if (entityClass == Call.class) {
+            return (List<T>) callDao.getUnsyncedCall();
+        } else if (entityClass == Chat.class) {
+            return (List<T>) chatDao.getUnsyncedChat();
+        } else if (entityClass == Enrollment.class) {
+            return (List<T>) enrollmentDao.getUnsyncedEnrollment();
+        } else if (entityClass == Group.class) {
+            return (List<T>) groupDao.getUnsyncedGroup();
+        } else if (entityClass == GroupMembership.class) {
+            return (List<T>) groupMembershipDao.getUnsyncedGroupMembership();
+        } else if (entityClass == Lesson.class) {
+            return (List<T>) lessonDao.getUnsyncedLesson();
+        } else if (entityClass == Mentor.class) {
+            return (List<T>) mentorDao.getUnsyncedMentors();
+        } else if (entityClass == MentorCourse.class) {
+            return (List<T>) mentorCourseDao.getUnsyncedMentorCourse();
+        } else if (entityClass == Message.class) {
+            return (List<T>) messageDao.getUnsyncedMessage();
+        } else if (entityClass == Module.class) {
+            return (List<T>) moduleDao.getUnsyncedModule();
+        } else if (entityClass == Notification.class) {
+            return (List<T>) notificationDao.getUnsyncedNotification();
+        } else if (entityClass == Review.class) {
+            return (List<T>) reviewDao.getUnsyncedReview();
+        } else if (entityClass == StudentLesson.class) {
+            return (List<T>) studentLessonDao.getUnsyncedStudentLesson();
+        } else if (entityClass == StudentMentor.class) {
+            return (List<T>) studentMentorDao.getUnsyncedStudentMentor();
+        } else if (entityClass == StudentModule.class) {
+            return (List<T>) studentModuleDao.getUnsyncedStudentModule();
+        }
+
+
+        throw new IllegalArgumentException("Unsupported entity class: " + entityClass.getName());
+    }
+
 
 
 
@@ -355,6 +523,10 @@ public class AppRepository {
 
     public Course getCourseById (String course_id){
         return courseDao.getCourseById(course_id);
+    }
+
+    public LiveData<Course> getCourseByIdLiveData(String course_id){
+        return courseDao.getCourseByIdLiveData(course_id);
     }
 
 
@@ -721,6 +893,10 @@ public class AppRepository {
         return mentorCourseDao.getMentorCourseByMentorCourseId(mentor_course_id);
     }
 
+    public LiveData<Mentor> getMentorsByCourseId(String courseId) {
+        return mentorCourseDao.getMentorsByCourseId(courseId);
+    }
+
 
     // MentorDao --------------------------------------------
 
@@ -1022,6 +1198,10 @@ public class AppRepository {
 
     public Review getReviewByReviewId(String review_id){
         return reviewDao.getReviewByReviewId(review_id);
+    }
+
+    public LiveData<Integer> getReviewCountForCourse(String courseId) {
+        return reviewDao.getReviewCountForCourse(courseId);
     }
 
 

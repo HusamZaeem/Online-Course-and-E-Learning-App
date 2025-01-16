@@ -50,18 +50,21 @@ public class Student implements Syncable {
     }
 
     @Ignore
-    public Student(@NonNull String student_id,String first_name, String last_name, String email, String password, String profile_photo, Date date_of_birth,boolean is_synced, Date last_updated, String phone) {
-        this.student_id=student_id;
+    public Student(@NonNull String student_id, String first_name, String last_name, String email, String password, String phone, String profile_photo, Date date_of_birth, boolean is_synced, Date last_updated) {
+        this.student_id = student_id;
         this.first_name = first_name;
         this.last_name = last_name;
         this.email = email;
         this.password = password;
+        this.phone = phone;
         this.profile_photo = profile_photo;
         this.date_of_birth = date_of_birth;
-        this.is_synced=is_synced;
-        this.last_updated=last_updated;
-        this.phone=phone;
+        this.is_synced = is_synced;
+        this.last_updated = last_updated;
     }
+
+
+
 
     public Date getLast_updated() {
         return last_updated;
@@ -88,7 +91,6 @@ public class Student implements Syncable {
     @Override
     public Map<String, Object> toMap() {
         Map<String, Object> map = new HashMap<>();
-        map.put("student_id", student_id);
         map.put("first_name", first_name);
         map.put("last_name", last_name);
         map.put("email", email);
@@ -96,7 +98,6 @@ public class Student implements Syncable {
         map.put("phone", phone);
         map.put("profile_photo", profile_photo);
         map.put("date_of_birth", Converter.toFirestoreTimestamp(date_of_birth));
-        map.put("is_synced", is_synced);
         map.put("last_updated", Converter.toFirestoreTimestamp(last_updated));
         return map;
     }

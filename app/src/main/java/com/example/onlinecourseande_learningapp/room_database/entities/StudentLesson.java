@@ -57,13 +57,13 @@ public class StudentLesson implements Syncable {
     @Ignore
     public StudentLesson(){}
 
-    public StudentLesson(@NonNull String student_lesson_id, @NonNull String student_id, @NonNull String lesson_id, boolean completion_status, boolean is_synced, Date last_updated ) {
+    public StudentLesson(@NonNull String student_lesson_id, @NonNull String student_id, @NonNull String lesson_id, boolean completion_status, boolean is_synced, Date last_updated) {
+        this.student_lesson_id = student_lesson_id;
         this.student_id = student_id;
         this.lesson_id = lesson_id;
         this.completion_status = completion_status;
         this.is_synced = is_synced;
         this.last_updated = last_updated;
-        this.student_lesson_id=student_lesson_id;
     }
 
     @NonNull
@@ -116,7 +116,6 @@ public class StudentLesson implements Syncable {
     @Override
     public Map<String, Object> toMap() {
         Map<String, Object> map = new HashMap<>();
-        map.put("student_lesson_id", student_lesson_id);
         map.put("student_id", student_id);
         map.put("lesson_id", lesson_id);
         map.put("completion_status", completion_status);

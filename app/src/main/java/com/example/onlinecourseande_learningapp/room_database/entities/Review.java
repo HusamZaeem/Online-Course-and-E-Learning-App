@@ -41,18 +41,17 @@ public class Review implements Syncable {
     public Review(){}
 
 
-    public Review(@NonNull String review_id, String student_id, String target_id, String type, double rate, String comment, Date timestamp, boolean is_synced,Date last_updated ) {
-        this.review_id=review_id;
+    public Review(@NonNull String review_id, String student_id, String target_id, String type, double rate, String comment, Date timestamp, boolean is_synced, Date last_updated) {
+        this.review_id = review_id;
         this.student_id = student_id;
         this.target_id = target_id;
         this.type = type;
         this.rate = rate;
         this.comment = comment;
         this.timestamp = timestamp;
-        this.is_synced= is_synced;
+        this.is_synced = is_synced;
         this.last_updated = last_updated;
     }
-
 
     @Ignore
     public Review(String student_id, String target_id, String type, double rate, String comment) {
@@ -104,13 +103,11 @@ public class Review implements Syncable {
     @Override
     public Map<String, Object> toMap() {
         Map<String, Object> map = new HashMap<>();
-        map.put("review_id", review_id);
         map.put("student_id", student_id);
         map.put("target_id", target_id);
         map.put("type", type);
         map.put("rate", rate);
         map.put("comment", comment);
-        map.put("is_synced", is_synced);
         map.put("timestamp", Converter.toFirestoreTimestamp(timestamp));
         map.put("last_updated", Converter.toFirestoreTimestamp(last_updated));
         return map;

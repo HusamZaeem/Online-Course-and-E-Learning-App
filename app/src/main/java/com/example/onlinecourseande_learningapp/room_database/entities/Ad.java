@@ -32,7 +32,7 @@ public class Ad implements Syncable {
     }
 
 
-    public Ad(@NonNull String id, String imageUrl, String main_title, String sub_title, String description, boolean is_synced,Date last_updated ) {
+    public Ad(@NonNull String id, String imageUrl, String main_title, String sub_title, String description, boolean is_synced, Date last_updated) {
         this.id = id;
         this.imageUrl = imageUrl;
         this.main_title = main_title;
@@ -87,12 +87,10 @@ public class Ad implements Syncable {
     @Override
     public Map<String, Object> toMap() {
         Map<String, Object> map = new HashMap<>();
-        map.put("id", id);
         map.put("imageUrl", imageUrl);
         map.put("main_title", main_title);
         map.put("sub_title", sub_title);
         map.put("description", description);
-        map.put("is_synced", is_synced);
         map.put("last_updated", Converter.toFirestoreTimestamp(last_updated));
         return map;
     }

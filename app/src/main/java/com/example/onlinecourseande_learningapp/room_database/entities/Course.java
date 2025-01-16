@@ -101,7 +101,6 @@ public class Course implements Syncable {
     @Override
     public Map<String, Object> toMap() {
         Map<String, Object> map = new HashMap<>();
-        map.put("course_id", course_id);
         map.put("course_name", course_name);
         map.put("price", price);
         map.put("hours", hours);
@@ -111,7 +110,6 @@ public class Course implements Syncable {
         map.put("students_count", students_count);
         map.put("photo_url", photo_url);
         map.put("category", category);
-        map.put("is_synced", is_synced);
         map.put("last_updated", Converter.toFirestoreTimestamp(last_updated));
         return map;
     }

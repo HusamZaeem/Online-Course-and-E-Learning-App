@@ -49,8 +49,8 @@ public class Enrollment implements Syncable {
     public Enrollment(){
     }
 
-    public Enrollment(@NonNull String enrollment_id, String student_id, String course_id, int progress, String status, Date completion_date, String certificate_url, Double final_grade, Date timestamp, double fee, boolean is_synced,Date last_updated ) {
-        this.enrollment_id=enrollment_id;
+    public Enrollment(@NonNull String enrollment_id, String student_id, String course_id, int progress, String status, Date completion_date, String certificate_url, Double final_grade, Date timestamp, double fee, boolean is_synced, Date last_updated) {
+        this.enrollment_id = enrollment_id;
         this.student_id = student_id;
         this.course_id = course_id;
         this.progress = progress;
@@ -60,8 +60,8 @@ public class Enrollment implements Syncable {
         this.final_grade = final_grade;
         this.timestamp = timestamp;
         this.fee = fee;
-        this.is_synced=is_synced;
-        this.last_updated=last_updated;
+        this.is_synced = is_synced;
+        this.last_updated = last_updated;
     }
 
     public boolean isIs_synced() {
@@ -105,7 +105,6 @@ public class Enrollment implements Syncable {
     @Override
     public Map<String, Object> toMap() {
         Map<String, Object> map = new HashMap<>();
-        map.put("enrollment_id", enrollment_id);
         map.put("student_id", student_id);
         map.put("course_id", course_id);
         map.put("progress", progress);
@@ -115,7 +114,6 @@ public class Enrollment implements Syncable {
         map.put("final_grade", final_grade);
         map.put("fee", fee);
         map.put("timestamp", Converter.toFirestoreTimestamp(timestamp));
-        map.put("is_synced", is_synced);
         map.put("last_updated", Converter.toFirestoreTimestamp(last_updated));
         return map;
     }

@@ -45,8 +45,8 @@ public class Message implements Syncable {
     @Ignore
     public Message(){}
 
-    public Message(@NonNull String message_id, String chat_id, String content, Date timestamp, String message_type, String group_id, boolean is_synced,Date last_updated ) {
-        this.message_id=message_id;
+    public Message(@NonNull String message_id, String chat_id, String content, Date timestamp, String message_type, String group_id, boolean is_synced, Date last_updated) {
+        this.message_id = message_id;
         this.chat_id = chat_id;
         this.content = content;
         this.timestamp = timestamp;
@@ -97,12 +97,10 @@ public class Message implements Syncable {
     @Override
     public Map<String, Object> toMap() {
         Map<String, Object> map = new HashMap<>();
-        map.put("message_id", message_id);
         map.put("chat_id", chat_id);
         map.put("content", content);
         map.put("message_type", message_type);
         map.put("group_id", group_id);
-        map.put("is_synced", is_synced);
         map.put("timestamp", Converter.toFirestoreTimestamp(timestamp));
         map.put("last_updated", Converter.toFirestoreTimestamp(last_updated));
         return map;

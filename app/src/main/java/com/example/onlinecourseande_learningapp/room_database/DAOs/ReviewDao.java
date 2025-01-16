@@ -71,4 +71,10 @@ public interface ReviewDao {
     @Query("SELECT * FROM Review WHERE is_synced = 0")
     List<Review> getUnsyncedReview();
 
+    @Query("SELECT COUNT(*) FROM Review WHERE type = 'Course' AND target_id = :courseId")
+    LiveData<Integer> getReviewCountForCourse(String courseId);
+
+    @Query("SELECT * FROM Review")
+    List<Review> getAllReviewsList();
+
 }

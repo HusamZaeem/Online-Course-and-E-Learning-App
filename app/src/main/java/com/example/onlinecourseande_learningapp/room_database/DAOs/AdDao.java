@@ -35,6 +35,9 @@ public interface AdDao {
     @Query("SELECT * FROM Ad")
     LiveData<List<Ad>> getAllAds();
 
+    @Query("SELECT * FROM Ad")
+    List<Ad> getAllAdsList();
+
     @Query("SELECT * FROM Ad WHERE id = :ad_id")
     Ad getAdById(String ad_id);
 

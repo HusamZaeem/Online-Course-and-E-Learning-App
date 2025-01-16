@@ -30,6 +30,9 @@ public interface EnrollmentDao {
     @Query("SELECT * FROM Enrollment")
     LiveData<List<Enrollment>> getAllEnrollments();
 
+    @Query("SELECT * FROM Enrollment")
+    List<Enrollment> getAllEnrollmentsList();
+
     @Query("SELECT * FROM Enrollment WHERE enrollment_id = :enrollment_id")
     LiveData<List<Enrollment>> getEnrollmentById(String enrollment_id);
 

@@ -57,12 +57,12 @@ public class StudentMentor implements Syncable {
     public StudentMentor(){}
 
 
-    public StudentMentor(@NonNull String student_mentor_id, @NonNull String student_id, @NonNull String mentor_id, boolean is_synced, Date last_updated ) {
+    public StudentMentor(@NonNull String student_mentor_id, @NonNull String student_id, @NonNull String mentor_id, boolean is_synced, Date last_updated) {
+        this.student_mentor_id = student_mentor_id;
         this.student_id = student_id;
         this.mentor_id = mentor_id;
         this.is_synced = is_synced;
         this.last_updated = last_updated;
-        this.student_mentor_id=student_mentor_id;
     }
 
     @NonNull
@@ -133,10 +133,8 @@ public class StudentMentor implements Syncable {
     @Override
     public Map<String, Object> toMap() {
         Map<String, Object> map = new HashMap<>();
-        map.put("student_mentor_id", student_mentor_id);
         map.put("student_id", student_id);
         map.put("mentor_id", mentor_id);
-        map.put("is_synced", is_synced);
         map.put("last_updated", Converter.toFirestoreTimestamp(last_updated));
         return map;
     }

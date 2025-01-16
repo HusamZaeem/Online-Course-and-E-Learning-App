@@ -96,7 +96,7 @@ public abstract class AppDatabase extends RoomDatabase {
                                 @Override
                                 public void onOpen(@NonNull SupportSQLiteDatabase db) {
                                     super.onOpen(db);
-                                    db.execSQL("PRAGMA foreign_keys=ON;");
+                                    db.setForeignKeyConstraintsEnabled(true);
                                 }
                             })
                             .build();

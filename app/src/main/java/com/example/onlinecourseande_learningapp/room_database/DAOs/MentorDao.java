@@ -33,6 +33,9 @@ public interface MentorDao {
     @Query("SELECT * FROM Mentor")
     LiveData<List<Mentor>> getAllMentors();
 
+    @Query("SELECT * FROM Mentor")
+    List<Mentor> getAllMentorsList();
+
     @Query("SELECT * FROM Mentor WHERE mentor_id = :mentor_id")
     Mentor getMentorById(String mentor_id);
 

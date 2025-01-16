@@ -30,6 +30,9 @@ public interface MessageDao {
     @Query("SELECT * FROM Message")
     LiveData<List<Message>> getAllMessages();
 
+    @Query("SELECT * FROM Message")
+    List<Message> getAllMessagesList();
+
     @Query("SELECT * FROM Message WHERE message_id = :message_id")
     LiveData<List<Message>> getMessageById(String message_id);
 

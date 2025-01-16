@@ -31,6 +31,9 @@ public interface ChatDao {
     @Query("SELECT * FROM Chat")
     LiveData<List<Chat>> getAllChats();
 
+    @Query("SELECT * FROM Chat")
+    List<Chat> getAllChatsList();
+
     @Query("SELECT * FROM Chat WHERE chat_id = :chat_id")
     Chat getChatById(String chat_id);
 

@@ -186,13 +186,22 @@ public class AllCoursesActivity extends AppCompatActivity implements RecentSearc
         }
     }
 
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.search_menu, menu);
-        MenuItem searchItem = menu.findItem(R.id.action_search);
-        SearchView searchView = (SearchView) searchItem.getActionView();
-        searchView.setQueryHint("Search courses...");
 
+        MenuItem searchItem = menu.findItem(R.id.action_search);
+        if (searchItem == null) {
+            throw new NullPointerException("Search item not found in menu.");
+        }
+
+        SearchView searchView = (SearchView) searchItem.getActionView();
+        if (searchView == null) {
+            throw new NullPointerException("SearchView is null. Check menu XML definition.");
+        }
+
+        searchView.setQueryHint("Search courses...");
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -210,6 +219,7 @@ public class AllCoursesActivity extends AppCompatActivity implements RecentSearc
 
         return true;
     }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

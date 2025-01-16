@@ -68,4 +68,13 @@
     <string name="tv_item_main_title">Today\'s Special</string>
     <string name="tv_item_description">Get a discount for every course order! Only valid for today!</string>
     <string name="tv_item_ad_discount">40%</string>
+    <string name="tv_course_reviews_no">(4.479 reviews)</string>
+    <string name="tv_course_hours">2.5 Hours</string>
+    <string name="tv_certificate">Certificate</string>
+    <string name="tv_mentor">Mentor</string>
+    <string name="tv_mentor_job_title">Mentor Job Title</string>
+    <string name="tv_about_course">About Course</string>
+    <string name="tv_course_description">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</string>
+    <string name="tv_course_tools">Tools</string>
+    <string name="enroll_course">Enroll Course</string>
 </resources>

@@ -30,6 +30,9 @@ public interface ModuleDao {
     @Query("SELECT * FROM Module")
     LiveData<List<Module>> getAllModules ();
 
+    @Query("SELECT * FROM Module")
+    List<Module> getAllModulesList ();
+
     @Query("SELECT * FROM Module WHERE module_id = :module_id")
     LiveData<List<Module>> getModuleById (String module_id);
 

@@ -39,15 +39,15 @@ public class Lesson implements Syncable {
     public Lesson(){}
 
 
-    public Lesson(@NonNull String lesson_id, String module_id, String lesson_title, int lesson_duration, String content_url, boolean is_exam, boolean is_synced,Date last_updated ) {
-        this.lesson_id=lesson_id;
+    public Lesson(@NonNull String lesson_id, String module_id, String lesson_title, int lesson_duration, String content_url, boolean is_exam, boolean is_synced, Date last_updated) {
+        this.lesson_id = lesson_id;
         this.module_id = module_id;
         this.lesson_title = lesson_title;
         this.lesson_duration = lesson_duration;
         this.content_url = content_url;
         this.is_exam = is_exam;
-        this.is_synced=is_synced;
-        this.last_updated=last_updated;
+        this.is_synced = is_synced;
+        this.last_updated = last_updated;
     }
 
     public boolean isIs_synced() {
@@ -91,13 +91,11 @@ public class Lesson implements Syncable {
     @Override
     public Map<String, Object> toMap() {
         Map<String, Object> map = new HashMap<>();
-        map.put("lesson_id", lesson_id);
         map.put("module_id", module_id);
         map.put("lesson_title", lesson_title);
         map.put("lesson_duration", lesson_duration);
         map.put("content_url", content_url);
         map.put("is_exam", is_exam);
-        map.put("is_synced", is_synced);
         map.put("last_updated", Converter.toFirestoreTimestamp(last_updated));
         return map;
     }

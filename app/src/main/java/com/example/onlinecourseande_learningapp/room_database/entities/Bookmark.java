@@ -42,8 +42,8 @@ public class Bookmark implements Syncable {
     public Bookmark(){}
 
 
-    public Bookmark(@NonNull String bookmark_id, String student_id, String course_id,boolean is_synced,Date last_updated ) {
-        this.bookmark_id=bookmark_id;
+    public Bookmark(@NonNull String bookmark_id, String student_id, String course_id, boolean is_synced, Date last_updated) {
+        this.bookmark_id = bookmark_id;
         this.student_id = student_id;
         this.course_id = course_id;
         this.is_synced = is_synced;
@@ -91,10 +91,8 @@ public class Bookmark implements Syncable {
     @Override
     public Map<String, Object> toMap() {
         Map<String, Object> map = new HashMap<>();
-        map.put("bookmark_id", bookmark_id);
         map.put("student_id", student_id);
         map.put("course_id", course_id);
-        map.put("is_synced", is_synced);
         map.put("last_updated", Converter.toFirestoreTimestamp(last_updated));
         return map;
     }

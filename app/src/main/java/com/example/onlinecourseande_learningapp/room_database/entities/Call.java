@@ -57,8 +57,8 @@ public class Call implements Syncable {
     @Ignore
     public Call(){}
 
-    public Call(@NonNull String call_id, String chat_id, String caller_id, String receiver_id, String callType, Date startTime, Date endTime, String callStatus, Date timestamp, boolean is_synced,Date last_updated ) {
-        this.call_id=call_id;
+    public Call(@NonNull String call_id, String chat_id, String caller_id, String receiver_id, String callType, Date startTime, Date endTime, String callStatus, Date timestamp, boolean is_synced, Date last_updated) {
+        this.call_id = call_id;
         this.chat_id = chat_id;
         this.caller_id = caller_id;
         this.receiver_id = receiver_id;
@@ -68,6 +68,7 @@ public class Call implements Syncable {
         this.callStatus = callStatus;
         this.timestamp = timestamp;
         this.is_synced = is_synced;
+        this.last_updated = last_updated;
     }
 
     public boolean isIs_synced() {
@@ -111,7 +112,6 @@ public class Call implements Syncable {
     @Override
     public Map<String, Object> toMap() {
         Map<String, Object> map = new HashMap<>();
-        map.put("call_id", call_id);
         map.put("chat_id", chat_id);
         map.put("caller_id", caller_id);
         map.put("receiver_id", receiver_id);
@@ -120,7 +120,6 @@ public class Call implements Syncable {
         map.put("endTime", Converter.toFirestoreTimestamp(endTime));
         map.put("callStatus", callStatus);
         map.put("timestamp", Converter.toFirestoreTimestamp(timestamp));
-        map.put("is_synced", is_synced);
         map.put("last_updated", Converter.toFirestoreTimestamp(last_updated));
         return map;
     }

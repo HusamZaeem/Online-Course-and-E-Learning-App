@@ -29,6 +29,9 @@ public interface BookmarkDao {
     @Query("SELECT * FROM Bookmark")
     LiveData<List<Bookmark>> getAllBookmarks ();
 
+    @Query("SELECT * FROM Bookmark")
+    List<Bookmark> getAllBookmarksList ();
+
     @Query("SELECT * FROM Bookmark WHERE bookmark_id = :bookmark_id")
     LiveData<List<Bookmark>> getBookmarkById (String bookmark_id);
 

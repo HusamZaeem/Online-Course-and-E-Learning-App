@@ -10,6 +10,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.function.Supplier;
 
 public class SyncManager {
@@ -17,43 +20,62 @@ public class SyncManager {
     private final AppRepository appRepository;
     private final FirebaseSyncHelper firebaseSyncHelper;
     private final FirebaseFirestore fs;
+    private final ExecutorService firebaseExecutor;
 
     public SyncManager(Context context) {
         this.roomDatabase = AppDatabase.getDatabase(context);
         this.appRepository = AppRepository.getInstance((Application) context.getApplicationContext());
         this.firebaseSyncHelper = new FirebaseSyncHelper(appRepository);
         this.fs = FirebaseFirestore.getInstance();
+        this.firebaseExecutor = Executors.newFixedThreadPool(4); // Separate executor for Firebase operations
     }
 
     public void syncAllData() {
-        AppDatabase.databaseWriteExecutor.execute(() -> {
-            // First, start listening for Firebase updates
-            startListeningForFirebaseUpdates(() -> {
-                // Once listening is complete, start syncing each entity one by one
-                syncEntity(appRepository::getUnsyncedStudents, "Student", () -> syncEntity(appRepository::getUnsyncedMentors, "Mentor", () -> syncEntity(appRepository::getUnsyncedCourses, "Course", () -> syncEntity(appRepository::getUnsyncedModule, "Module", () -> syncEntity(appRepository::getUnsyncedLesson, "Lesson", () -> syncEntity(appRepository::getUnsyncedChat, "Chat", () ->  syncEntity(appRepository::getUnsyncedStudentModule, "StudentModule", () -> syncEntity(appRepository::getUnsyncedStudentMentor, "StudentMentor", () -> syncEntity(appRepository::getUnsyncedStudentLesson, "StudentLesson", () -> syncEntity(appRepository::getUnsyncedMentorCourse, "MentorCourse", () -> syncEntity(appRepository::getUnsyncedGroupMembership, "GroupMembership", () ->  syncEntity(appRepository::getUnsyncedCall, "Call", () -> syncEntity(appRepository::getUnsyncedReview, "Review", () -> syncEntity(appRepository::getUnsyncedNotification, "Notification", () -> syncEntity(appRepository::getUnsyncedAttachment, "Attachment", () -> syncEntity(appRepository::getUnsyncedGroup, "Group", () -> syncEntity(appRepository::getUnsyncedEnrollment, "Enrollment", () -> syncEntity(appRepository::getUnsyncedMessage, "Message", () -> syncEntity(appRepository::getUnsyncedBookmark, "Bookmark", () -> syncEntity(appRepository::getUnsyncedAd, "Ad", () -> {
-                    // Finally, all syncing is done
-                }))))))))))))))))))));
-            });
+        CompletableFuture.runAsync(() -> {
+            // Start listening for Firebase updates
+            startListeningForFirebaseUpdates()
+                    .thenCompose(aVoid -> syncEntity(appRepository::getUnsyncedStudents, "Student"))
+                    .thenCompose(aVoid -> syncEntity(appRepository::getUnsyncedMentors, "Mentor"))
+                    .thenCompose(aVoid -> syncEntity(appRepository::getUnsyncedCourses, "Course"))
+                    .thenCompose(aVoid -> syncEntity(appRepository::getUnsyncedModule, "Module"))
+                    .thenCompose(aVoid -> syncEntity(appRepository::getUnsyncedLesson, "Lesson"))
+                    .thenCompose(aVoid -> syncEntity(appRepository::getUnsyncedChat, "Chat"))
+                    .thenCompose(aVoid -> syncEntity(appRepository::getUnsyncedStudentModule, "StudentModule"))
+                    .thenCompose(aVoid -> syncEntity(appRepository::getUnsyncedStudentMentor, "StudentMentor"))
+                    .thenCompose(aVoid -> syncEntity(appRepository::getUnsyncedStudentLesson, "StudentLesson"))
+                    .thenCompose(aVoid -> syncEntity(appRepository::getUnsyncedMentorCourse, "MentorCourse"))
+                    .thenCompose(aVoid -> syncEntity(appRepository::getUnsyncedGroupMembership, "GroupMembership"))
+                    .thenCompose(aVoid -> syncEntity(appRepository::getUnsyncedCall, "Call"))
+                    .thenCompose(aVoid -> syncEntity(appRepository::getUnsyncedReview, "Review"))
+                    .thenCompose(aVoid -> syncEntity(appRepository::getUnsyncedNotification, "Notification"))
+                    .thenCompose(aVoid -> syncEntity(appRepository::getUnsyncedAttachment, "Attachment"))
+                    .thenCompose(aVoid -> syncEntity(appRepository::getUnsyncedGroup, "Group"))
+                    .thenCompose(aVoid -> syncEntity(appRepository::getUnsyncedEnrollment, "Enrollment"))
+                    .thenCompose(aVoid -> syncEntity(appRepository::getUnsyncedMessage, "Message"))
+                    .thenCompose(aVoid -> syncEntity(appRepository::getUnsyncedBookmark, "Bookmark"))
+                    .thenCompose(aVoid -> syncEntity(appRepository::getUnsyncedAd, "Ad"))
+                    .thenRun(() -> Log.d("SyncManager", "All data synced successfully"))
+                    .exceptionally(e -> {
+                        Log.e("SyncManager", "Error during sync", e);
+                        return null;
+                    });
         });
     }
 
-
-    // Modified syncEntity method to accept a SyncCallback
-    public <T extends Syncable> void syncEntity(Supplier<List<T>> fetchUnsynced, String collection, SyncCallback callback) {
-        AppDatabase.databaseWriteExecutor.execute(() -> {
-            List<T> unsyncedEntities = fetchUnsynced.get();
+    private CompletableFuture<Void> syncEntity(Supplier<List<? extends Syncable>> fetchUnsynced, String collection) {
+        return CompletableFuture.runAsync(() -> {
+            List<? extends Syncable> unsyncedEntities = fetchUnsynced.get();
 
             if (unsyncedEntities == null || unsyncedEntities.isEmpty()) {
                 Log.d("SyncManager", "No unsynced entities found in collection: " + collection);
-                callback.onSyncComplete();
                 return;
             }
 
-            for (T entity : unsyncedEntities) {
+            for (Syncable entity : unsyncedEntities) {
                 String documentId = entity.getId();
                 if (documentId == null || documentId.isEmpty()) {
                     Log.e("SyncManager", "Invalid ID for entity in collection: " + collection);
-                    continue; // Skip this entity
+                    continue;
                 }
 
                 Map<String, Object> firebaseData = new HashMap<>();
@@ -61,10 +83,10 @@ public class SyncManager {
 
                 if (entityData == null) {
                     Log.e("SyncManager", "Failed to convert entity to map for collection: " + collection);
-                    continue; // Skip this entity
+                    continue;
                 }
 
-                // Process the map to convert Date fields to Firestore Timestamps
+                // Convert Date fields to Firestore Timestamps
                 for (Map.Entry<String, Object> entry : entityData.entrySet()) {
                     if (entry.getValue() instanceof Date) {
                         firebaseData.put(entry.getKey(), Converter.toFirestoreTimestamp((Date) entry.getValue()));
@@ -73,34 +95,72 @@ public class SyncManager {
                     }
                 }
 
-                fs.collection(collection).document(documentId)
-                        .set(firebaseData)
-                        .addOnSuccessListener(aVoid -> {
-                            AppDatabase.databaseWriteExecutor.execute(() -> {
+                CompletableFuture.runAsync(() -> {
+                    fs.collection(collection).document(documentId)
+                            .set(firebaseData)
+                            .addOnSuccessListener(aVoid -> {
                                 entity.markAsSynced();
                                 entity.updateInRepository(appRepository);
                                 Log.d("SyncManager", "Successfully synced entity in collection: " + collection);
-                                callback.onSyncComplete();
-                            });
-                        })
-                        .addOnFailureListener(e -> {
-                            Log.e("SyncError", "Failed to sync entity in collection: " + collection, e);
-                            callback.onSyncComplete();
-                        });
+                            })
+                            .addOnFailureListener(e -> Log.e("SyncError", "Failed to sync entity in collection: " + collection, e));
+                }, firebaseExecutor);
             }
         });
     }
 
+//    private CompletableFuture<Void> startListeningForFirebaseUpdates() {
+//        return CompletableFuture.runAsync(() -> {
+//            firebaseSyncHelper.startSyncingStudents(() -> firebaseSyncHelper.startSyncingMentors(() -> firebaseSyncHelper.startSyncingCourses(() -> {
+//                // Add other syncing logic here
+//            })));
+//        });
+//    }
 
-    private void startListeningForFirebaseUpdates(Runnable onListeningComplete) {
-        firebaseSyncHelper.startSyncingStudents(() -> firebaseSyncHelper.startSyncingMentors(() -> firebaseSyncHelper.startSyncingCourses(() -> firebaseSyncHelper.startSyncingModules(() -> firebaseSyncHelper.startSyncingLessons(() -> firebaseSyncHelper.startSyncingChats(() -> firebaseSyncHelper.startSyncingStudentModules(() -> firebaseSyncHelper.startSyncingStudentMentors(() -> firebaseSyncHelper.startSyncingStudentLessons(() -> firebaseSyncHelper.startSyncingMentorCourses(() -> firebaseSyncHelper.startSyncingGroupMemberships(() -> firebaseSyncHelper.startSyncingCalls(() -> firebaseSyncHelper.startSyncingReviews(() -> firebaseSyncHelper.startSyncingNotifications(() -> firebaseSyncHelper.startSyncingAttachments(() -> firebaseSyncHelper.startSyncingGroups(() -> firebaseSyncHelper.startSyncingEnrollments(() -> firebaseSyncHelper.startSyncingMessages(() ->  firebaseSyncHelper.startSyncingBookmarks(() -> firebaseSyncHelper.startSyncingAds(() -> {
-            // Once everything is synced, we call the onListeningComplete callback
-            onListeningComplete.run();
-        }))))))))))))))))))));
-    }
+        private CompletableFuture<Void> startListeningForFirebaseUpdates() {
+            return CompletableFuture.runAsync(() -> {
+                firebaseSyncHelper.startSyncingStudents(() -> {
+                    firebaseSyncHelper.startSyncingMentors(() -> {
+                        firebaseSyncHelper.startSyncingCourses(() -> {
+                            firebaseSyncHelper.startSyncingModules(() -> {
+                                firebaseSyncHelper.startSyncingLessons(() -> {
+                                    firebaseSyncHelper.startSyncingChats(() -> {
+                                        firebaseSyncHelper.startSyncingStudentModules(() -> {
+                                            firebaseSyncHelper.startSyncingStudentMentors(() -> {
+                                                firebaseSyncHelper.startSyncingStudentLessons(() -> {
+                                                    firebaseSyncHelper.startSyncingMentorCourses(() -> {
+                                                        firebaseSyncHelper.startSyncingGroups(() -> {
+                                                        firebaseSyncHelper.startSyncingGroupMemberships(() -> {
+                                                            firebaseSyncHelper.startSyncingCalls(() -> {
+                                                                firebaseSyncHelper.startSyncingReviews(() -> {
+                                                                    firebaseSyncHelper.startSyncingNotifications(() -> {
+                                                                                firebaseSyncHelper.startSyncingEnrollments(() -> {
+                                                                                    firebaseSyncHelper.startSyncingMessages(() -> {
+                                                                                        firebaseSyncHelper.startSyncingAttachments(() -> {
+                                                                                        firebaseSyncHelper.startSyncingBookmarks(() -> {
+                                                                                            firebaseSyncHelper.startSyncingAds(() -> {
+                                                                                                // Add other syncing logic here
+                                                                                            });
+                                                                                        });
+                                                                                    });
+                                                                                });
+                                                                            });
+                                                                        });
+                                                                    });
+                                                                });
+                                                            });
+                                                        });
+                                                    });
+                                                });
+                                            });
+                                        });
+                                    });
+                                });
+                            });
+                        });
+                    });
+                });
+            });
 
-
-    public interface SyncCallback {
-        void onSyncComplete();
-    }
+}
 }

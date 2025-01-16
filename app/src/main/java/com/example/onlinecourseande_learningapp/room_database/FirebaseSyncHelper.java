@@ -1,6 +1,5 @@
 package com.example.onlinecourseande_learningapp.room_database;
 
-
 import android.util.Log;
 
 import com.example.onlinecourseande_learningapp.room_database.entities.Ad;
@@ -56,8 +55,9 @@ public class FirebaseSyncHelper {
                             });
                         }
                     }
+                    onComplete.run();
                 });
-        onComplete.run();
+
     }
 
     public void startSyncingCourses(Runnable onComplete) {
@@ -77,8 +77,9 @@ public class FirebaseSyncHelper {
                             });
                         }
                     }
+                    onComplete.run();
                 });
-        onComplete.run();
+
     }
 
     public void startSyncingStudents(Runnable onComplete) {
@@ -98,8 +99,9 @@ public class FirebaseSyncHelper {
                             });
                         }
                     }
+                    onComplete.run();
                 });
-        onComplete.run();
+
     }
 
 
@@ -120,8 +122,9 @@ public class FirebaseSyncHelper {
                             });
                         }
                     }
+                    onComplete.run();
                 });
-        onComplete.run();
+
     }
 
 
@@ -142,8 +145,9 @@ public class FirebaseSyncHelper {
                             });
                         }
                     }
+                    onComplete.run();
                 });
-        onComplete.run();
+
     }
 
 
@@ -164,8 +168,9 @@ public class FirebaseSyncHelper {
                             });
                         }
                     }
+                    onComplete.run();
                 });
-        onComplete.run();
+
     }
 
 
@@ -186,8 +191,9 @@ public class FirebaseSyncHelper {
                             });
                         }
                     }
+                    onComplete.run();
                 });
-        onComplete.run();
+
     }
 
 
@@ -208,8 +214,9 @@ public class FirebaseSyncHelper {
                             });
                         }
                     }
+                    onComplete.run();
                 });
-        onComplete.run();
+
     }
 
     public void startSyncingModules(Runnable onComplete) {
@@ -229,8 +236,9 @@ public class FirebaseSyncHelper {
                             });
                         }
                     }
+                    onComplete.run();
                 });
-        onComplete.run();
+
     }
 
 
@@ -251,8 +259,9 @@ public class FirebaseSyncHelper {
                             });
                         }
                     }
+                    onComplete.run();
                 });
-        onComplete.run();
+
     }
 
 
@@ -273,8 +282,9 @@ public class FirebaseSyncHelper {
                             });
                         }
                     }
+                    onComplete.run();
                 });
-        onComplete.run();
+
     }
 
 
@@ -295,8 +305,9 @@ public class FirebaseSyncHelper {
                             });
                         }
                     }
+                    onComplete.run();
                 });
-        onComplete.run();
+
     }
 
 
@@ -317,8 +328,9 @@ public class FirebaseSyncHelper {
                             });
                         }
                     }
+                    onComplete.run();
                 });
-        onComplete.run();
+
     }
 
 
@@ -339,8 +351,9 @@ public class FirebaseSyncHelper {
                             });
                         }
                     }
+                    onComplete.run();
                 });
-        onComplete.run();
+
     }
 
 
@@ -361,8 +374,9 @@ public class FirebaseSyncHelper {
                             });
                         }
                     }
+                    onComplete.run();
                 });
-        onComplete.run();
+
     }
 
 
@@ -379,12 +393,12 @@ public class FirebaseSyncHelper {
                             remoteChat.setChat_id(dc.getDocument().getId());
                             AppDatabase.getDatabaseWriteExecutor().execute(() -> {
                                 Chat localChat = appRepository.getChatById(remoteChat.getId());
-                                handleSync(remoteChat,localChat,"Chat");
+                                handleSync(remoteChat, localChat, "Chat");
                             });
                         }
                     }
+                    onComplete.run();
                 });
-        onComplete.run();
     }
 
 
@@ -405,8 +419,9 @@ public class FirebaseSyncHelper {
                             });
                         }
                     }
+                    onComplete.run();
                 });
-        onComplete.run();
+
     }
 
 
@@ -428,8 +443,9 @@ public class FirebaseSyncHelper {
 
                         }
                     }
+                    onComplete.run();
                 });
-        onComplete.run();
+
     }
 
 
@@ -451,8 +467,9 @@ public class FirebaseSyncHelper {
                             });
                         }
                     }
+                    onComplete.run();
                 });
-        onComplete.run();
+
     }
 
 
@@ -473,8 +490,9 @@ public class FirebaseSyncHelper {
                             });
                         }
                     }
+                    onComplete.run();
                 });
-        onComplete.run();
+
     }
 
 
@@ -482,36 +500,44 @@ public class FirebaseSyncHelper {
     private <T extends Syncable> void handleSync(T remoteEntity, T localEntity, String collection) {
         String documentId = remoteEntity.getId();
         if (documentId == null || documentId.isEmpty()) {
-            Log.w(TAG, "Firestore Document ID is missing for " + collection);
+            Log.w(TAG, "Firestore Document ID is missing or invalid for " + collection);
             return;
         }
 
-        if (localEntity == null) {
-            remoteEntity.setPrimaryKey(documentId);
-            remoteEntity.insertInRepository(appRepository);
-            Log.i(TAG, collection + " Inserted: " + documentId);
-        } else {
-            Date remoteLastUpdated = remoteEntity.getLast_updated();
-            Date localLastUpdated = localEntity.getLast_updated();
-
-            if (remoteLastUpdated == null && localLastUpdated == null) {
-                Log.w(TAG, collection + " has no valid last_updated timestamps: " + documentId);
-                return;
-            }
-
-            if (remoteLastUpdated != null && (localLastUpdated == null || remoteLastUpdated.compareTo(localLastUpdated) > 0)) {
+        try {
+            if (localEntity == null) {
                 remoteEntity.setPrimaryKey(documentId);
-                remoteEntity.updateInRepository(appRepository);
-                Log.i(TAG, collection + " Updated locally from Firebase: " + documentId);
-            } else if (localLastUpdated != null && (remoteLastUpdated == null || remoteLastUpdated.compareTo(localLastUpdated) < 0)) {
-                Map<String, Object> localData = localEntity.toMap();
-                localData.put("last_updated", Converter.toFirestoreTimestamp(localLastUpdated)); // Convert Date to Firestore Timestamp
+                remoteEntity.insertInRepository(appRepository);
+                Log.i(TAG, collection + " Inserted: " + documentId);
+            } else {
+                Date remoteLastUpdated = remoteEntity.getLast_updated();
+                Date localLastUpdated = localEntity.getLast_updated();
 
-                db.collection(collection).document(localEntity.getId())
-                        .set(localData)
-                        .addOnSuccessListener(aVoid -> Log.i(TAG, "Conflict resolved: Local data pushed to Firebase"))
-                        .addOnFailureListener(error -> Log.e(TAG, "Failed to resolve conflict for local data: " + documentId, error));
+                if (remoteLastUpdated == null && localLastUpdated == null) {
+                    Log.w(TAG, collection + " has no valid last_updated timestamps: " + documentId);
+                    return;
+                }
+
+                if (remoteLastUpdated != null && (localLastUpdated == null || remoteLastUpdated.after(localLastUpdated))) {
+                    remoteEntity.setPrimaryKey(documentId);
+                    remoteEntity.updateInRepository(appRepository);
+                    Log.i(TAG, collection + " Updated locally from Firebase: " + documentId);
+                } else if (localLastUpdated != null && (remoteLastUpdated == null || localLastUpdated.after(remoteLastUpdated))) {
+                    try {
+                        Map<String, Object> localData = localEntity.toMap();
+                        localData.put("last_updated", Converter.toFirestoreTimestamp(localLastUpdated));
+
+                        db.collection(collection).document(localEntity.getId())
+                                .set(localData)
+                                .addOnSuccessListener(aVoid -> Log.i(TAG, "Conflict resolved: Local data pushed to Firebase"))
+                                .addOnFailureListener(error -> Log.e(TAG, "Failed to resolve conflict for local data: " + documentId, error));
+                    } catch (Exception e) {
+                        Log.e(TAG, "Error while pushing local data to Firebase for " + collection + ": " + documentId, e);
+                    }
+                }
             }
+        } catch (Exception e) {
+            Log.e(TAG, "Error in handleSync for " + collection + " and documentId: " + documentId, e);
         }
     }
 

@@ -38,8 +38,8 @@ public class Module implements Syncable {
     @Ignore
     public Module(){}
 
-    public Module(@NonNull String module_id, String module_name, String course_id, int duration, boolean is_synced,Date last_updated ) {
-        this.module_id=module_id;
+    public Module(@NonNull String module_id, String module_name, String course_id, int duration, boolean is_synced, Date last_updated) {
+        this.module_id = module_id;
         this.module_name = module_name;
         this.course_id = course_id;
         this.duration = duration;
@@ -88,11 +88,9 @@ public class Module implements Syncable {
     @Override
     public Map<String, Object> toMap() {
         Map<String, Object> map = new HashMap<>();
-        map.put("module_id", module_id);
         map.put("module_name", module_name);
         map.put("course_id", course_id);
         map.put("duration", duration);
-        map.put("is_synced", is_synced);
         map.put("last_updated", Converter.toFirestoreTimestamp(last_updated));
         return map;
     }

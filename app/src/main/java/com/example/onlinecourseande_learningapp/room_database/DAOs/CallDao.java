@@ -30,6 +30,9 @@ public interface CallDao {
     @Query("SELECT * FROM Call")
     LiveData<List<Call>> getAllCalls ();
 
+    @Query("SELECT * FROM Call")
+    List<Call> getAllCallsList ();
+
     @Query("SELECT * FROM Call WHERE call_id = :call_id")
     Call getCallById (String call_id);
 

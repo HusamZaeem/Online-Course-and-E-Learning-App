@@ -7,8 +7,10 @@ import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
+import androidx.room.Transaction;
 import androidx.room.Update;
 
+import com.example.onlinecourseande_learningapp.room_database.entities.Mentor;
 import com.example.onlinecourseande_learningapp.room_database.entities.MentorCourse;
 import com.example.onlinecourseande_learningapp.room_database.entities.Message;
 
@@ -32,11 +34,17 @@ public interface MentorCourseDao {
     @Query("SELECT course_id FROM MentorCourse WHERE mentor_id = :mentor_id")
     LiveData<List<String>> getAllMentorCourses(String mentor_id);
 
+    @Query("SELECT * FROM MentorCourse")
+    List<MentorCourse> getAllMentorsCourses();
+
     @Query("SELECT * FROM MentorCourse WHERE mentor_course_id = :mentor_course_id")
     MentorCourse getMentorCourseByMentorCourseId(String mentor_course_id);
 
     @Query("SELECT * FROM MentorCourse WHERE is_synced = 0")
     List<MentorCourse> getUnsyncedMentorCourse();
 
+    @Transaction
+    @Query("SELECT * FROM Mentor WHERE mentor_id IN (SELECT mentor_id FROM MentorCourse WHERE course_id = :courseId LIMIT 1)")
+    LiveData<Mentor> getMentorsByCourseId(String courseId);
 
 }

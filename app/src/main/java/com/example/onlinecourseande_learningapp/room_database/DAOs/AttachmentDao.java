@@ -32,6 +32,9 @@ public interface AttachmentDao {
     @Query("SELECT * FROM Attachment")
     LiveData<List<Attachment>> getAllAttachments ();
 
+    @Query("SELECT * FROM Attachment")
+    List<Attachment> getAllAttachmentsList ();
+
 
     @Query(
             "SELECT Attachment.* " +

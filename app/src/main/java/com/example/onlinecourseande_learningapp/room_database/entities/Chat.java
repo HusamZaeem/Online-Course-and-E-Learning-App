@@ -39,12 +39,13 @@ public class Chat implements Syncable {
     @Ignore
     public Chat(){}
 
-    public Chat(@NonNull String chat_id, String sender_id, String receiver_id, Date timestamp, boolean is_synced,Date last_updated ) {
+    public Chat(@NonNull String chat_id, String sender_id, String receiver_id, Date timestamp, boolean is_synced, Date last_updated) {
+        this.chat_id = chat_id;
         this.sender_id = sender_id;
         this.receiver_id = receiver_id;
         this.timestamp = timestamp;
-        this.is_synced=is_synced;
-        this.last_updated=last_updated;
+        this.is_synced = is_synced;
+        this.last_updated = last_updated;
     }
 
     public boolean isIs_synced() {
@@ -88,10 +89,8 @@ public class Chat implements Syncable {
     @Override
     public Map<String, Object> toMap() {
         Map<String, Object> map = new HashMap<>();
-        map.put("chat_id", chat_id);
         map.put("sender_id", sender_id);
         map.put("receiver_id", receiver_id);
-        map.put("is_synced", is_synced);
         map.put("timestamp", Converter.toFirestoreTimestamp(timestamp));
         map.put("last_updated", Converter.toFirestoreTimestamp(last_updated));
         return map;

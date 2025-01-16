@@ -57,13 +57,13 @@ public class StudentModule implements Syncable {
     @Ignore
     public StudentModule(){}
 
-    public StudentModule(@NonNull String student_module_id, @NonNull String module_id, double module_grade, @NonNull String student_id, boolean is_synced, Date last_updated ) {
+    public StudentModule(@NonNull String student_module_id, @NonNull String student_id, @NonNull String module_id, double module_grade, boolean is_synced, Date last_updated) {
+        this.student_module_id = student_module_id;
+        this.student_id = student_id;
         this.module_id = module_id;
         this.module_grade = module_grade;
-        this.student_id = student_id;
         this.is_synced = is_synced;
         this.last_updated = last_updated;
-        this.student_module_id=student_module_id;
     }
 
     public boolean isIs_synced() {
@@ -116,11 +116,9 @@ public class StudentModule implements Syncable {
     @Override
     public Map<String, Object> toMap() {
         Map<String, Object> map = new HashMap<>();
-        map.put("student_module_id", student_module_id);
         map.put("student_id", student_id);
         map.put("module_id", module_id);
         map.put("module_grade", module_grade);
-        map.put("is_synced", is_synced);
         map.put("last_updated", Converter.toFirestoreTimestamp(last_updated));
         return map;
     }

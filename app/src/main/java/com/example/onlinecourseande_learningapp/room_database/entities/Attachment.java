@@ -36,8 +36,8 @@ public class Attachment implements Syncable {
     @Ignore
     public Attachment(){}
 
-    public Attachment(@NonNull String attachment_id, String media_url, String message_id,boolean is_synced,Date last_updated ) {
-        this.attachment_id=attachment_id;
+    public Attachment(@NonNull String attachment_id, String media_url, String message_id, boolean is_synced, Date last_updated) {
+        this.attachment_id = attachment_id;
         this.media_url = media_url;
         this.message_id = message_id;
         this.is_synced = is_synced;
@@ -85,10 +85,8 @@ public class Attachment implements Syncable {
     @Override
     public Map<String, Object> toMap() {
         Map<String, Object> map = new HashMap<>();
-        map.put("attachment_id", attachment_id);
         map.put("media_url", media_url);
         map.put("message_id", message_id);
-        map.put("is_synced", is_synced);
         map.put("last_updated", Converter.toFirestoreTimestamp(last_updated));
         return map;
     }

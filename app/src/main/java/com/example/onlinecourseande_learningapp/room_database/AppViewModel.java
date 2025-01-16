@@ -242,12 +242,15 @@ public class AppViewModel extends AndroidViewModel {
         return appRepository.getAllCourses();
     }
 
-    Course getCourseById (String course_id){
+    public Course getCourseById (String course_id){
         return appRepository.getCourseById(course_id);
     }
 
+    public LiveData<Course> getCourseByIdLiveData(String course_id){
+        return appRepository.getCourseByIdLiveData(course_id);
+    }
 
-    Course getCoursesByCategory (String category){
+    public Course getCoursesByCategory (String category){
         return appRepository.getCoursesByCategory(category);
     }
 
@@ -576,6 +579,10 @@ public class AppViewModel extends AndroidViewModel {
     }
 
 
+    public LiveData<Mentor> getMentorsByCourseId(String courseId) {
+        return appRepository.getMentorsByCourseId(courseId);
+    }
+
     // MessageDao --------------------------------------------
 
 
@@ -783,6 +790,9 @@ public class AppViewModel extends AndroidViewModel {
 
 
 
+    public LiveData<Integer> getReviewCountForCourse(String courseId) {
+        return appRepository.getReviewCountForCourse(courseId);
+    }
 
 
 

@@ -26,4 +26,3 @@ public class PeriodicSyncWorker extends Worker {
         }
     }
 }
-

@@ -54,5 +54,6 @@ public interface StudentLessonDao {
     @Query("SELECT * FROM StudentLesson WHERE is_synced = 0")
     List<StudentLesson> getUnsyncedStudentLesson();
 
-
+    @Query("SELECT * FROM StudentLesson")
+    List<StudentLesson> getAllStudentLesson();
 }

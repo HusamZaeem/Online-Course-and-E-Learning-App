@@ -43,4 +43,7 @@ public interface StudentModuleDao {
     @Query("SELECT * FROM StudentModule WHERE is_synced = 0")
     List<StudentModule> getUnsyncedStudentModule();
 
+    @Query("SELECT * FROM StudentModule")
+    List<StudentModule> getAllStudentModule();
+
 }

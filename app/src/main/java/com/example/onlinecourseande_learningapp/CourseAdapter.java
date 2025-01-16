@@ -1,6 +1,7 @@
 package com.example.onlinecourseande_learningapp;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,6 +44,13 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.CourseView
         holder.courseRating.setText(String.valueOf(course.getCourse_rating()));
         holder.courseStudentsCount.setText(String.valueOf(course.getStudents_count()) + " students");
         ImageLoaderUtil.loadImageFromFirebaseStorage(context, course.getPhoto_url(), holder.photo);
+
+        holder.itemView.setOnClickListener(view -> {
+            Intent intent = new Intent(context, CourseDetailsActivity.class);
+            intent.putExtra("course_id", course.getCourse_id());
+            context.startActivity(intent);
+        });
+
     }
 
     @Override

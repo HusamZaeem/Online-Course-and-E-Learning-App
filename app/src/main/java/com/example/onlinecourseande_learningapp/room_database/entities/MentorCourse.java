@@ -63,12 +63,16 @@ public class MentorCourse implements Syncable {
     }
 
     @Ignore
-    public MentorCourse(@NonNull String mentor_id, @NonNull String course_id, boolean is_synced, Date last_updated) {
+    public MentorCourse(@NonNull String mentor_course_id, @NonNull String mentor_id, @NonNull String course_id, boolean is_synced, Date last_updated) {
+        this.mentor_course_id = mentor_course_id;
         this.mentor_id = mentor_id;
         this.course_id = course_id;
         this.is_synced = is_synced;
         this.last_updated = last_updated;
     }
+
+
+
 
     @NonNull
     public String getMentor_course_id() {
@@ -120,10 +124,8 @@ public class MentorCourse implements Syncable {
     @Override
     public Map<String, Object> toMap() {
         Map<String, Object> map = new HashMap<>();
-        map.put("mentor_course_id", mentor_course_id);
         map.put("mentor_id", mentor_id);
         map.put("course_id", course_id);
-        map.put("is_synced", is_synced);
         map.put("last_updated", Converter.toFirestoreTimestamp(last_updated));
         return map;
     }

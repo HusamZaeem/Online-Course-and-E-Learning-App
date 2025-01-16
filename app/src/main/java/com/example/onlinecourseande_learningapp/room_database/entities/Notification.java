@@ -37,13 +37,13 @@ public class Notification implements Syncable {
     @Ignore
     public Notification(){}
 
-    public Notification(@NonNull String notification_id, String student_id, String content, Date timestamp, boolean is_synced,Date last_updated ) {
-        this.notification_id=notification_id;
+    public Notification(@NonNull String notification_id, String student_id, String content, Date timestamp, boolean is_synced, Date last_updated) {
+        this.notification_id = notification_id;
         this.student_id = student_id;
         this.content = content;
         this.timestamp = timestamp;
-        this.is_synced=is_synced;
-        this.last_updated= last_updated;
+        this.is_synced = is_synced;
+        this.last_updated = last_updated;
     }
 
     public boolean isIs_synced() {
@@ -87,7 +87,6 @@ public class Notification implements Syncable {
     @Override
     public Map<String, Object> toMap() {
         Map<String, Object> map = new HashMap<>();
-        map.put("notification_id", notification_id);
         map.put("student_id", student_id);
         map.put("content", content);
         map.put("receiver_id", is_synced);

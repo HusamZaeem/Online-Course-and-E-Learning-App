@@ -31,6 +31,9 @@ public interface GroupDao {
     @Query("SELECT * FROM `Group`")
     LiveData<List<Group>> getAllGroups();
 
+    @Query("SELECT * FROM `Group`")
+    List<Group> getAllGroupsList();
+
     @Query("SELECT * FROM `Group` WHERE group_id = :group_id")
     LiveData<List<Group>> getGroupById(String group_id);
 

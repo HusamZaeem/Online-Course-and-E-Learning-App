@@ -44,4 +44,7 @@ public interface GroupMembershipDao {
     @Query("SELECT * FROM GroupMembership WHERE is_synced = 0")
     List<GroupMembership> getUnsyncedGroupMembership();
 
+    @Query("SELECT * FROM GroupMembership")
+    List<GroupMembership> getAllGroupMemberships();
+
 }

@@ -39,4 +39,7 @@ public interface StudentMentorDao {
     @Query("SELECT * FROM StudentMentor WHERE is_synced = 0")
     List<StudentMentor> getUnsyncedStudentMentor();
 
+    @Query("SELECT * FROM StudentMentor")
+    List<StudentMentor> getAllStudentMentor();
+
 }
