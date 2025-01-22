@@ -33,6 +33,8 @@ public interface EnrollmentDao {
     @Query("SELECT * FROM Enrollment")
     List<Enrollment> getAllEnrollmentsList();
 
+
+
     @Query("SELECT * FROM Enrollment WHERE enrollment_id = :enrollment_id")
     LiveData<List<Enrollment>> getEnrollmentById(String enrollment_id);
 
@@ -128,8 +130,8 @@ public interface EnrollmentDao {
 
 
 
-    @Query("SELECT * FROM Enrollment WHERE student_id = :student_id AND course_id = :course_id AND status = 'enrolled'")
-    Enrollment checkEnrollment(String student_id, String course_id);
+    @Query("SELECT * FROM Enrollment WHERE student_id = :student_id AND course_id = :course_id")
+    LiveData<Enrollment> checkEnrollment(String student_id, String course_id);
 
 
 
@@ -138,6 +140,10 @@ public interface EnrollmentDao {
 
     @Query("SELECT * FROM Enrollment WHERE is_synced = 0")
     List<Enrollment> getUnsyncedEnrollment();
+
+
+    @Query("SELECT * FROM Enrollment WHERE student_id = :studentId AND course_id IN (:courseIds)")
+    LiveData<List<Enrollment>> checkEnrollmentInMentorCourses(String studentId, List<String> courseIds);
 
 
 }

@@ -18,6 +18,7 @@ public class RecentSearchAdapter extends RecyclerView.Adapter<RecentSearchAdapte
     private Context context;
     private OnSearchItemClickListener listener;
 
+
     public interface OnSearchItemClickListener {
         void onDeleteClick(String item);
         void onItemClick(String item);
@@ -43,7 +44,7 @@ public class RecentSearchAdapter extends RecyclerView.Adapter<RecentSearchAdapte
 
         holder.itemView.setOnClickListener(v -> {
             if (listener != null) {
-                listener.onItemClick(search); // Define this in your listener
+                listener.onItemClick(search);
             }
         });
 

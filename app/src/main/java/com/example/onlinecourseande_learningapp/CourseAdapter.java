@@ -25,6 +25,11 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.CourseView
         this.context=context;
     }
 
+    public void updateData(List<Course> newCourseList) {
+        this.courseList = newCourseList;
+        notifyDataSetChanged();
+    }
+
     @NonNull
     @Override
     public CourseViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {

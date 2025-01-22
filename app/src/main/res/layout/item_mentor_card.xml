@@ -11,7 +11,7 @@
         android:layout_margin="8dp"
         android:layout_gravity="center"
         android:elevation="0dp"
-        app:cardCornerRadius="50dp">
+        app:cardCornerRadius="30dp">
 
         <ImageView
             android:id="@+id/iv_item_mentor_photo"

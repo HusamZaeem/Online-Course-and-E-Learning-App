@@ -77,4 +77,13 @@ public interface ReviewDao {
     @Query("SELECT * FROM Review")
     List<Review> getAllReviewsList();
 
+
+    @Query("SELECT COUNT(*) FROM Review WHERE type = 'Mentor' AND target_id = :mentorId")
+    LiveData<Integer> getReviewCountForMentor(String mentorId);
+
+
+
+
+
+
 }

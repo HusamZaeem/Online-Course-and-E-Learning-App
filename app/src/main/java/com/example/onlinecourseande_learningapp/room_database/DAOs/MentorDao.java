@@ -39,6 +39,9 @@ public interface MentorDao {
     @Query("SELECT * FROM Mentor WHERE mentor_id = :mentor_id")
     Mentor getMentorById(String mentor_id);
 
+    @Query("SELECT * FROM Mentor WHERE mentor_id = :mentor_id")
+    LiveData<Mentor> getMentorByIdLive(String mentor_id);
+
     @Query("SELECT * FROM Mentor WHERE is_synced = 0")
     List<Mentor> getUnsyncedMentors();
 

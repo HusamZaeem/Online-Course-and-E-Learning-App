@@ -27,8 +27,8 @@ public class Review implements Syncable {
     @NonNull
     private String review_id="";
     private String student_id;
-    private String target_id;
-    private String type;
+    private String target_id; //(course_id,mentor_id)
+    private String type; // (Course,Mentor)
     private double rate;
     private String comment;
     private Date timestamp;
@@ -60,6 +60,18 @@ public class Review implements Syncable {
         this.type = type;
         this.rate = rate;
         this.comment = comment;
+    }
+
+    @Ignore
+    public Review(String review_id, String student_id, String target_id, String type, double rate, String comment,Date timestamp, boolean is_synced) {
+        this.review_id= review_id;
+        this.student_id = student_id;
+        this.target_id = target_id;
+        this.type = type;
+        this.rate = rate;
+        this.comment = comment;
+        this.timestamp=timestamp;
+        this.is_synced = is_synced;
     }
 
     public boolean isIs_synced() {

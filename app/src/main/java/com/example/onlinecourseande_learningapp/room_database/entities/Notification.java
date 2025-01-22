@@ -89,7 +89,6 @@ public class Notification implements Syncable {
         Map<String, Object> map = new HashMap<>();
         map.put("student_id", student_id);
         map.put("content", content);
-        map.put("receiver_id", is_synced);
         map.put("timestamp", Converter.toFirestoreTimestamp(timestamp));
         map.put("last_updated", Converter.toFirestoreTimestamp(last_updated));
         return map;

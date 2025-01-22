@@ -10,6 +10,7 @@ import androidx.room.Query;
 import androidx.room.Transaction;
 import androidx.room.Update;
 
+import com.example.onlinecourseande_learningapp.room_database.entities.Course;
 import com.example.onlinecourseande_learningapp.room_database.entities.Mentor;
 import com.example.onlinecourseande_learningapp.room_database.entities.MentorCourse;
 import com.example.onlinecourseande_learningapp.room_database.entities.Message;
@@ -46,5 +47,16 @@ public interface MentorCourseDao {
     @Transaction
     @Query("SELECT * FROM Mentor WHERE mentor_id IN (SELECT mentor_id FROM MentorCourse WHERE course_id = :courseId LIMIT 1)")
     LiveData<Mentor> getMentorsByCourseId(String courseId);
+
+
+    @Query("SELECT COUNT(*) FROM MentorCourse WHERE mentor_id = :mentorId")
+    LiveData<Integer> getMentorCourseCount(String mentorId);
+
+
+    @Query("SELECT course_id FROM MentorCourse WHERE mentor_id = :mentorId")
+    List<String> getCoursesForAMentor(String mentorId);
+
+
+
 
 }

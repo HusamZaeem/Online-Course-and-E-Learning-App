@@ -109,13 +109,6 @@ public class SyncManager {
         });
     }
 
-//    private CompletableFuture<Void> startListeningForFirebaseUpdates() {
-//        return CompletableFuture.runAsync(() -> {
-//            firebaseSyncHelper.startSyncingStudents(() -> firebaseSyncHelper.startSyncingMentors(() -> firebaseSyncHelper.startSyncingCourses(() -> {
-//                // Add other syncing logic here
-//            })));
-//        });
-//    }
 
         private CompletableFuture<Void> startListeningForFirebaseUpdates() {
             return CompletableFuture.runAsync(() -> {
@@ -139,7 +132,7 @@ public class SyncManager {
                                                                                         firebaseSyncHelper.startSyncingAttachments(() -> {
                                                                                         firebaseSyncHelper.startSyncingBookmarks(() -> {
                                                                                             firebaseSyncHelper.startSyncingAds(() -> {
-                                                                                                // Add other syncing logic here
+
                                                                                             });
                                                                                         });
                                                                                     });

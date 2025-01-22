@@ -25,9 +25,11 @@ public class MyApplication extends Application {
     public void onCreate() {
         super.onCreate();
 
+        FirebaseApp.initializeApp(this);
         FirebaseAppCheck firebaseAppCheck = FirebaseAppCheck.getInstance();
-        firebaseAppCheck.installAppCheckProviderFactory(DebugAppCheckProviderFactory.getInstance());
-        firebaseAppCheck.setTokenAutoRefreshEnabled(false);
+        firebaseAppCheck.installAppCheckProviderFactory(
+                DebugAppCheckProviderFactory.getInstance()
+        );
 
 
         // Initialize the Facebook SDK

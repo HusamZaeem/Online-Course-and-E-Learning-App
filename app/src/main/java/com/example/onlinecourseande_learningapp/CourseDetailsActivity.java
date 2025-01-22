@@ -36,6 +36,8 @@ public class CourseDetailsActivity extends AppCompatActivity {
 
         CourseDetailsPagerAdapter adapter = new CourseDetailsPagerAdapter(this,courseId);
         binding.vbCourseDetails.setAdapter(adapter);
+        binding.vbCourseDetails.setOffscreenPageLimit(3);
+
 
         new TabLayoutMediator(binding.courseDetailsTabLayout, binding.vbCourseDetails, (tab, position) -> {
             switch (position) {

@@ -6,6 +6,8 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.Transformations;
 
 import com.example.onlinecourseande_learningapp.AppExecutors;
 import com.example.onlinecourseande_learningapp.room_database.DAOs.EnrollmentDao;
@@ -30,12 +32,15 @@ import com.example.onlinecourseande_learningapp.room_database.entities.StudentLe
 import com.example.onlinecourseande_learningapp.room_database.entities.StudentMentor;
 import com.example.onlinecourseande_learningapp.room_database.entities.StudentModule;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class AppViewModel extends AndroidViewModel {
 
     AppRepository appRepository;
+    private static AppViewModel instance;
     private final MutableLiveData<Boolean> lessonCompletionStatus = new MutableLiveData<>();
+    private final MutableLiveData<String> searchQuery = new MutableLiveData<>();
 
 
     public AppViewModel(@NonNull Application application) {
@@ -43,8 +48,51 @@ public class AppViewModel extends AndroidViewModel {
         appRepository = new AppRepository(application);
     }
 
+    public static AppViewModel getInstance(@NonNull Application application) {
+        if (instance == null) {
+            instance = new AppViewModel(application);
+        }
+        return instance;
+    }
+
+    // Method to get filtered mentors based on query
+    public void getFilteredMentors(String query, final MentorFilterCallback callback) {
+        // Observe LiveData to get the list of mentors
+        appRepository.getAllMentors().observeForever(new Observer<List<Mentor>>() {
+            @Override
+            public void onChanged(List<Mentor> allMentors) {
+                List<Mentor> filteredMentors = new ArrayList<>();
+
+                // Filter logic
+                if (allMentors != null) {
+                    for (Mentor mentor : allMentors) {
+                        if (mentor.getMentor_fName().toLowerCase().contains(query.toLowerCase()) ||
+                                mentor.getMentor_lName().toLowerCase().contains(query.toLowerCase())) {
+                            filteredMentors.add(mentor);
+                        }
+                    }
+                }
+
+                // Callback to return the filtered mentors
+                callback.onFilterComplete(filteredMentors);
+            }
+        });
+    }
+
+    public interface MentorFilterCallback {
+        void onFilterComplete(List<Mentor> filteredMentors);
+    }
 
 
+
+
+    public LiveData<String> getSearchQuery() {
+        return searchQuery;
+    }
+
+    public void setSearchQuery(String query) {
+        searchQuery.setValue(query);
+    }
 
 
 
@@ -242,6 +290,10 @@ public class AppViewModel extends AndroidViewModel {
         return appRepository.getAllCourses();
     }
 
+    public LiveData<List<Course>> getCoursesByIds(List<String> courseIds){
+        return appRepository.getCoursesByIds(courseIds);
+    }
+
     public Course getCourseById (String course_id){
         return appRepository.getCourseById(course_id);
     }
@@ -253,6 +305,23 @@ public class AppViewModel extends AndroidViewModel {
     public Course getCoursesByCategory (String category){
         return appRepository.getCoursesByCategory(category);
     }
+
+    public LiveData<List<Course>> getCoursesForMentor(String mentorId) {
+        // Fetch course IDs for the mentor
+        LiveData<List<String>> courseIdsLiveData = appRepository.getAllMentorCourses(mentorId);
+
+        // Map course IDs to course objects once the list is available
+        return Transformations.switchMap(courseIdsLiveData, courseIds -> {
+            if (courseIds != null && !courseIds.isEmpty()) {
+                // Fetch the courses for the given course IDs
+                return appRepository.getCoursesByIds(courseIds);
+            }
+            // If no course IDs are available, return an empty list
+            return new MutableLiveData<>(new ArrayList<>());
+        });
+    }
+
+
 
 
     // EnrollmentDao --------------------------------------------
@@ -324,22 +393,25 @@ public class AppViewModel extends AndroidViewModel {
 
 
 
-    // Enroll in a paid course
+
     public void completeEnrollment(String studentId, String courseId, double fee, String courseName) {
         appRepository.completeEnrollment(studentId, courseId, fee, courseName);
     }
 
 
 
-    // Enroll in a free course
+
     public void enrollInFreeCourse(String studentId, String courseId) {
             appRepository.enrollInFreeCourse(studentId, courseId);
     }
 
-    public Enrollment checkEnrollment(String student_id, String course_id) {
+    public LiveData<Enrollment> checkEnrollment(String student_id, String course_id) {
         return appRepository.checkEnrollment(student_id, course_id);
     }
 
+    public LiveData<List<Enrollment>> checkEnrollmentInMentorCourses(String studentId, List<String> courseIds){
+        return appRepository.checkEnrollmentInMentorCourses(studentId,courseIds);
+    }
 
 
 
@@ -524,6 +596,7 @@ public class AppViewModel extends AndroidViewModel {
 
 
 
+
     // MentorDao --------------------------------------------
 
 
@@ -555,6 +628,10 @@ public class AppViewModel extends AndroidViewModel {
         return appRepository.getMentorById(mentor_id);
     }
 
+    public LiveData<Mentor> getMentorByIdLive(String mentor_id){
+        return appRepository.getMentorByIdLive(mentor_id);
+    }
+
 
     public List<Mentor> getUnsyncedMentors(){
         return appRepository.getUnsyncedMentors();
@@ -581,6 +658,20 @@ public class AppViewModel extends AndroidViewModel {
 
     public LiveData<Mentor> getMentorsByCourseId(String courseId) {
         return appRepository.getMentorsByCourseId(courseId);
+    }
+
+
+    public LiveData<Integer> getMentorCourseCount(String mentorId){
+        return appRepository.getMentorCourseCount(mentorId);
+    }
+
+    public LiveData<List<String>> getCoursesForAMentor(String mentorId) {
+        MutableLiveData<List<String>> courseIds = new MutableLiveData<>();
+        AppExecutors.getInstance().diskIO().execute(() -> {
+            List<String> ids = appRepository.getCoursesForAMentor(mentorId);
+            courseIds.postValue(ids);
+        });
+        return courseIds;
     }
 
     // MessageDao --------------------------------------------
@@ -792,6 +883,11 @@ public class AppViewModel extends AndroidViewModel {
 
     public LiveData<Integer> getReviewCountForCourse(String courseId) {
         return appRepository.getReviewCountForCourse(courseId);
+    }
+
+
+    public LiveData<Integer> getReviewCountForMentor(String mentorId){
+        return appRepository.getReviewCountForMentor(mentorId);
     }
 
 

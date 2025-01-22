@@ -1,5 +1,6 @@
 package com.example.onlinecourseande_learningapp;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -78,6 +79,11 @@ public class AboutCourseFragment extends Fragment {
                                 binding.ivCourseMentorPhoto
                         );
 
+                        binding.ivCourseMentorPhoto.setOnClickListener(view -> {
+                            Intent intent = new Intent(requireContext(), MentorProfileActivity.class);
+                            intent.putExtra("mentor_id", mentor.getMentor_id());
+                            startActivity(intent);
+                        });
 
                         binding.ivCourseMentorChat.setOnClickListener(view -> {
                             // Handle chat button click

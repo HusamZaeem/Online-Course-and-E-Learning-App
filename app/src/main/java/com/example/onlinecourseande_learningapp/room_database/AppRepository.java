@@ -525,6 +525,10 @@ public class AppRepository {
         return courseDao.getCourseById(course_id);
     }
 
+    public LiveData<List<Course>> getCoursesByIds(List<String> courseIds){
+        return courseDao.getCoursesByIds(courseIds);
+    }
+
     public LiveData<Course> getCourseByIdLiveData(String course_id){
         return courseDao.getCourseByIdLiveData(course_id);
     }
@@ -644,13 +648,18 @@ public class AppRepository {
         });
     }
 
-    public Enrollment checkEnrollment(String student_id, String course_id) {
+    public LiveData<Enrollment> checkEnrollment(String student_id, String course_id) {
         return enrollmentDao.checkEnrollment(student_id, course_id);
     }
 
 
     public Enrollment getEnrollmentByEnrollmentId(String enrollment_id){
         return enrollmentDao.getEnrollmentByEnrollmentId(enrollment_id);
+    }
+
+
+    public LiveData<List<Enrollment>> checkEnrollmentInMentorCourses(String studentId, List<String> courseIds){
+        return enrollmentDao.checkEnrollmentInMentorCourses(studentId,courseIds);
     }
 
 
@@ -897,6 +906,14 @@ public class AppRepository {
         return mentorCourseDao.getMentorsByCourseId(courseId);
     }
 
+    public LiveData<Integer> getMentorCourseCount(String mentorId){
+        return mentorCourseDao.getMentorCourseCount(mentorId);
+    }
+
+
+    public List<String> getCoursesForAMentor(String mentorId){
+        return mentorCourseDao.getCoursesForAMentor(mentorId);
+    }
 
     // MentorDao --------------------------------------------
 
@@ -935,6 +952,10 @@ public class AppRepository {
 
     public Mentor getMentorById(String mentor_id){
         return mentorDao.getMentorById(mentor_id);
+    }
+
+    public LiveData<Mentor> getMentorByIdLive(String mentor_id){
+        return mentorDao.getMentorByIdLive(mentor_id);
     }
 
 
@@ -1203,6 +1224,12 @@ public class AppRepository {
     public LiveData<Integer> getReviewCountForCourse(String courseId) {
         return reviewDao.getReviewCountForCourse(courseId);
     }
+
+
+    public LiveData<Integer> getReviewCountForMentor(String mentorId){
+        return reviewDao.getReviewCountForMentor(mentorId);
+    }
+
 
 
     // StudentDao --------------------------------------------

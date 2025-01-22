@@ -1,16 +1,11 @@
 package com.example.onlinecourseande_learningapp;
 
-import static java.security.AccessController.getContext;
-
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
-import android.widget.EditText;
-import android.widget.SearchView;
-import android.widget.Toolbar;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
@@ -32,7 +27,6 @@ public class AllCoursesActivity extends AppCompatActivity implements RecentSearc
     private CourseAdapter courseAdapter;
     private List<Course> allCourses = new ArrayList<>();
     private List<Course> filteredCourses = new ArrayList<>();
-    private EditText searchEditText;
     private List<String> recentSearches = new ArrayList<>();
     private RecentSearchAdapter recentSearchAdapter;
 
@@ -54,12 +48,13 @@ public class AllCoursesActivity extends AppCompatActivity implements RecentSearc
         setupToolbar();
         setupTabLayoutCategories();
         setupRecyclerView();
-        loadCourses("All");
+        setupSearchEditText();
         setupRecentSearchRecyclerView();
 
+        loadCourses("All");
         toggleDeleteAllVisibility();
 
-        binding.tvDeleteAll.setOnClickListener(v -> {
+        binding.tvClearAll.setOnClickListener(v -> {
             recentSearches.clear();
             recentSearchAdapter.notifyDataSetChanged();
             SharedPrefHelper.saveRecentSearches(this, recentSearches);
@@ -67,7 +62,23 @@ public class AllCoursesActivity extends AppCompatActivity implements RecentSearc
         });
     }
 
+    private void setupSearchEditText() {
+        binding.searchEditText.setVisibility(View.VISIBLE); // Ensure it's visible
+        binding.searchEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
 
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                filterCoursesBySearch(s.toString());
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+        });
+    }
 
     private void setupRecentSearchRecyclerView() {
         binding.recentSearchRecyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -78,9 +89,9 @@ public class AllCoursesActivity extends AppCompatActivity implements RecentSearc
 
     private void toggleDeleteAllVisibility() {
         if (recentSearches.isEmpty()) {
-            binding.tvDeleteAll.setVisibility(View.GONE);
+            binding.tvClearAll.setVisibility(View.GONE);
         } else {
-            binding.tvDeleteAll.setVisibility(View.VISIBLE);
+            binding.tvClearAll.setVisibility(View.VISIBLE);
         }
     }
 
@@ -157,6 +168,7 @@ public class AllCoursesActivity extends AppCompatActivity implements RecentSearc
             }
         }
         courseAdapter.notifyDataSetChanged();
+        toggleNoResultsImage();
     }
 
     private void filterCoursesBySearch(String query) {
@@ -171,11 +183,16 @@ public class AllCoursesActivity extends AppCompatActivity implements RecentSearc
             }
         }
         courseAdapter.notifyDataSetChanged();
+        toggleNoResultsImage();
     }
 
-
-
-
+    private void toggleNoResultsImage() {
+        if (filteredCourses.isEmpty()) {
+            binding.noResultsImage.setVisibility(View.VISIBLE);
+        } else {
+            binding.noResultsImage.setVisibility(View.GONE);
+        }
+    }
 
     private void addSearchToRecent(String searchQuery) {
         if (!recentSearches.contains(searchQuery)) {
@@ -187,50 +204,7 @@ public class AllCoursesActivity extends AppCompatActivity implements RecentSearc
     }
 
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.search_menu, menu);
-
-        MenuItem searchItem = menu.findItem(R.id.action_search);
-        if (searchItem == null) {
-            throw new NullPointerException("Search item not found in menu.");
-        }
-
-        SearchView searchView = (SearchView) searchItem.getActionView();
-        if (searchView == null) {
-            throw new NullPointerException("SearchView is null. Check menu XML definition.");
-        }
-
-        searchView.setQueryHint("Search courses...");
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                filterCoursesBySearch(query);
-                addSearchToRecent(query);
-                return true;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                filterCoursesBySearch(newText);
-                return true;
-            }
-        });
-
-        return true;
-    }
-
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            navigateToHomeFragment();
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
+@Override
     public void onDeleteClick(String item) {
         recentSearches.remove(item);
         recentSearchAdapter.notifyDataSetChanged();

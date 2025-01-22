@@ -27,7 +27,7 @@ public class CourseDetailsPagerAdapter extends FragmentStateAdapter {
             case 1:
                 return LessonsFragment.newInstance(courseId);
             case 2:
-                return ReviewsFragment.newInstance(courseId);
+                return ReviewsFragment.newInstance(courseId, "Course");
             default:
                 throw new IllegalArgumentException("Invalid tab position");
         }
@@ -35,7 +35,7 @@ public class CourseDetailsPagerAdapter extends FragmentStateAdapter {
 
     @Override
     public int getItemCount() {
-        return 3; // Number of tabs
+        return 3;
     }
 }
 

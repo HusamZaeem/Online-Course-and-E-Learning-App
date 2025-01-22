@@ -43,6 +43,9 @@ public interface CourseDao {
     @Query("SELECT * FROM Course WHERE course_id = :course_id")
     LiveData<Course> getCourseByIdLiveData(String course_id);
 
+    @Query("SELECT * FROM Course WHERE course_id IN (:courseIds)")
+    LiveData<List<Course>> getCoursesByIds(List<String> courseIds);
+
     @Query("SELECT * FROM Course WHERE category = :category")
     Course getCoursesByCategory (String category);
 

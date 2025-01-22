@@ -3,6 +3,7 @@ package com.example.onlinecourseande_learningapp;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -100,16 +101,32 @@ public class NewPasswordFragment extends Fragment {
 
         binding.etPasswordNew1.setOnFocusChangeListener((v, hasFocus) -> {
             int color = hasFocus ? getResources().getColor(R.color.et_bg_active) : getResources().getColor(R.color.et_bg_default);
-            // Change icon color
-            binding.etPasswordNew1.getCompoundDrawables()[0].setColorFilter(color, PorterDuff.Mode.SRC_IN); // Lock icon
-            binding.etPasswordNew1.getCompoundDrawables()[2].setColorFilter(color, PorterDuff.Mode.SRC_IN); // Eye icon
+            Drawable[] drawables = binding.etPasswordNew1.getCompoundDrawables();
+
+            // Check and apply color filter to the start icon (index 0)
+            if (drawables[0] != null) {
+                drawables[0].setColorFilter(color, PorterDuff.Mode.SRC_IN);
+            }
+
+            // Check and apply color filter to the end icon (index 2)
+            if (drawables[2] != null) {
+                drawables[2].setColorFilter(color, PorterDuff.Mode.SRC_IN);
+            }
         });
 
         binding.etPasswordNew2.setOnFocusChangeListener((v, hasFocus) -> {
             int color = hasFocus ? getResources().getColor(R.color.et_bg_active) : getResources().getColor(R.color.et_bg_default);
-            // Change icon color
-            binding.etPasswordNew2.getCompoundDrawables()[0].setColorFilter(color, PorterDuff.Mode.SRC_IN); // Lock icon
-            binding.etPasswordNew2.getCompoundDrawables()[2].setColorFilter(color, PorterDuff.Mode.SRC_IN); // Eye icon
+            Drawable[] drawables = binding.etPasswordNew2.getCompoundDrawables();
+
+            // Check and apply color filter to the start icon (index 0)
+            if (drawables[0] != null) {
+                drawables[0].setColorFilter(color, PorterDuff.Mode.SRC_IN);
+            }
+
+            // Check and apply color filter to the end icon (index 2)
+            if (drawables[2] != null) {
+                drawables[2].setColorFilter(color, PorterDuff.Mode.SRC_IN);
+            }
         });
 
 
@@ -178,35 +195,49 @@ public class NewPasswordFragment extends Fragment {
     }
 
     private void resetPassword(String newPassword) {
-        firestore.collection("Student")
-                .whereEqualTo("email", email)
-                .get()
-                .addOnSuccessListener(queryDocumentSnapshots -> {
-                    if (!queryDocumentSnapshots.isEmpty()) {
-                        String studentId = queryDocumentSnapshots.getDocuments().get(0).getId();
-                        firestore.collection("Student").document(studentId)
-                                .update("password", newPassword)
-                                .addOnSuccessListener(unused -> {
-                                    Log.d("ResetPassword", "Password updated successfully in Firebase.");
-                                    // Update Room Database
-                                    repository.updateStudentPassword(email, newPassword);
-                                    // Show Dialog and Transition
-                                    enqueueSyncWorkAndShowDialog(newPassword);
-                                })
-                                .addOnFailureListener(e ->{
-                                    Log.e("ResetPassword", "Error updating password in Firebase: ", e);
-                                    Toast.makeText(getContext(), "Error updating password in Firebase: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                                }
+        // Encrypt the new password before updating in local database
+        try {
+            KeystoreHelper keystoreHelper = new KeystoreHelper();
+            keystoreHelper.generateKey();
+            String encryptedPassword = keystoreHelper.encryptPassword(newPassword);
 
-                                );
-                    } else {
-                        Toast.makeText(getContext(), "No user found with the provided email.", Toast.LENGTH_SHORT).show();
-                    }
-                })
-                .addOnFailureListener(e ->
-                        Toast.makeText(getContext(), "Error fetching user: " + e.getMessage(), Toast.LENGTH_SHORT).show()
-                );
+            // First update Firebase
+            firestore.collection("Student")
+                    .whereEqualTo("email", email)
+                    .get()
+                    .addOnSuccessListener(queryDocumentSnapshots -> {
+                        if (!queryDocumentSnapshots.isEmpty()) {
+                            String studentId = queryDocumentSnapshots.getDocuments().get(0).getId();
+                            firestore.collection("Student").document(studentId)
+                                    .update("password", newPassword) // Store the plain password in Firebase
+                                    .addOnSuccessListener(unused -> {
+                                        Log.d("ResetPassword", "Password updated successfully in Firebase.");
+
+
+                                        repository.updateStudentPassword(email, encryptedPassword);
+
+                                        // Show Dialog and Start Sync Worker
+                                        enqueueSyncWorkAndShowDialog(newPassword);
+                                    })
+                                    .addOnFailureListener(e -> {
+                                        Log.e("ResetPassword", "Error updating password in Firebase: ", e);
+                                        Toast.makeText(getContext(), "Error updating password in Firebase: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                    });
+                        } else {
+                            Toast.makeText(getContext(), "No user found with the provided email.", Toast.LENGTH_SHORT).show();
+                        }
+                    })
+                    .addOnFailureListener(e ->
+                            Toast.makeText(getContext(), "Error fetching user: " + e.getMessage(), Toast.LENGTH_SHORT).show()
+                    );
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(getContext(), "Encryption error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
     }
+
+
 
     private void enqueueSyncWorkAndShowDialog(String newHashedPassword) {
         OneTimeWorkRequest syncWorkRequest = new OneTimeWorkRequest.Builder(PeriodicSyncWorker.class).build();

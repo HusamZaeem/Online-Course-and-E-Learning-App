@@ -114,34 +114,54 @@ public class SignUp extends AppCompatActivity {
         binding.btnSignUpNewAccount.setOnClickListener(v -> {
             String email = binding.etEmailSignUp.getText().toString();
             String password = binding.etPasswordSignUp.getText().toString();
-            String hashedPassword = PasswordHasher.hashPassword(password);
 
             if (isValidEmail(email) && isValidPassword(password)) {
                 if (isNetworkAvailable()) {
-                    firebaseAuth.createUserWithEmailAndPassword(email, password)
-                            .addOnCompleteListener(task -> {
-                                if (task.isSuccessful()) {
-                                    FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
-                                    if (firebaseUser != null) {
-                                        String uid = firebaseUser.getUid();
-                                        saveUserToFirestore(uid, email, hashedPassword);
-                                        syncData();
-                                        startActivity(new Intent(getBaseContext(), MainActivity.class));
-                                        finish();
+                    try {
+                        KeystoreHelper keystoreHelper = new KeystoreHelper();
+                        keystoreHelper.generateKey();  // Ensure key is generated
+
+                        // Encrypt password for local Room database
+                        String encryptedPassword = keystoreHelper.encryptPassword(password);
+
+                        firebaseAuth.createUserWithEmailAndPassword(email, password)
+                                .addOnCompleteListener(task -> {
+                                    if (task.isSuccessful()) {
+                                        FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
+                                        if (firebaseUser != null) {
+                                            String uid = firebaseUser.getUid();
+                                            saveUserToFirestore(uid, email, password); // For Firebase we send the plain password
+                                            saveUserLocally(email, encryptedPassword); // Store encrypted password locally
+                                            syncData();
+                                            startActivity(new Intent(getBaseContext(), MainActivity.class));
+                                            finish();
+                                        }
+                                    } else {
+                                        showErrorMessage("Sign-Up Failed: " + task.getException().getMessage());
                                     }
-                                } else {
-                                    showErrorMessage("Sign-Up Failed: " + task.getException().getMessage());
-                                }
-                            });
+                                });
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        showErrorMessage("Encryption error: " + e.getMessage());
+                    }
                 } else {
-                    saveUserLocally(email, hashedPassword);
-                    showErrorMessage("You are offline. User will be saved locally.");
+                    try {
+                        KeystoreHelper keystoreHelper = new KeystoreHelper();
+                        keystoreHelper.generateKey();
+                        String encryptedPassword = keystoreHelper.encryptPassword(password);
+                        saveUserLocally(email, encryptedPassword);
+                        showErrorMessage("You are offline. User will be saved locally.");
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        showErrorMessage("Encryption error: " + e.getMessage());
+                    }
                 }
             } else {
                 showErrorMessage("Invalid email or password");
             }
-
         });
+
+
 
 
 

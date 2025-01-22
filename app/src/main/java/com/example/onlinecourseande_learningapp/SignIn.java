@@ -3,11 +3,13 @@ package com.example.onlinecourseande_learningapp;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.PorterDuff;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.text.InputType;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
@@ -19,6 +21,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.onlinecourseande_learningapp.databinding.ActivitySignInBinding;
 import com.example.onlinecourseande_learningapp.room_database.AppViewModel;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 public class SignIn extends AppCompatActivity {
 
@@ -28,6 +31,10 @@ public class SignIn extends AppCompatActivity {
 
     private AppViewModel appViewModel;
     private FirebaseAuth firebaseAuth;
+
+    private static final String PREFS_NAME = "UserPrefs";
+    private static final String KEY_EMAIL = "email";
+    private static final String KEY_PASSWORD = "password";
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -39,6 +46,10 @@ public class SignIn extends AppCompatActivity {
 
         appViewModel = new ViewModelProvider(this).get(AppViewModel.class);
         firebaseAuth = FirebaseAuth.getInstance();
+
+
+
+        checkRememberedUser();
 
 
         // Add Eye Icon Click Listener
@@ -98,41 +109,58 @@ public class SignIn extends AppCompatActivity {
 
 
 
-        binding.btnSignIn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        binding.btnSignIn.setOnClickListener(v -> {
+            String email = binding.etEmailSignIn.getText().toString();
+            String password = binding.etPasswordSignIn.getText().toString();
 
-                String email = binding.etEmailSignIn.getText().toString();
-                String password = binding.etPasswordSignIn.getText().toString();
-
-                if (isValidEmail(email) && isValidPassword(password)) {
-                    if (isNetworkAvailable()) {
-                        // User is online, sign in normally with Firebase
-                        firebaseAuth.signInWithEmailAndPassword(email, password)
-                                .addOnCompleteListener(task -> {
-                                    if (task.isSuccessful()) {
+            if (isValidEmail(email) && isValidPassword(password)) {
+                if (isNetworkAvailable()) {
+                    // User is online, sign in normally with Firebase
+                    firebaseAuth.signInWithEmailAndPassword(email, password)
+                            .addOnCompleteListener(task -> {
+                                if (task.isSuccessful()) {
+                                    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                                    String userId = user != null ? user.getUid() : null;
+                                    if (userId != null) {
+                                        Log.d("SignIn", "Student ID set: " + userId);
+                                        saveStudentIdToSharedPreferences(userId);
+                                        saveCredentials(email, password);
                                         startActivity(new Intent(getBaseContext(), MainActivity.class));
                                         finish();
-                                    } else {
-                                        showErrorMessage("Sign-In Failed: " + task.getException().getMessage());
+                                    }else {
+                                        showErrorMessage("Failed to retrieve student ID.");
                                     }
-                                });
-                    } else {
-                        // User is offline, observe the LiveData for student
-                        appViewModel.getStudentByEmail(email).observe(SignIn.this, student -> {
-                            if (student != null && PasswordHasher.verifyPassword(password, student.getPassword())) {
-                                // User logged in successfully with local data
-                                startActivity(new Intent(getBaseContext(), MainActivity.class));
-                                finish();
-                            } else {
-                                showErrorMessage("No matching user found offline.");
-                            }
-                        });
-                    }
+                                } else {
+                                    showErrorMessage("Sign-In Failed: " + task.getException().getMessage());
+                                }
+                            });
                 } else {
-                    showErrorMessage("Invalid email or password");
+                    // User is offline, observe the LiveData for student
+                    appViewModel.getStudentByEmail(email).observe(SignIn.this, student -> {
+                        if (student != null) {
+                            // Decrypt password using KeystoreHelper instance
+                            try {
+                                KeystoreHelper keystoreHelper = new KeystoreHelper();  // Create instance
+                                String decryptedPassword = keystoreHelper.decryptPassword(student.getPassword());
+                                if (PasswordHasher.verifyPassword(password, decryptedPassword)) {
+                                    // User logged in successfully with local data
+                                    saveStudentIdToSharedPreferences(student.getStudent_id());
+                                    startActivity(new Intent(getBaseContext(), MainActivity.class));
+                                    finish();
+                                } else {
+                                    showErrorMessage("No matching user found offline.");
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                showErrorMessage("Failed to decrypt password.");
+                            }
+                        } else {
+                            showErrorMessage("No matching user found offline.");
+                        }
+                    });
                 }
-
+            } else {
+                showErrorMessage("Invalid email or password");
             }
         });
 
@@ -143,6 +171,66 @@ public class SignIn extends AppCompatActivity {
 
 
 
+
+
+    }
+
+    private void checkRememberedUser() {
+        SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+        String savedEmail = prefs.getString(KEY_EMAIL, null);
+
+        if (savedEmail != null) {
+            binding.etEmailSignIn.setText(savedEmail);
+
+            // Retrieve encrypted password from SharedPreferences
+            String encryptedPassword = prefs.getString(KEY_PASSWORD, null);
+            if (encryptedPassword != null) {
+                try {
+                    KeystoreHelper keystoreHelper = new KeystoreHelper();
+                    String decryptedPassword = keystoreHelper.decryptPassword(encryptedPassword);  // Decrypt password
+                    binding.etPasswordSignIn.setText(decryptedPassword);
+
+                    // Attempt login using the decrypted password
+                    firebaseAuth.signInWithEmailAndPassword(savedEmail, decryptedPassword)
+                            .addOnCompleteListener(task -> {
+                                if (task.isSuccessful()) {
+                                    saveStudentIdToSharedPreferences(firebaseAuth.getCurrentUser().getUid());
+                                    startActivity(new Intent(getBaseContext(), MainActivity.class));
+                                    finish();
+                                }
+                            });
+                } catch (Exception e) {
+                    showErrorMessage("Failed to decrypt password.");
+                }
+            }
+        }
+    }
+
+
+    private void saveCredentials(String email, String password) {
+        if (binding.cbRememberMeSignIn.isChecked()) {
+            try {
+                KeystoreHelper keystoreHelper = new KeystoreHelper();
+                String encryptedPassword = keystoreHelper.encryptPassword(password);  // Encrypt password before saving
+
+                SharedPreferences.Editor editor = getSharedPreferences(PREFS_NAME, MODE_PRIVATE).edit();
+                editor.putString(KEY_EMAIL, email);
+                editor.putString(KEY_PASSWORD, encryptedPassword);
+                editor.apply();
+            } catch (Exception e) {
+                showErrorMessage("Error saving credentials.");
+            }
+        }
+    }
+
+
+
+    private void saveStudentIdToSharedPreferences(String studentId) {
+        SharedPreferences sharedPreferences = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("student_id", studentId);
+        editor.apply();
+        Log.d("SignIn", "Student ID saved to SharedPreferences: " + studentId);
     }
 
 

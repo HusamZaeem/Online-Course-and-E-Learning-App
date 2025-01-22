@@ -33,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
+
         if (savedInstanceState == null) {
             String fragment = getIntent().getStringExtra("FRAGMENT");
             if (fragment != null && fragment.equals("HOME")) {
@@ -80,4 +81,13 @@ public class MainActivity extends AppCompatActivity {
             return true;
         });
     }
+
+    public void loadSearchFragment() {
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.main, new SearchFragment())
+                .addToBackStack(null)
+                .commit();
+    }
+
 }

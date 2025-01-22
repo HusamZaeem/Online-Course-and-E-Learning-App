@@ -77,4 +77,7 @@
     <string name="tv_course_description">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</string>
     <string name="tv_course_tools">Tools</string>
     <string name="enroll_course">Enroll Course</string>
+    <string name="delete_recent_search">delete recent search</string>
+    <string name="write_review">Write your review here</string>
+    <string name="delete_review">delete review</string>
 </resources>

@@ -21,6 +21,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -41,6 +42,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.concurrent.Executors;
 
@@ -54,6 +56,7 @@ public class HomeFragment extends Fragment {
     private RecyclerView mentorsRecyclerView, coursesRecyclerView;
     private TabLayout tabLayoutCategories;
     private TextView tvUserFullName;
+    private EditText et_home_search;
     private Handler adHandler = new Handler();
 
     public HomeFragment() {
@@ -71,10 +74,16 @@ public class HomeFragment extends Fragment {
         tabLayoutCategories = view.findViewById(R.id.tabLayoutCategories);
         coursesRecyclerView = view.findViewById(R.id.coursesRecyclerView);
         tvUserFullName = view.findViewById(R.id.tv_home_user_name);
+        et_home_search = view.findViewById(R.id.et_home_search);
+        TextView tvHomeGreeting = view.findViewById(R.id.tv_home_greeting);
         TextView tvTopMentorSeeAll = view.findViewById(R.id.tv_top_mentor_see_all);
         TextView tvMostPopularCoursesSeeAll = view.findViewById(R.id.tv_most_popular_courses_see_all);
 
         appViewModel = new ViewModelProvider(this).get(AppViewModel.class);
+
+
+        String greeting = getGreetingMessage();
+        tvHomeGreeting.setText(greeting);
 
         // Load data
         loadProfilePhotoAndName();
@@ -83,6 +92,11 @@ public class HomeFragment extends Fragment {
         setupTabLayoutCategories();
         setupCourseRecyclerView();
 
+        et_home_search.setOnFocusChangeListener((v, hasFocus) -> {
+            if (hasFocus) {
+                ((MainActivity) requireActivity()).loadSearchFragment();
+            }
+        });
 
         tvTopMentorSeeAll.setOnClickListener(v -> {
             Intent intent = new Intent(getActivity(), MentorsActivity.class);
@@ -96,6 +110,23 @@ public class HomeFragment extends Fragment {
 
         return view;
     }
+
+
+    private String getGreetingMessage() {
+        Calendar calendar = Calendar.getInstance();
+        int hour = calendar.get(Calendar.HOUR_OF_DAY);
+
+        if (hour >= 5 && hour < 12) {
+            return "Good Morning";
+        } else if (hour >= 12 && hour < 17) {
+            return "Good Afternoon";
+        } else if (hour >= 17 && hour < 21) {
+            return "Good Evening";
+        } else {
+            return "Good Night";
+        }
+    }
+
 
     private void loadProfilePhotoAndName() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
