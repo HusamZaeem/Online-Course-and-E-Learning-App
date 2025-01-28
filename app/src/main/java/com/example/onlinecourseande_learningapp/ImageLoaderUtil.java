@@ -1,5 +1,6 @@
 package com.example.onlinecourseande_learningapp;
 
+import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
 import android.widget.ImageView;
@@ -16,11 +17,13 @@ public class ImageLoaderUtil {
         StorageReference storageRef = storage.getReferenceFromUrl(firebaseStorageUrl);
 
         storageRef.getDownloadUrl().addOnSuccessListener(uri -> {
-            Glide.with(context)
-                    .load(uri)
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .placeholder(R.drawable.baseline_image_24)
-                    .into(imageView);
+            if (context instanceof Activity && !((Activity) context).isDestroyed()) {
+                Glide.with(context)
+                        .load(uri)
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .placeholder(R.drawable.baseline_image_24)
+                        .into(imageView);
+            }
         }).addOnFailureListener(exception -> {
             Log.e("ImageLoaderUtil", "Error loading image: ", exception);
             imageView.setImageResource(R.drawable.head_icon);

@@ -107,7 +107,7 @@ public class ReviewsAdapter extends ListAdapter<Review, ReviewsAdapter.ReviewVie
 
 
             TimeUtils.getCurrentTimeLive().observe(lifecycleOwner, currentTime -> {
-                String relativeTime = TimeUtils.getRelativeTime(review.getTimestamp().getTime(), currentTime);
+                String relativeTime = TimeUtils.getRelativeTime(review.getTimestamp().getTime(), System.currentTimeMillis());
                 binding.reviewTimestamp.setText(relativeTime);
             });
 

@@ -1,9 +1,15 @@
 package com.example.onlinecourseande_learningapp;
 
+
 import android.os.Handler;
+
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.TimeZone;
 
 public class TimeUtils {
 
@@ -26,7 +32,13 @@ public class TimeUtils {
     }
 
     public static String getRelativeTime(long timestamp, long currentTime) {
-        long diff = currentTime - timestamp;
+        // Get the timezone from the system
+        TimeZone timeZone = TimeZone.getDefault();
+
+        // Adjust the timestamp to the user's timezone
+        long adjustedTimestamp = timestamp + timeZone.getOffset(timestamp);
+
+        long diff = currentTime - adjustedTimestamp;
 
         if (diff < 60 * 1000) { // Less than a minute
             return "Just now";
@@ -43,5 +55,12 @@ public class TimeUtils {
         } else {
             return (diff / (365L * 24 * 60 * 60 * 1000)) + " years ago";
         }
+    }
+
+    public static String formatTimestamp(long timestamp) {
+        // Use a simple date format with timezone support
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        sdf.setTimeZone(TimeZone.getDefault());
+        return sdf.format(new Date(timestamp));
     }
 }

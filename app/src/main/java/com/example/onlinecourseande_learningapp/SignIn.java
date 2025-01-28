@@ -115,7 +115,7 @@ public class SignIn extends AppCompatActivity {
 
             if (isValidEmail(email) && isValidPassword(password)) {
                 if (isNetworkAvailable()) {
-                    // User is online, sign in normally with Firebase
+                    // User is online, sign in with Firebase
                     firebaseAuth.signInWithEmailAndPassword(email, password)
                             .addOnCompleteListener(task -> {
                                 if (task.isSuccessful()) {

@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.onlinecourseande_learningapp.databinding.ActivitySignupLoginBinding;
@@ -15,6 +16,7 @@ public class SignupLogin extends AppCompatActivity {
     ActivitySignupLoginBinding binding;
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -23,9 +25,13 @@ public class SignupLogin extends AppCompatActivity {
 
 
 
+
+
+
         binding.btnSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
 
                 Intent intent = new Intent(SignupLogin.this, SignUp.class);
                 startActivity(intent);

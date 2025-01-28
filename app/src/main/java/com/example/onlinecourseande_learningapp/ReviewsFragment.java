@@ -92,9 +92,7 @@ public class ReviewsFragment extends Fragment {
         super.onCreate(savedInstanceState);
         getViewLifecycleOwnerLiveData().observe(this, owner -> {
             if (owner != null) {
-                appViewModel.getReviewsForCourse(targetId).observe(owner, reviews -> {
-                    reviewsAdapter.submitList(reviews);
-                });
+                loadReviews();
             }
         });
     }

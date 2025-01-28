@@ -119,7 +119,7 @@ public class SignUp extends AppCompatActivity {
                 if (isNetworkAvailable()) {
                     try {
                         KeystoreHelper keystoreHelper = new KeystoreHelper();
-                        keystoreHelper.generateKey();  // Ensure key is generated
+                        keystoreHelper.generateKey();
 
                         // Encrypt password for local Room database
                         String encryptedPassword = keystoreHelper.encryptPassword(password);
@@ -130,8 +130,8 @@ public class SignUp extends AppCompatActivity {
                                         FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
                                         if (firebaseUser != null) {
                                             String uid = firebaseUser.getUid();
-                                            saveUserToFirestore(uid, email, password); // For Firebase we send the plain password
-                                            saveUserLocally(email, encryptedPassword); // Store encrypted password locally
+                                            saveUserToFirestore(uid, email, password);
+                                            saveUserLocally(email, encryptedPassword);
                                             syncData();
                                             startActivity(new Intent(getBaseContext(), MainActivity.class));
                                             finish();

@@ -55,8 +55,11 @@
 
             <TextView
                 android:id="@+id/tv_item_course_name"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:singleLine="true"
+                android:maxLines="1"
                 android:text="@string/tv_course_name"
                 android:textSize="18sp"
                 android:layout_margin="16dp"
@@ -64,7 +67,8 @@
                 android:textStyle="bold"
                 app:layout_constraintTop_toBottomOf="@+id/tv_item_course_category"
                 app:layout_constraintStart_toEndOf="@+id/iv_item_course_photo"
-                />
+                app:layout_constraintEnd_toEndOf="parent" />
+
 
 
             <TextView

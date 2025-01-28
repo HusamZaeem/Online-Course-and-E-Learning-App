@@ -33,6 +33,7 @@ public class Course implements Syncable {
     private int students_count;
     private String photo_url;
     private String category;
+    private String course_intro;
     private boolean is_synced;
     private Date last_updated;
 
@@ -41,7 +42,7 @@ public class Course implements Syncable {
     public Course(){}
 
 
-    public Course(@NonNull String course_id, String course_name, double price, double hours, double course_rating, String description, String tools_used, int students_count, String photo_url, String category, boolean is_synced, Date last_updated) {
+    public Course(@NonNull String course_id, String course_name, double price, double hours, double course_rating, String description, String tools_used, int students_count, String photo_url, String category,String course_intro, boolean is_synced, Date last_updated) {
         this.course_id = course_id;
         this.course_name = course_name;
         this.price = price;
@@ -52,8 +53,17 @@ public class Course implements Syncable {
         this.students_count = students_count;
         this.photo_url = photo_url;
         this.category = category;
+        this.course_intro=course_intro;
         this.is_synced = is_synced;
         this.last_updated = last_updated;
+    }
+
+    public String getCourse_intro() {
+        return course_intro;
+    }
+
+    public void setCourse_intro(String course_intro) {
+        this.course_intro = course_intro;
     }
 
     public double getCourse_rating() {
