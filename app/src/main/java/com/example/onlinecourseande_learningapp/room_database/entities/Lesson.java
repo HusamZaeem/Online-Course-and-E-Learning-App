@@ -29,6 +29,7 @@ public class Lesson implements Syncable {
     private String module_id;
     private String lesson_title;
     private int lesson_duration;
+    private int lesson_order;
     private String content_url;
     private boolean is_exam;
     private boolean is_synced;
@@ -39,15 +40,24 @@ public class Lesson implements Syncable {
     public Lesson(){}
 
 
-    public Lesson(@NonNull String lesson_id, String module_id, String lesson_title, int lesson_duration, String content_url, boolean is_exam, boolean is_synced, Date last_updated) {
+    public Lesson(@NonNull String lesson_id, String module_id, String lesson_title, int lesson_duration, int lesson_order, String content_url, boolean is_exam, boolean is_synced, Date last_updated) {
         this.lesson_id = lesson_id;
         this.module_id = module_id;
         this.lesson_title = lesson_title;
         this.lesson_duration = lesson_duration;
+        this.lesson_order=lesson_order;
         this.content_url = content_url;
         this.is_exam = is_exam;
         this.is_synced = is_synced;
         this.last_updated = last_updated;
+    }
+
+    public int getLesson_order() {
+        return lesson_order;
+    }
+
+    public void setLesson_order(int lesson_order) {
+        this.lesson_order = lesson_order;
     }
 
     public boolean isIs_synced() {
@@ -94,6 +104,7 @@ public class Lesson implements Syncable {
         map.put("module_id", module_id);
         map.put("lesson_title", lesson_title);
         map.put("lesson_duration", lesson_duration);
+        map.put("lesson_order", lesson_order);
         map.put("content_url", content_url);
         map.put("is_exam", is_exam);
         map.put("last_updated", Converter.toFirestoreTimestamp(last_updated));

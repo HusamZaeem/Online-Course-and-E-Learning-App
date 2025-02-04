@@ -1,5 +1,6 @@
 [versions]
 agp = "8.7.3"
+circleprogress = "1.2.1"
 compiler = "4.15.1"
 core = "12.0.0"
 coreSplashscreen = "1.0.1"
@@ -30,6 +31,7 @@ totp = "1.0.0"
 youtubeAndroidPlayerApi = "1.2.2"
 
 [libraries]
+circleprogress = { module = "com.github.lzyzsd:circleprogress", version.ref = "circleprogress" }
 compiler = { module = "com.github.bumptech.glide:compiler", version.ref = "compiler" }
 core = { module = "com.pierfrancescosoffritti.androidyoutubeplayer:core", version.ref = "core" }
 core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "coreSplashscreen" }

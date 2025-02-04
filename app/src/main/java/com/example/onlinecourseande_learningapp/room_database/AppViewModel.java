@@ -17,6 +17,7 @@ import com.example.onlinecourseande_learningapp.room_database.entities.Bookmark;
 import com.example.onlinecourseande_learningapp.room_database.entities.Call;
 import com.example.onlinecourseande_learningapp.room_database.entities.Chat;
 import com.example.onlinecourseande_learningapp.room_database.entities.Course;
+import com.example.onlinecourseande_learningapp.room_database.entities.CourseWithProgress;
 import com.example.onlinecourseande_learningapp.room_database.entities.Enrollment;
 import com.example.onlinecourseande_learningapp.room_database.entities.Group;
 import com.example.onlinecourseande_learningapp.room_database.entities.GroupMembership;
@@ -25,6 +26,7 @@ import com.example.onlinecourseande_learningapp.room_database.entities.Mentor;
 import com.example.onlinecourseande_learningapp.room_database.entities.MentorCourse;
 import com.example.onlinecourseande_learningapp.room_database.entities.Message;
 import com.example.onlinecourseande_learningapp.room_database.entities.Module;
+import com.example.onlinecourseande_learningapp.room_database.entities.ModuleWithLessons;
 import com.example.onlinecourseande_learningapp.room_database.entities.Notification;
 import com.example.onlinecourseande_learningapp.room_database.entities.Review;
 import com.example.onlinecourseande_learningapp.room_database.entities.Student;
@@ -322,6 +324,17 @@ public class AppViewModel extends AndroidViewModel {
     }
 
 
+    public LiveData<Integer> getTotalLessons(String courseId){
+        return appRepository.getTotalLessons(courseId);
+    }
+
+    public LiveData<List<CourseWithProgress>> getCompletedCourses(String studentId){
+        return appRepository.getCompletedCourses(studentId);
+    }
+
+    public LiveData<List<CourseWithProgress>> getOngoingCourses(String studentId){
+        return appRepository.getOngoingCourses(studentId);
+    }
 
 
     // EnrollmentDao --------------------------------------------
@@ -533,7 +546,7 @@ public class AppViewModel extends AndroidViewModel {
     }
 
 
-    public LiveData<List<Lesson>> getLessonById(String lessonId) {
+    public LiveData<Lesson> getLessonById(String lessonId) {
         return appRepository.getLessonById(lessonId);
     }
 
@@ -576,8 +589,17 @@ public class AppViewModel extends AndroidViewModel {
     }
 
 
+    public void unlockNextLesson(String studentId, String lessonId){
+            appRepository.unlockNextLesson(studentId,lessonId);
+    }
 
+    public LiveData<List<Lesson>> getLessonsByModule(String moduleId){
+        return appRepository.getLessonsByModule(moduleId);
+    }
 
+    public LiveData<Boolean> isLessonAlreadyInserted(String studentId, String lessonId){
+        return appRepository.isLessonAlreadyInserted(studentId,lessonId);
+    }
 
     // MentorCourseDao --------------------------------------------
 
@@ -767,7 +789,9 @@ public class AppViewModel extends AndroidViewModel {
 
 
 
-
+    public LiveData<List<ModuleWithLessons>> getModulesWithLessons(String courseId){
+        return appRepository.getModulesWithLessons(courseId);
+    }
 
 
 
@@ -971,7 +995,7 @@ public class AppViewModel extends AndroidViewModel {
     }
 
 
-    boolean getCompletionStatus(String student_id, String lesson_id){
+    public LiveData<Boolean> getCompletionStatus(String student_id, String lesson_id){
         return appRepository.getCompletionStatus(student_id,lesson_id);
     }
 
@@ -999,6 +1023,9 @@ public class AppViewModel extends AndroidViewModel {
     }
 
 
+    public LiveData<Integer> getCompletedLessonsCount(String studentId){
+        return appRepository.getCompletedLessonsCount(studentId);
+    }
 
     // StudentMentorDao --------------------------------------------
 

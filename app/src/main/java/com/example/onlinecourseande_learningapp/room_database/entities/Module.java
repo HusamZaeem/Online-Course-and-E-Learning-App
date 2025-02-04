@@ -30,6 +30,7 @@ public class Module implements Syncable {
     private String module_name;
     private String course_id;
     private int duration;
+    private int module_order;
     private boolean is_synced;
     private Date last_updated;
 
@@ -38,13 +39,22 @@ public class Module implements Syncable {
     @Ignore
     public Module(){}
 
-    public Module(@NonNull String module_id, String module_name, String course_id, int duration, boolean is_synced, Date last_updated) {
+    public Module(@NonNull String module_id, String module_name, String course_id, int duration, int module_order, boolean is_synced, Date last_updated) {
         this.module_id = module_id;
         this.module_name = module_name;
         this.course_id = course_id;
         this.duration = duration;
+        this.module_order=module_order;
         this.is_synced = is_synced;
         this.last_updated = last_updated;
+    }
+
+    public int getModule_order() {
+        return module_order;
+    }
+
+    public void setModule_order(int module_order) {
+        this.module_order = module_order;
     }
 
     public boolean isIs_synced() {
@@ -91,6 +101,7 @@ public class Module implements Syncable {
         map.put("module_name", module_name);
         map.put("course_id", course_id);
         map.put("duration", duration);
+        map.put("module_order", module_order);
         map.put("last_updated", Converter.toFirestoreTimestamp(last_updated));
         return map;
     }

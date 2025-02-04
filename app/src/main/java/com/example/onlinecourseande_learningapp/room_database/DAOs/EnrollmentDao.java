@@ -30,6 +30,8 @@ public interface EnrollmentDao {
     @Query("SELECT * FROM Enrollment")
     LiveData<List<Enrollment>> getAllEnrollments();
 
+
+
     @Query("SELECT * FROM Enrollment")
     List<Enrollment> getAllEnrollmentsList();
 
@@ -81,6 +83,11 @@ public interface EnrollmentDao {
     LiveData<List<Enrollment>> getEnrollmentsForStudent(String student_id);
 
 
+    @Query("SELECT * FROM Enrollment WHERE student_id = :student_id")
+    List<Enrollment> getEnrollmentsForStudentList(String student_id);
+
+    @Query("SELECT * FROM Enrollment WHERE student_id = :student_id AND status = 'Completed' ")
+    List<Enrollment> getCompletedEnrollmentsList(String student_id);
 
 
     @Query(
@@ -145,5 +152,10 @@ public interface EnrollmentDao {
     @Query("SELECT * FROM Enrollment WHERE student_id = :studentId AND course_id IN (:courseIds)")
     LiveData<List<Enrollment>> checkEnrollmentInMentorCourses(String studentId, List<String> courseIds);
 
+    @Query("UPDATE Enrollment SET progress = :progress WHERE student_id = :studentId AND course_id = :courseId")
+    void updateProgress(String studentId, String courseId, int progress);
+
+    @Query("SELECT * FROM Enrollment WHERE student_id = :studentId AND status = 'Completed'")
+    List<Enrollment> getCompletedEnrollments(String studentId);
 
 }

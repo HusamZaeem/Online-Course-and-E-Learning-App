@@ -1,6 +1,7 @@
 package com.example.onlinecourseande_learningapp.room_database.DAOs;
 
 
+import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
@@ -33,7 +34,7 @@ public interface StudentLessonDao {
 
 
     @Query("SELECT completion_status FROM StudentLesson WHERE student_id = :student_id AND lesson_id = :lesson_id")
-    boolean getCompletionStatus(String student_id, String lesson_id);
+    LiveData<Boolean> getCompletionStatus(String student_id, String lesson_id);
 
 
     @Query("UPDATE StudentLesson SET completion_status = :completion_status WHERE student_id = :student_id AND lesson_id = :lesson_id")
@@ -47,6 +48,13 @@ public interface StudentLessonDao {
 
     }
 
+    @Query("SELECT EXISTS(SELECT 1 FROM StudentLesson WHERE student_id = :studentId AND lesson_id = :lessonId)")
+    LiveData<Boolean> isLessonAlreadyInserted(String studentId, String lessonId);
+
+
+    @Query("UPDATE StudentLesson SET completion_status = 1 WHERE student_id = :studentId AND lesson_id = :lessonId")
+    void unlockNextLesson(String studentId, String lessonId);
+
 
     @Query("SELECT * FROM StudentLesson WHERE student_lesson_id = :student_lesson_id")
     StudentLesson getStudentLessonById(String student_lesson_id);
@@ -56,4 +64,13 @@ public interface StudentLessonDao {
 
     @Query("SELECT * FROM StudentLesson")
     List<StudentLesson> getAllStudentLesson();
+
+    @Query("SELECT COUNT(*) FROM StudentLesson WHERE student_id = :studentId AND completion_status = 1")
+    LiveData<Integer> getCompletedLessonsCount(String studentId);
+
+    @Query("SELECT COUNT(*) FROM StudentLesson WHERE student_id = :studentId AND lesson_id IN (:lessonIds) AND completion_status = 1")
+    int countCompletedLessons(String studentId, List<String> lessonIds);
+
+
+
 }

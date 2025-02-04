@@ -1,10 +1,13 @@
 package com.example.onlinecourseande_learningapp;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -49,11 +52,33 @@ public class AboutCourseFragment extends Fragment {
 
         appViewModel = new ViewModelProvider(this).get(AppViewModel.class);
 
+        // Check if user is enrolled
+        String studentId = getStudentIdFromSharedPreferences();
+        appViewModel.checkEnrollment(studentId, courseId).observe(getViewLifecycleOwner(), enrollment -> {
+            if (enrollment != null) {
+                // Student is enrolled, disable the button
+                binding.btnEnroll.setEnabled(false);
+                binding.btnEnroll.setBackgroundTintList(ContextCompat.getColorStateList(requireContext(), R.color.gray));
+                binding.btnEnroll.setText("Enrolled");
+            } else {
+                // Student is not enrolled
+                binding.btnEnroll.setEnabled(true);
+                binding.btnEnroll.setBackgroundTintList(ContextCompat.getColorStateList(requireContext(), R.color.btn_color));
+                binding.btnEnroll.setText(getString(R.string.enroll_course));
+            }
+        });
+
 
         loadCourseDetails();
 
         return binding.getRoot();
     }
+
+    private String getStudentIdFromSharedPreferences() {
+        SharedPreferences sharedPreferences = requireContext().getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
+        return sharedPreferences.getString("student_id", null);
+    }
+
 
     private void loadCourseDetails() {
         // Observe LiveData for the course details

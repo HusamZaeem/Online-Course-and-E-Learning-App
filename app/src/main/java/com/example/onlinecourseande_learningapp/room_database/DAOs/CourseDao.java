@@ -41,6 +41,12 @@ public interface CourseDao {
     Course getCourseById (String course_id);
 
     @Query("SELECT * FROM Course WHERE course_id = :course_id")
+    LiveData<Course> getCourseByIdLive (String course_id);
+
+    @Query("SELECT * FROM Course WHERE course_id = :courseId")
+    Course getCourseByIdSync(String courseId);
+
+    @Query("SELECT * FROM Course WHERE course_id = :course_id")
     LiveData<Course> getCourseByIdLiveData(String course_id);
 
     @Query("SELECT * FROM Course WHERE course_id IN (:courseIds)")
@@ -51,5 +57,14 @@ public interface CourseDao {
 
     @Query("SELECT * FROM Course WHERE is_synced = 0")
     List<Course> getUnsyncedCourses();
+
+
+    @Query(
+            "SELECT COUNT(*) FROM Lesson " +
+                    "INNER JOIN Module ON Lesson.module_id = Module.module_id " +
+                    "WHERE Module.course_id = :courseId"
+    )
+    LiveData<Integer> getTotalLessons(String courseId);
+
 
 }

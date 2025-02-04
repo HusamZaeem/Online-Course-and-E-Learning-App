@@ -118,7 +118,8 @@ dependencies {
     annotationProcessor libs.compiler
 
 
-    implementation 'com.pierfrancescosoffritti.androidyoutubeplayer:core:12.0.0'
+    implementation libs.core
+
 
 
 

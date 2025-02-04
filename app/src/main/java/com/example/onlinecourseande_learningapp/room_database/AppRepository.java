@@ -1,8 +1,12 @@
 package com.example.onlinecourseande_learningapp.room_database;
 
 import android.app.Application;
+import android.util.Log;
 
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MediatorLiveData;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Transformations;
 import androidx.room.Delete;
 import androidx.room.Update;
 
@@ -33,6 +37,7 @@ import com.example.onlinecourseande_learningapp.room_database.entities.Bookmark;
 import com.example.onlinecourseande_learningapp.room_database.entities.Call;
 import com.example.onlinecourseande_learningapp.room_database.entities.Chat;
 import com.example.onlinecourseande_learningapp.room_database.entities.Course;
+import com.example.onlinecourseande_learningapp.room_database.entities.CourseWithProgress;
 import com.example.onlinecourseande_learningapp.room_database.entities.Enrollment;
 import com.example.onlinecourseande_learningapp.room_database.entities.Group;
 import com.example.onlinecourseande_learningapp.room_database.entities.GroupMembership;
@@ -41,6 +46,7 @@ import com.example.onlinecourseande_learningapp.room_database.entities.Mentor;
 import com.example.onlinecourseande_learningapp.room_database.entities.MentorCourse;
 import com.example.onlinecourseande_learningapp.room_database.entities.Message;
 import com.example.onlinecourseande_learningapp.room_database.entities.Module;
+import com.example.onlinecourseande_learningapp.room_database.entities.ModuleWithLessons;
 import com.example.onlinecourseande_learningapp.room_database.entities.Notification;
 import com.example.onlinecourseande_learningapp.room_database.entities.Review;
 import com.example.onlinecourseande_learningapp.room_database.entities.Student;
@@ -48,8 +54,10 @@ import com.example.onlinecourseande_learningapp.room_database.entities.StudentLe
 import com.example.onlinecourseande_learningapp.room_database.entities.StudentMentor;
 import com.example.onlinecourseande_learningapp.room_database.entities.StudentModule;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 public class AppRepository {
 
@@ -544,7 +552,128 @@ public class AppRepository {
     }
 
 
+    public LiveData<List<CourseWithProgress>> getOngoingCourses(String studentId) {
+        MutableLiveData<List<CourseWithProgress>> liveData = new MutableLiveData<>();
+        AppDatabase.databaseWriteExecutor.execute(() -> {
+            List<CourseWithProgress> ongoingCourses = new ArrayList<>();
+            // Fetch enrollments for the student (synchronously)
+            List<Enrollment> enrollments = enrollmentDao.getEnrollmentsForStudentList(studentId);
+            if (enrollments != null) {
+                for (Enrollment enrollment : enrollments) {
+                    // Use the synchronous DAO method to get modules with lessons for this course
+                    List<ModuleWithLessons> modules = moduleDao.getModulesWithLessonsSync(enrollment.getCourse_id());
+                    if (modules != null) {
+                        int totalLessons = modules.stream()
+                                .mapToInt(m -> m.getLessons() != null ? m.getLessons().size() : 0)
+                                .sum();
+                        List<String> lessonIds = new ArrayList<>();
+                        for (ModuleWithLessons m : modules) {
+                            if (m.getLessons() != null) {
+                                for (Lesson lesson : m.getLessons()) {
+                                    lessonIds.add(lesson.getLesson_id());
+                                }
+                            }
+                        }
+                        // Count completed lessons using the list of lesson IDs
+                        int completedLessons = studentLessonDao.countCompletedLessons(studentId, lessonIds);
+                        // Only add if the course is still ongoing (not 100% complete)
+                        if (totalLessons > 0 && completedLessons < totalLessons) {
+                            Course course = courseDao.getCourseByIdSync(enrollment.getCourse_id());
+                            ongoingCourses.add(new CourseWithProgress(course, enrollment, completedLessons, totalLessons));
+                        }
+                    }
+                }
+            }
+            liveData.postValue(ongoingCourses);
+        });
+        return liveData;
+    }
+
+    public LiveData<List<CourseWithProgress>> getCompletedCourses(String studentId) {
+        MutableLiveData<List<CourseWithProgress>> liveData = new MutableLiveData<>();
+        AppDatabase.databaseWriteExecutor.execute(() -> {
+            List<CourseWithProgress> completedCourses = new ArrayList<>();
+            List<Enrollment> enrollments = enrollmentDao.getCompletedEnrollmentsList(studentId);
+            Log.d("CompletedCourses", "Found " + (enrollments != null ? enrollments.size() : 0) + " completed enrollments");
+            if (enrollments != null) {
+                for (Enrollment enrollment : enrollments) {
+                    List<ModuleWithLessons> modules = moduleDao.getModulesWithLessonsSync(enrollment.getCourse_id());
+                    if (modules != null) {
+                        int totalLessons = modules.stream()
+                                .mapToInt(m -> m.getLessons() != null ? m.getLessons().size() : 0)
+                                .sum();
+                        List<String> lessonIds = new ArrayList<>();
+                        for (ModuleWithLessons m : modules) {
+                            if (m.getLessons() != null) {
+                                for (Lesson lesson : m.getLessons()) {
+                                    lessonIds.add(lesson.getLesson_id());
+                                }
+                            }
+                        }
+                        int completedLessons = studentLessonDao.countCompletedLessons(studentId, lessonIds);
+                        // Only add if the course is 100% complete
+                        if (totalLessons > 0 && completedLessons >= totalLessons) {
+                            Course course = courseDao.getCourseByIdSync(enrollment.getCourse_id());
+                            if (course != null) {
+                                Log.d("CompletedCourses", "Loaded course: " + course.getCourse_name());
+                            } else {
+                                Log.d("CompletedCourses", "Course not found for ID: " + enrollment.getCourse_id());
+                            }
+
+                            Log.d("CompletedCourses", "Course ID: " + enrollment.getCourse_id() +
+                                    " | Total Lessons: " + totalLessons +
+                                    " | Completed Lessons: " + completedLessons);
+
+                            completedCourses.add(new CourseWithProgress(course, enrollment, completedLessons, totalLessons));
+                        }
+                    }
+                }
+            }
+            liveData.postValue(completedCourses);
+        });
+        return liveData;
+    }
+
+
+
+
+
+
+    public LiveData<Integer> getTotalLessons(String courseId){
+        return courseDao.getTotalLessons(courseId);
+    }
+
+
     // EnrollmentDao --------------------------------------------
+
+
+
+    public void updateEnrollmentProgress(String studentId, String courseId) {
+        AppDatabase.databaseWriteExecutor.execute(() -> {
+            // Get all modules and their lessons for the course synchronously
+            List<ModuleWithLessons> modules = moduleDao.getModulesWithLessonsSync(courseId);
+            if (modules != null) {
+                int totalLessons = modules.stream()
+                        .mapToInt(m -> m.getLessons() != null ? m.getLessons().size() : 0)
+                        .sum();
+                List<String> lessonIds = new ArrayList<>();
+                for (ModuleWithLessons m : modules) {
+                    if (m.getLessons() != null) {
+                        for (Lesson lesson : m.getLessons()) {
+                            lessonIds.add(lesson.getLesson_id());
+                        }
+                    }
+                }
+                int completedLessons = studentLessonDao.countCompletedLessons(studentId, lessonIds);
+                if (totalLessons > 0) {
+                    int progressPercentage = (int) ((completedLessons / (float) totalLessons) * 100);
+                    enrollmentDao.updateProgress(studentId, courseId, progressPercentage);
+                }
+            }
+        });
+    }
+
+
 
 
 
@@ -594,11 +723,7 @@ public class AppRepository {
 
 
 
-    public void updateEnrollmentProgress(String student_id, String course_id){
-        AppDatabase.databaseWriteExecutor.execute(() -> {
-            enrollmentDao.updateEnrollmentProgress(student_id,course_id);
-        });
-    }
+
 
 
     public LiveData<List<Enrollment>> getEnrollmentsForStudent(String student_id){
@@ -809,7 +934,7 @@ public class AppRepository {
     }
 
 
-    public LiveData<List<Lesson>> getLessonById(String lessonId) {
+    public LiveData<Lesson> getLessonById(String lessonId) {
         return lessonDao.getLessonById(lessonId);
     }
 
@@ -860,12 +985,25 @@ public class AppRepository {
     }
 
 
+    public void unlockNextLesson(String studentId, String lessonId){
+        AppDatabase.databaseWriteExecutor.execute(() -> {
+            studentLessonDao.unlockNextLesson(studentId,lessonId);
+        });
+    }
 
     public Lesson getLessonByLessonId(String lesson_id){
         return lessonDao.getLessonByLessonId(lesson_id);
     }
 
 
+    public LiveData<List<Lesson>> getLessonsByModule(String moduleId){
+        return lessonDao.getLessonsByModule(moduleId);
+    }
+
+
+    public LiveData<Boolean> isLessonAlreadyInserted(String studentId, String lessonId){
+        return studentLessonDao.isLessonAlreadyInserted(studentId,lessonId);
+    }
 
     // MentorCourseDao --------------------------------------------
 
@@ -1079,6 +1217,9 @@ public class AppRepository {
     }
 
 
+    public LiveData<List<ModuleWithLessons>> getModulesWithLessons(String courseId){
+        return moduleDao.getModulesWithLessons(courseId);
+    }
 
 
     // NotificationDao --------------------------------------------
@@ -1324,7 +1465,7 @@ public class AppRepository {
     }
 
 
-    public boolean getCompletionStatus(String student_id, String lesson_id){
+    public LiveData<Boolean> getCompletionStatus(String student_id, String lesson_id){
         return studentLessonDao.getCompletionStatus(student_id,lesson_id);
     }
 
@@ -1353,6 +1494,9 @@ public class AppRepository {
         return studentLessonDao.getStudentLessonById(student_lesson_id);
     }
 
+    public LiveData<Integer> getCompletedLessonsCount(String studentId){
+        return studentLessonDao.getCompletedLessonsCount(studentId);
+    }
 
     // StudentMentorDao --------------------------------------------
 

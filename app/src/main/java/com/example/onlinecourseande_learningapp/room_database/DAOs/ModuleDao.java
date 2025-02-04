@@ -7,9 +7,11 @@ import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
+import androidx.room.Transaction;
 import androidx.room.Update;
 
 import com.example.onlinecourseande_learningapp.room_database.entities.Module;
+import com.example.onlinecourseande_learningapp.room_database.entities.ModuleWithLessons;
 import com.example.onlinecourseande_learningapp.room_database.entities.Notification;
 
 import java.util.List;
@@ -53,5 +55,12 @@ public interface ModuleDao {
     List<Module> getUnsyncedModule();
 
 
+    @Transaction
+    @Query("SELECT * FROM Module WHERE course_id = :courseId ORDER BY module_order")
+    LiveData<List<ModuleWithLessons>> getModulesWithLessons(String courseId);
+
+    @Transaction
+    @Query("SELECT * FROM Module WHERE course_id = :courseId")
+    List<ModuleWithLessons> getModulesWithLessonsSync(String courseId);
 
 }

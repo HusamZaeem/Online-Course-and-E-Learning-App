@@ -66,6 +66,14 @@ public class StudentLesson implements Syncable {
         this.last_updated = last_updated;
     }
 
+    @Ignore
+    public StudentLesson(@NonNull String student_lesson_id, @NonNull String student_id, @NonNull String lesson_id, boolean completion_status){
+        this.student_lesson_id = student_lesson_id;
+        this.student_id=student_id;
+        this.lesson_id=lesson_id;
+        this.completion_status=completion_status;
+    }
+
     @NonNull
     public String getStudent_lesson_id() {
         return student_lesson_id;

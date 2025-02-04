@@ -120,6 +120,7 @@ public class Course implements Syncable {
         map.put("students_count", students_count);
         map.put("photo_url", photo_url);
         map.put("category", category);
+        map.put("course_intro", course_intro);
         map.put("last_updated", Converter.toFirestoreTimestamp(last_updated));
         return map;
     }

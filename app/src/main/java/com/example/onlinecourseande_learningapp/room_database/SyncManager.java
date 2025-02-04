@@ -36,9 +36,6 @@ public class SyncManager {
             startListeningForFirebaseUpdates()
                     .thenCompose(aVoid -> syncEntity(appRepository::getUnsyncedStudents, "Student"))
                     .thenCompose(aVoid -> syncEntity(appRepository::getUnsyncedMentors, "Mentor"))
-                    .thenCompose(aVoid -> syncEntity(appRepository::getUnsyncedCourses, "Course"))
-                    .thenCompose(aVoid -> syncEntity(appRepository::getUnsyncedModule, "Module"))
-                    .thenCompose(aVoid -> syncEntity(appRepository::getUnsyncedLesson, "Lesson"))
                     .thenCompose(aVoid -> syncEntity(appRepository::getUnsyncedChat, "Chat"))
                     .thenCompose(aVoid -> syncEntity(appRepository::getUnsyncedStudentModule, "StudentModule"))
                     .thenCompose(aVoid -> syncEntity(appRepository::getUnsyncedStudentMentor, "StudentMentor"))
@@ -53,7 +50,6 @@ public class SyncManager {
                     .thenCompose(aVoid -> syncEntity(appRepository::getUnsyncedEnrollment, "Enrollment"))
                     .thenCompose(aVoid -> syncEntity(appRepository::getUnsyncedMessage, "Message"))
                     .thenCompose(aVoid -> syncEntity(appRepository::getUnsyncedBookmark, "Bookmark"))
-                    .thenCompose(aVoid -> syncEntity(appRepository::getUnsyncedAd, "Ad"))
                     .thenRun(() -> Log.d("SyncManager", "All data synced successfully"))
                     .exceptionally(e -> {
                         Log.e("SyncManager", "Error during sync", e);

@@ -2,7 +2,9 @@ package com.example.onlinecourseande_learningapp;
 
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -41,8 +43,22 @@ public class CourseDetailsActivity extends AppCompatActivity {
         appViewModel = new ViewModelProvider(this).get(AppViewModel.class);
 
         String courseId = getIntent().getStringExtra("course_id");
+        if (courseId == null) {
+            Log.e("CourseDetailsActivity", "No course_id found, returning to previous page.");
+            Toast.makeText(this, "Error: Course not found", Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
+
+
         if (savedInstanceState == null) {
             setCourseDetails(courseId);
+        }
+
+
+        String openFragment = getIntent().getStringExtra("open_fragment");
+        if ("LessonsFragment".equals(openFragment)) {
+            binding.vbCourseDetails.setCurrentItem(1);  // Open "Lessons" tab
         }
 
 
@@ -106,6 +122,8 @@ public class CourseDetailsActivity extends AppCompatActivity {
 
             if (videoId != null && !videoId.isEmpty()) {
                 loadYouTubeVideo(videoId);
+            }else {
+                Log.e("CourseDetailsActivity", "Video ID is null");
             }
 
 
@@ -117,35 +135,42 @@ public class CourseDetailsActivity extends AppCompatActivity {
 
     private String extractYouTubeVideoId(String url) {
         if (url != null && !url.isEmpty()) {
-            Pattern pattern = Pattern.compile("(https?://(?:www\\.)?youtube\\.com/watch\\?v=|youtu.be/)([a-zA-Z0-9_-]+)");
+            Log.d("YouTube", "URL before extraction: " + url);  // Log URL for debugging
+            // Simplified regex for YouTube video ID extraction
+            Pattern pattern = Pattern.compile("(?:youtube\\.com/(?:.*[?&]v=|embed/|v/|.*[?&]vi=)|youtu\\.be/)([a-zA-Z0-9_-]{11})");
             Matcher matcher = pattern.matcher(url);
             if (matcher.find()) {
-                return matcher.group(2); // Return the video ID
+                String videoId = matcher.group(1);
+                Log.d("YouTube", "Extracted Video ID: " + videoId);  // Log the extracted ID
+                return videoId;
             }
         }
+        Log.e("YouTube", "Video ID extraction failed for URL: " + url);  // Log failure
         return null;
     }
+
+
+
+
 
     private void loadYouTubeVideo(String videoId) {
         binding.youtubePlayerView.addYouTubePlayerListener(new AbstractYouTubePlayerListener() {
             @Override
             public void onReady(YouTubePlayer youTubePlayer) {
-                // Cue the video (does not autoplay)
                 youTubePlayer.cueVideo(videoId, 0f);
             }
 
             @Override
             public void onStateChange(YouTubePlayer youTubePlayer, PlayerConstants.PlayerState state) {
                 if (state == PlayerConstants.PlayerState.PLAYING) {
-                    // Enter fullscreen when video starts playing
-                    enterFullScreenMode();
+                    enterFullScreenMode();  // Auto-enter fullscreen
                 } else if (state == PlayerConstants.PlayerState.PAUSED || state == PlayerConstants.PlayerState.ENDED) {
-                    // Exit fullscreen when video is paused or ends
-                    exitFullScreenMode();
+                    exitFullScreenMode(); // Exit fullscreen on pause or finish
                 }
             }
         });
     }
+
 
     private void enterFullScreenMode() {
         // Force landscape mode
@@ -183,11 +208,12 @@ public class CourseDetailsActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         if (getRequestedOrientation() == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
-            exitFullScreenMode(); // Exit fullscreen and return to portrait
+            exitFullScreenMode();
         } else {
-            super.onBackPressed(); // Default behavior
+            super.onBackPressed();
         }
     }
+
 
     @Override
     protected void onDestroy() {

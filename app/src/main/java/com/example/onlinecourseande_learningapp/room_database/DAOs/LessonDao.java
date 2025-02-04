@@ -35,7 +35,7 @@ public interface LessonDao {
     List<Lesson> getAllLessonsList ();
 
     @Query("SELECT * FROM Lesson WHERE lesson_id = :lesson_id")
-    LiveData<List<Lesson>> getLessonById (String lesson_id);
+    LiveData<Lesson> getLessonById (String lesson_id);
 
     @Query("SELECT * FROM Lesson WHERE module_id = :module_id")
     LiveData<List<Lesson>> getAllLessonsByModuleId (String module_id);
@@ -67,5 +67,14 @@ public interface LessonDao {
 
     @Query("SELECT * FROM Lesson WHERE is_synced = 0")
     List<Lesson> getUnsyncedLesson();
+
+
+    @Query("SELECT * FROM Lesson WHERE module_id = :moduleId ORDER BY lesson_order ASC")
+    LiveData<List<Lesson>> getLessonsByModule(String moduleId);
+
+
+    @Query("SELECT lesson_id FROM Lesson WHERE module_id IN (SELECT module_id FROM Module WHERE course_id = :courseId)")
+    List<String> getLessonIdsForCourse(String courseId);
+
 
 }
