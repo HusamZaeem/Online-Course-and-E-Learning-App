@@ -1,6 +1,8 @@
 package com.example.onlinecourseande_learningapp.room_database;
 
 import android.app.Application;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 
 import androidx.lifecycle.LiveData;
@@ -393,6 +395,34 @@ public class AppRepository {
         return bookmarkDao.getBookmarkByBookmarkId(bookmark_id);
     }
 
+    public LiveData<List<Course>> getBookmarkedCourses(String student_id){
+        return bookmarkDao.getBookmarkedCourses(student_id);
+    }
+
+    public Bookmark getBookmarkForCourseAndStudent(String courseId, String studentId){
+        return bookmarkDao.getBookmarkForCourseAndStudent(courseId,studentId);
+    }
+
+    public void removeBookmark(String courseId, String studentId) {
+        AppDatabase.databaseWriteExecutor.execute(() -> {
+            Bookmark bookmark = bookmarkDao.getBookmarkForCourseAndStudent(courseId, studentId);
+            if (bookmark != null) {
+                bookmarkDao.deleteBookmark(bookmark);
+            }
+        });
+    }
+
+    public void isCourseBookmarked(String courseId, String studentId, AppRepository.Callback<Boolean> callback) {
+        AppDatabase.databaseWriteExecutor.execute(() -> {
+            boolean isBookmarked = bookmarkDao.isCourseBookmarked(courseId, studentId);
+            // Post the result to the callback on the main thread
+            new Handler(Looper.getMainLooper()).post(() -> callback.onResult(isBookmarked));
+        });
+    }
+
+    public interface Callback<T> {
+        void onResult(T result);
+    }
 
     // CallDao --------------------------------------------
 
@@ -767,9 +797,9 @@ public class AppRepository {
 
 
     // Enroll in a free course
-    public void enrollInFreeCourse(String studentId, String courseId) {
+    public void enrollInFreeCourse(String enrollment_id, String student_id, String course_id) {
         AppExecutors.getInstance().diskIO().execute(() -> {
-            enrollmentDao.enrollInFreeCourse(studentId, courseId);
+            enrollmentDao.enrollInFreeCourse(enrollment_id, student_id, course_id);
         });
     }
 

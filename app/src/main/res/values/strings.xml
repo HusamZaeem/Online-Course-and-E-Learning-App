@@ -80,4 +80,8 @@
     <string name="delete_recent_search">delete recent search</string>
     <string name="write_review">Write your review here</string>
     <string name="delete_review">delete review</string>
+    <string name="back">back</string>
+    <string name="no_courses_found_for_the_selected_category">No courses found for the selected category</string>
+    <string name="student_profile">Student Profile</string>
+    <string name="edit_photo">edit photo</string>
 </resources>

@@ -52,7 +52,7 @@ public class AllCoursesFragment extends Fragment {
 
     private void setupRecyclerView() {
         binding.recyclerViewAllCourses.setLayoutManager(new LinearLayoutManager(getContext()));
-        courseAdapter = new CourseAdapter(getContext(), allCourses);
+        courseAdapter = new CourseAdapter(getContext(), allCourses, appViewModel, getViewLifecycleOwner());
         binding.recyclerViewAllCourses.setAdapter(courseAdapter);
     }
 

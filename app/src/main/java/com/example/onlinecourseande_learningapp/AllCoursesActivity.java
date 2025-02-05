@@ -143,7 +143,7 @@ public class AllCoursesActivity extends AppCompatActivity implements RecentSearc
 
     private void setupRecyclerView() {
         binding.coursesRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        courseAdapter = new CourseAdapter(this, filteredCourses);
+        courseAdapter = new CourseAdapter(this, filteredCourses, appViewModel, this);
         binding.coursesRecyclerView.setAdapter(courseAdapter);
     }
 

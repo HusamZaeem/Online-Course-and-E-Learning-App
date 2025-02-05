@@ -58,9 +58,14 @@ public class MentorCoursesFragment extends Fragment {
 
     private void setupRecyclerView() {
         binding.rvMentorCourses.setLayoutManager(new LinearLayoutManager(getContext()));
-        courseAdapter = new CourseAdapter(getContext(), new ArrayList<>());
+
+        AppViewModel appViewModel = new ViewModelProvider(requireActivity()).get(AppViewModel.class);
+
+        courseAdapter = new CourseAdapter(getContext(), new ArrayList<>(), appViewModel, getViewLifecycleOwner());
+
         binding.rvMentorCourses.setAdapter(courseAdapter);
     }
+
 
 
     private void fetchMentorCourses(String mentorId) {

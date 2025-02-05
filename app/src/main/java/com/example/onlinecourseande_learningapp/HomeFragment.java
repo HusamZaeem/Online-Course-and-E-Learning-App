@@ -78,8 +78,13 @@ public class HomeFragment extends Fragment {
         TextView tvHomeGreeting = view.findViewById(R.id.tv_home_greeting);
         TextView tvTopMentorSeeAll = view.findViewById(R.id.tv_top_mentor_see_all);
         TextView tvMostPopularCoursesSeeAll = view.findViewById(R.id.tv_most_popular_courses_see_all);
+        ImageView ivHomeBookmarks = view.findViewById(R.id.iv_home_bookmarks);
+
 
         appViewModel = new ViewModelProvider(this).get(AppViewModel.class);
+
+
+
 
 
         String greeting = getGreetingMessage();
@@ -91,6 +96,12 @@ public class HomeFragment extends Fragment {
         setupMentorRecyclerView();
         setupTabLayoutCategories();
         setupCourseRecyclerView();
+
+
+        ivHomeBookmarks.setOnClickListener(v -> {
+            Intent intent = new Intent(getActivity(), BookmarksActivity.class);
+            startActivity(intent);
+        });
 
         et_home_search.setOnFocusChangeListener((v, hasFocus) -> {
             if (hasFocus) {
@@ -236,7 +247,7 @@ public class HomeFragment extends Fragment {
                     }
                 }
             }
-            CourseAdapter courseAdapter = new CourseAdapter(getContext(), filteredCourses);
+            CourseAdapter courseAdapter = new CourseAdapter(getContext(), filteredCourses, appViewModel, getViewLifecycleOwner());
             coursesRecyclerView.setAdapter(courseAdapter);
         });
     }
@@ -246,7 +257,7 @@ public class HomeFragment extends Fragment {
         appViewModel.getAllCourses().observe(getViewLifecycleOwner(), courseList -> {
             Log.d(TAG, "Observer triggered with data: " + courseList);
             if (courseList != null && !courseList.isEmpty()) {
-                CourseAdapter courseAdapter = new CourseAdapter(getContext(), courseList);
+                CourseAdapter courseAdapter = new CourseAdapter(getContext(), courseList, appViewModel, getViewLifecycleOwner());
                 coursesRecyclerView.setAdapter(courseAdapter);
                 Log.d(TAG, "Courses loaded: " + courseList.size());
             } else {

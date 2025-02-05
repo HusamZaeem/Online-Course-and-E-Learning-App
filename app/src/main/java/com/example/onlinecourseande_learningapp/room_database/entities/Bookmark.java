@@ -91,6 +91,7 @@ public class Bookmark implements Syncable {
     @Override
     public Map<String, Object> toMap() {
         Map<String, Object> map = new HashMap<>();
+        map.put("bookmark_id", bookmark_id);
         map.put("student_id", student_id);
         map.put("course_id", course_id);
         map.put("last_updated", Converter.toFirestoreTimestamp(last_updated));

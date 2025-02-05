@@ -10,6 +10,7 @@ import androidx.room.Query;
 import androidx.room.Update;
 
 import com.example.onlinecourseande_learningapp.room_database.entities.Bookmark;
+import com.example.onlinecourseande_learningapp.room_database.entities.Course;
 import com.example.onlinecourseande_learningapp.room_database.entities.Lesson;
 
 import java.util.List;
@@ -39,11 +40,22 @@ public interface BookmarkDao {
     LiveData<List<Bookmark>> getAllStudentBookmarks (String student_id);
 
 
+    @Query("SELECT Course.* FROM Course " +
+            "INNER JOIN Bookmark ON Course.course_id = Bookmark.course_id " +
+            "WHERE Bookmark.student_id = :student_id")
+    LiveData<List<Course>> getBookmarkedCourses(String student_id);
+
+    @Query("SELECT * FROM Bookmark WHERE course_id = :courseId AND student_id = :studentId LIMIT 1")
+    Bookmark getBookmarkForCourseAndStudent(String courseId, String studentId);
+
     @Query("SELECT * FROM Bookmark WHERE bookmark_id = :bookmark_id")
     Bookmark getBookmarkByBookmarkId(String bookmark_id);
 
     @Query("SELECT * FROM Bookmark WHERE is_synced = 0")
     List<Bookmark> getUnsyncedBookmark();
 
+
+    @Query("SELECT EXISTS (SELECT 1 FROM bookmark WHERE course_id = :courseId AND student_id = :studentId LIMIT 1)")
+    boolean isCourseBookmarked(String courseId, String studentId);
 
 }

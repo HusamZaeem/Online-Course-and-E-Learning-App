@@ -173,6 +173,22 @@ public class AppViewModel extends AndroidViewModel {
     }
 
 
+    public LiveData<List<Course>> getBookmarkedCourses(String student_id){
+        return appRepository.getBookmarkedCourses(student_id);
+    }
+
+    public Bookmark getBookmarkForCourseAndStudent(String courseId, String studentId){
+        return appRepository.getBookmarkForCourseAndStudent(courseId,studentId);
+    }
+
+    public void removeBookmark(String courseId, String studentId){
+        appRepository.removeBookmark(courseId,studentId);
+    }
+
+
+    public void isCourseBookmarked(String courseId, String studentId, AppRepository.Callback<Boolean> callback) {
+        appRepository.isCourseBookmarked(courseId, studentId, callback);
+    }
 
 
 
@@ -414,8 +430,8 @@ public class AppViewModel extends AndroidViewModel {
 
 
 
-    public void enrollInFreeCourse(String studentId, String courseId) {
-            appRepository.enrollInFreeCourse(studentId, courseId);
+    public void enrollInFreeCourse(String enrollment_id, String student_id, String course_id) {
+            appRepository.enrollInFreeCourse(enrollment_id, student_id, course_id);
     }
 
     public LiveData<Enrollment> checkEnrollment(String student_id, String course_id) {

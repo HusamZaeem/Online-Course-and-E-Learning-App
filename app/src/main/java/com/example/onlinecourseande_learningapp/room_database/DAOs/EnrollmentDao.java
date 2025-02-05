@@ -121,7 +121,7 @@ public interface EnrollmentDao {
 
     @Query(
             "UPDATE Enrollment " +
-                    "SET fee = :fee, status = 'enrolled', timestamp = CURRENT_TIMESTAMP " +
+                    "SET fee = :fee, status = 'Ongoing', timestamp = CURRENT_TIMESTAMP " +
                     "WHERE student_id = :student_id AND course_id = :course_id"
     )
     void updateFeeStatusAndTimestamp(String student_id, String course_id, double fee);
@@ -130,10 +130,10 @@ public interface EnrollmentDao {
 
 
     @Query(
-            "INSERT OR REPLACE INTO Enrollment (student_id, course_id, fee, status, timestamp) " +
-                    "VALUES (:student_id, :course_id, 0, 'enrolled', CURRENT_TIMESTAMP)"
+            "INSERT OR REPLACE INTO Enrollment (enrollment_id, student_id, course_id, fee, progress, status,is_synced , timestamp) " +
+                    "VALUES (:enrollment_id, :student_id, :course_id, 0, 0,'Ongoing',0 ,CURRENT_TIMESTAMP)"
     )
-    void enrollInFreeCourse(String student_id, String course_id);
+    void enrollInFreeCourse(String enrollment_id, String student_id, String course_id);
 
 
 

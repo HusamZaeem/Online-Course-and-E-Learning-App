@@ -7,6 +7,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkInfo;
@@ -25,14 +26,17 @@ import android.widget.Toast;
 
 import com.example.onlinecourseande_learningapp.databinding.FragmentNewPasswordBinding;
 import com.example.onlinecourseande_learningapp.room_database.AppRepository;
+import com.example.onlinecourseande_learningapp.room_database.AppViewModel;
 import com.example.onlinecourseande_learningapp.room_database.PeriodicSyncWorker;
+import com.example.onlinecourseande_learningapp.room_database.entities.Student;
 import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.Date;
 
 public class NewPasswordFragment extends Fragment {
 
     private FragmentNewPasswordBinding binding;
-    private FirebaseFirestore firestore;
-    private AppRepository repository;
+    private AppViewModel appViewModel;
     private String email;
     private boolean isPasswordVisible = false;
     private AlertDialog dialog;
@@ -45,8 +49,7 @@ public class NewPasswordFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = FragmentNewPasswordBinding.inflate(inflater, container, false);
-        firestore = FirebaseFirestore.getInstance();
-        repository = AppRepository.getInstance(requireActivity().getApplication());
+        appViewModel = new ViewModelProvider(this).get(AppViewModel.class);
 
         if (getArguments() != null) {
             email = getArguments().getString("email", "");
@@ -59,7 +62,6 @@ public class NewPasswordFragment extends Fragment {
 
         binding.btnResetPassword.setOnClickListener(v -> {
             String newPassword = binding.etPasswordNew1.getText().toString().trim();
-            String hashedPassword = PasswordHasher.hashPassword(newPassword);
             String confirmPassword = binding.etPasswordNew2.getText().toString().trim();
 
             if (newPassword.isEmpty() || !newPassword.equals(confirmPassword)) {
@@ -67,12 +69,11 @@ public class NewPasswordFragment extends Fragment {
                 return;
             }
 
-            if (isValidPassword(newPassword)){
-
-                resetPassword(hashedPassword);
+            if (isValidPassword(newPassword)) {
+                resetPassword(newPassword);
             }
-
         });
+
 
         // Add Eye Icon Click Listener
         binding.etPasswordNew1.setOnTouchListener((v, event) -> {
@@ -195,42 +196,28 @@ public class NewPasswordFragment extends Fragment {
     }
 
     private void resetPassword(String newPassword) {
-        // Encrypt the new password before updating in local database
         try {
+            // Encrypt the new password using KeystoreHelper
             KeystoreHelper keystoreHelper = new KeystoreHelper();
             keystoreHelper.generateKey();
             String encryptedPassword = keystoreHelper.encryptPassword(newPassword);
 
-            // First update Firebase
-            firestore.collection("Student")
-                    .whereEqualTo("email", email)
-                    .get()
-                    .addOnSuccessListener(queryDocumentSnapshots -> {
-                        if (!queryDocumentSnapshots.isEmpty()) {
-                            String studentId = queryDocumentSnapshots.getDocuments().get(0).getId();
-                            firestore.collection("Student").document(studentId)
-                                    .update("password", newPassword) // Store the plain password in Firebase
-                                    .addOnSuccessListener(unused -> {
-                                        Log.d("ResetPassword", "Password updated successfully in Firebase.");
 
+            appViewModel.getStudentByEmail(email).observe(getViewLifecycleOwner(), student -> {
+                if (student != null) {
+                    // Update the student object with the encrypted password, mark as not synced, and update last_updated
+                    student.setPassword(encryptedPassword);
+                    student.setIs_synced(false);
+                    student.setLast_updated(new Date());
 
-                                        repository.updateStudentPassword(email, encryptedPassword);
+                    appViewModel.updateStudent(student);
+                    Toast.makeText(getContext(), "Password updated successfully.", Toast.LENGTH_SHORT).show();
 
-                                        // Show Dialog and Start Sync Worker
-                                        enqueueSyncWorkAndShowDialog(newPassword);
-                                    })
-                                    .addOnFailureListener(e -> {
-                                        Log.e("ResetPassword", "Error updating password in Firebase: ", e);
-                                        Toast.makeText(getContext(), "Error updating password in Firebase: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                                    });
-                        } else {
-                            Toast.makeText(getContext(), "No user found with the provided email.", Toast.LENGTH_SHORT).show();
-                        }
-                    })
-                    .addOnFailureListener(e ->
-                            Toast.makeText(getContext(), "Error fetching user: " + e.getMessage(), Toast.LENGTH_SHORT).show()
-                    );
-
+                    enqueueSyncWorkAndShowDialog(encryptedPassword);
+                } else {
+                    Toast.makeText(getContext(), "Student not found in local database.", Toast.LENGTH_SHORT).show();
+                }
+            });
         } catch (Exception e) {
             e.printStackTrace();
             Toast.makeText(getContext(), "Encryption error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
@@ -239,7 +226,8 @@ public class NewPasswordFragment extends Fragment {
 
 
 
-    private void enqueueSyncWorkAndShowDialog(String newHashedPassword) {
+
+    private void enqueueSyncWorkAndShowDialog(String newEncryptedPassword) {
         OneTimeWorkRequest syncWorkRequest = new OneTimeWorkRequest.Builder(PeriodicSyncWorker.class).build();
         showCustomDialog();
 

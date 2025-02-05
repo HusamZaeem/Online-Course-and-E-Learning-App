@@ -14,10 +14,13 @@ import androidx.lifecycle.ViewModelProvider;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.example.onlinecourseande_learningapp.databinding.FragmentAboutCourseBinding;
 import com.example.onlinecourseande_learningapp.room_database.AppViewModel;
 import com.example.onlinecourseande_learningapp.room_database.entities.Mentor;
+
+import java.util.UUID;
 
 
 public class AboutCourseFragment extends Fragment {
@@ -70,6 +73,19 @@ public class AboutCourseFragment extends Fragment {
 
 
         loadCourseDetails();
+
+
+        binding.btnEnroll.setOnClickListener(v -> {
+            if (studentId != null && courseId != null) {
+                String enrollment_id = UUID.randomUUID().toString();
+                appViewModel.enrollInFreeCourse(enrollment_id, studentId, courseId);
+                Toast.makeText(getContext(), "You are now enrolled in this course", Toast.LENGTH_SHORT).show();
+
+                binding.btnEnroll.setEnabled(false);
+                binding.btnEnroll.setText("Enrolled");
+                binding.btnEnroll.setBackgroundTintList(ContextCompat.getColorStateList(getContext(), R.color.gray));
+            }
+        });
 
         return binding.getRoot();
     }
