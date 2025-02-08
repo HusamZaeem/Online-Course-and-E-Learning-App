@@ -11,6 +11,7 @@ import android.os.Bundle;
 
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -51,7 +52,7 @@ public class HomeFragment extends Fragment {
 
     private AppViewModel appViewModel;
 
-    private ImageView ivHomeUserProfilePicture;
+    private ImageView ivHomeUserProfilePicture, ivHomeNotification;
     private ViewPager2 viewPagerAds;
     private RecyclerView mentorsRecyclerView, coursesRecyclerView;
     private TabLayout tabLayoutCategories;
@@ -69,6 +70,7 @@ public class HomeFragment extends Fragment {
 
         // UI Initialization
         ivHomeUserProfilePicture = view.findViewById(R.id.iv_home_user_profile_picture);
+        ivHomeNotification = view.findViewById(R.id.iv_home_notification);
         viewPagerAds = view.findViewById(R.id.viewPagerAds);
         mentorsRecyclerView = view.findViewById(R.id.mentorsRecyclerView);
         tabLayoutCategories = view.findViewById(R.id.tabLayoutCategories);
@@ -84,6 +86,13 @@ public class HomeFragment extends Fragment {
         appViewModel = new ViewModelProvider(this).get(AppViewModel.class);
 
 
+        ivHomeNotification.setOnClickListener(v -> {
+            FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
+            fragmentManager.beginTransaction()
+                    .replace(R.id.main, new NotificationFragment())
+                    .addToBackStack(null)
+                    .commit();
+        });
 
 
 

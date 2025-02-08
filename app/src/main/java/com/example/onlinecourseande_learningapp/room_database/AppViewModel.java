@@ -35,7 +35,9 @@ import com.example.onlinecourseande_learningapp.room_database.entities.StudentMe
 import com.example.onlinecourseande_learningapp.room_database.entities.StudentModule;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 public class AppViewModel extends AndroidViewModel {
 
@@ -432,6 +434,22 @@ public class AppViewModel extends AndroidViewModel {
 
     public void enrollInFreeCourse(String enrollment_id, String student_id, String course_id) {
             appRepository.enrollInFreeCourse(enrollment_id, student_id, course_id);
+
+
+        Course course = appRepository.getCourseById(course_id);
+
+        Notification notification = new Notification();
+        notification.setNotification_id(UUID.randomUUID().toString());
+        notification.setStudent_id(student_id);
+        notification.setTitle("Enrollment Successful");
+        notification.setContent("You have successfully enrolled in the " + course.getCourse_name() + " course.");
+        notification.setType("enrollment");
+        notification.setTimestamp(new Date());
+        notification.setIs_synced(false);
+
+
+        appRepository.insertNotification(notification);
+
     }
 
     public LiveData<Enrollment> checkEnrollment(String student_id, String course_id) {
@@ -947,6 +965,19 @@ public class AppViewModel extends AndroidViewModel {
 
     public void updateStudent (Student student){
             appRepository.updateStudent(student);
+
+        Notification notification = new Notification();
+        notification.setNotification_id(UUID.randomUUID().toString());
+        notification.setStudent_id(student.getId());
+        notification.setTitle("Account Updated");
+        notification.setContent("Your account information was updated successfully.");
+        notification.setType("profile_update");
+        notification.setTimestamp(new Date());
+        notification.setIs_synced(false);
+
+
+        appRepository.insertNotification(notification);
+
     }
 
     public void updateStudentPassword(String email, String newPassword){

@@ -37,8 +37,8 @@ public interface NotificationDao {
     LiveData<List<Notification>> getNotificationById(String notification_id);
 
 
-    @Query("SELECT * FROM Notification WHERE student_id = :student_id")
-    LiveData<List<Notification>> getAllStudentNotifications(String student_id);
+    @Query("SELECT * FROM Notification WHERE student_id = :studentId ORDER BY timestamp DESC")
+    LiveData<List<Notification>> getAllStudentNotifications(String studentId);
 
 
     @Query("SELECT * FROM Notification WHERE notification_id = :notification_id")

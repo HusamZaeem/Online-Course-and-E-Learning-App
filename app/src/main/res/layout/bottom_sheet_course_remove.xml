@@ -12,7 +12,8 @@
         android:text="Are you sure you want to remove this course from Bookmarks?"
         android:textAppearance="?android:textAppearanceLarge"
         android:gravity="center"
-        android:textColor="#000"
+        android:textColor="@color/primary_color"
+        android:textStyle="bold"
         android:layout_marginBottom="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -180,18 +181,23 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/courseCardView">
 
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btnCancel"
             android:layout_width="150dp"
             android:layout_height="wrap_content"
             android:text="Cancel"
+            android:textColor="@color/btn_color"
+            android:background="@drawable/btn_bg"
             android:layout_marginEnd="8dp"/>
 
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btnRemove"
             android:layout_width="150dp"
             android:layout_height="wrap_content"
-            android:text="Yes, Remove"/>
+            android:text="Yes, Remove"
+            android:background="@drawable/btn_bg"
+            android:backgroundTint="@color/btn_color"
+            android:textColor="@color/white"/>
 
     </LinearLayout>
 

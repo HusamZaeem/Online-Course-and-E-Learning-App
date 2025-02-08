@@ -115,20 +115,15 @@ public class SignIn extends AppCompatActivity {
 
             if (isValidEmail(email) && isValidPassword(password)) {
                 if (isNetworkAvailable()) {
-                    // User is online, sign in with Firebase
                     firebaseAuth.signInWithEmailAndPassword(email, password)
                             .addOnCompleteListener(task -> {
                                 if (task.isSuccessful()) {
-                                    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                                    String userId = user != null ? user.getUid() : null;
-                                    if (userId != null) {
-                                        Log.d("SignIn", "Student ID set: " + userId);
-                                        saveStudentIdToSharedPreferences(userId);
+                                    FirebaseUser user = firebaseAuth.getCurrentUser();
+                                    if (user != null) {
+                                        saveStudentIdToSharedPreferences(user.getUid());
                                         saveCredentials(email, password);
-                                        startActivity(new Intent(getBaseContext(), MainActivity.class));
+                                        startActivity(new Intent(SignIn.this, MainActivity.class));
                                         finish();
-                                    }else {
-                                        showErrorMessage("Failed to retrieve student ID.");
                                     }
                                 } else {
                                     showErrorMessage("Sign-In Failed: " + task.getException().getMessage());
@@ -163,13 +158,6 @@ public class SignIn extends AppCompatActivity {
                 showErrorMessage("Invalid email or password");
             }
         });
-
-
-
-
-
-
-
 
 
 

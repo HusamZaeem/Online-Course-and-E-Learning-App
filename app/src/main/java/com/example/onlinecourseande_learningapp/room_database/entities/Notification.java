@@ -28,6 +28,8 @@ public class Notification implements Syncable {
     @NonNull
     private String notification_id="";
     private String student_id;
+    private String title;
+    private String type;
     private String content;
     private Date timestamp;
     private boolean is_synced;
@@ -37,13 +39,31 @@ public class Notification implements Syncable {
     @Ignore
     public Notification(){}
 
-    public Notification(@NonNull String notification_id, String student_id, String content, Date timestamp, boolean is_synced, Date last_updated) {
+    public Notification(@NonNull String notification_id, String student_id ,String title , String type, String content, Date timestamp, boolean is_synced, Date last_updated) {
         this.notification_id = notification_id;
         this.student_id = student_id;
+        this.title = title;
+        this.type = type;
         this.content = content;
         this.timestamp = timestamp;
         this.is_synced = is_synced;
         this.last_updated = last_updated;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     public boolean isIs_synced() {
@@ -132,4 +152,6 @@ public class Notification implements Syncable {
     public void setTimestamp(Date timestamp) {
         this.timestamp = timestamp;
     }
+
+
 }
