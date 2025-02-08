@@ -445,6 +445,7 @@ public class AppViewModel extends AndroidViewModel {
         notification.setContent("You have successfully enrolled in the " + course.getCourse_name() + " course.");
         notification.setType("enrollment");
         notification.setTimestamp(new Date());
+        notification.setLast_updated(new Date());
         notification.setIs_synced(false);
 
 
@@ -973,6 +974,7 @@ public class AppViewModel extends AndroidViewModel {
         notification.setContent("Your account information was updated successfully.");
         notification.setType("profile_update");
         notification.setTimestamp(new Date());
+        notification.setLast_updated(new Date());
         notification.setIs_synced(false);
 
 
