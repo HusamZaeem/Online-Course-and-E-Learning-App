@@ -378,7 +378,7 @@ public class AppViewModel extends AndroidViewModel {
         return appRepository.getAllEnrollments();
     }
 
-    public LiveData<List<Enrollment>> getEnrollmentById(String enrollment_id){
+    public LiveData<Enrollment> getEnrollmentById(String enrollment_id){
         return appRepository.getEnrollmentById(enrollment_id);
     }
 

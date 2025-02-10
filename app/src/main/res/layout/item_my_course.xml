@@ -98,9 +98,11 @@
 
             <!-- Circular Progress Bar (Container for Progress + Text) -->
             <FrameLayout
+                android:id="@+id/fl_circularProgress"
                 android:layout_width="70dp"
                 android:layout_height="70dp"
-                android:layout_marginEnd="8dp">
+                android:layout_marginEnd="8dp"
+                android:visibility="visible">
 
                 <!-- Circular Progress Indicator -->
                 <com.google.android.material.progressindicator.CircularProgressIndicator
@@ -123,7 +125,19 @@
                     android:textSize="16sp"
                     android:textColor="@android:color/black"
                     android:textStyle="bold"/>
+
+
+
             </FrameLayout>
+
+            <Button
+                android:id="@+id/btnViewCertificate"
+                android:layout_width="150dp"
+                android:layout_height="50dp"
+                android:text="View Certificate"
+                android:visibility="gone"
+                android:backgroundTint="@color/btn_color"
+                android:textColor="@color/btn_text_color"/>
 
         </LinearLayout>
     </androidx.cardview.widget.CardView>

@@ -732,7 +732,7 @@ public class AppRepository {
         return enrollmentDao.getAllEnrollments();
     }
 
-    public LiveData<List<Enrollment>> getEnrollmentById(String enrollment_id){
+    public LiveData<Enrollment> getEnrollmentById(String enrollment_id){
         return enrollmentDao.getEnrollmentById(enrollment_id);
     }
 

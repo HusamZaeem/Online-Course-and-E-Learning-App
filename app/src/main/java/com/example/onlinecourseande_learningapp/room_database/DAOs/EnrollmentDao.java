@@ -38,7 +38,7 @@ public interface EnrollmentDao {
 
 
     @Query("SELECT * FROM Enrollment WHERE enrollment_id = :enrollment_id")
-    LiveData<List<Enrollment>> getEnrollmentById(String enrollment_id);
+    LiveData<Enrollment> getEnrollmentById(String enrollment_id);
 
 
     @Query("SELECT * FROM Enrollment WHERE student_id = :student_id AND course_id = :course_id")

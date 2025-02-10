@@ -9,7 +9,7 @@
     android:padding="16dp"
     tools:context=".ProfileFragment">
 
-    <!-- Profile Photo with Edit Icon -->
+
     <FrameLayout
         android:id="@+id/fl_photo"
         android:layout_width="130dp"
@@ -45,7 +45,7 @@
             android:contentDescription="@string/edit_photo" />
     </FrameLayout>
 
-    <!-- First Name Field -->
+
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/tilFirstName"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
@@ -65,7 +65,7 @@
             android:enabled="false" />
     </com.google.android.material.textfield.TextInputLayout>
 
-    <!-- Last Name Field -->
+
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/tilLastName"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
@@ -87,7 +87,7 @@
 
 
 
-    <!-- Phone Field -->
+
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/tilPhone"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
@@ -108,7 +108,7 @@
             android:inputType="phone" />
     </com.google.android.material.textfield.TextInputLayout>
 
-    <!-- Date of Birth Field with DatePicker -->
+
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/tilDob"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
@@ -121,7 +121,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <!-- This field is non‑editable so that clicking it triggers the DatePickerDialog -->
+
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etDob"
             android:layout_width="match_parent"
@@ -131,7 +131,7 @@
             android:clickable="true" />
     </com.google.android.material.textfield.TextInputLayout>
 
-    <!-- Edit Personal Information Button (toggles edit mode) -->
+
     <Button
         android:id="@+id/btnEditSave"
         android:layout_width="0dp"
@@ -145,7 +145,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Change Password Button -->
+
     <Button
         android:id="@+id/btnChangePassword"
         android:layout_width="0dp"
@@ -159,7 +159,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Logout Button -->
+
     <Button
         android:id="@+id/btnLogout"
         android:layout_width="0dp"
