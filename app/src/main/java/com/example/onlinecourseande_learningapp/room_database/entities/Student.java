@@ -37,6 +37,16 @@ public class Student implements Syncable {
     public Student(){}
 
 
+    public Student(String student_id, String first_name, String last_name, String email, String password) {
+        this.email = email;
+        this.password = password;
+        this.student_id=student_id;
+        this.first_name=first_name;
+        this.last_name=last_name;
+    }
+
+
+    @Ignore
     public Student(String student_id, String email, String password) {
         this.email = email;
         this.password = password;

@@ -112,6 +112,8 @@ public class SignUp extends AppCompatActivity {
 
 
         binding.btnSignUpNewAccount.setOnClickListener(v -> {
+            String firstName = binding.etFirstNameSignUp.getText().toString();
+            String lastName = binding.etLastNameSignUp.getText().toString();
             String email = binding.etEmailSignUp.getText().toString();
             String password = binding.etPasswordSignUp.getText().toString();
 
@@ -131,7 +133,7 @@ public class SignUp extends AppCompatActivity {
                                         if (firebaseUser != null) {
                                             String uid = firebaseUser.getUid();
                                             saveUserToFirestore(uid, email, password);
-                                            saveUserLocally(email, encryptedPassword);
+                                            saveUserLocally(firstName, lastName, email, encryptedPassword);
                                             syncData();
                                             startActivity(new Intent(getBaseContext(), MainActivity.class));
                                             finish();
@@ -149,7 +151,7 @@ public class SignUp extends AppCompatActivity {
                         KeystoreHelper keystoreHelper = new KeystoreHelper();
                         keystoreHelper.generateKey();
                         String encryptedPassword = keystoreHelper.encryptPassword(password);
-                        saveUserLocally(email, encryptedPassword);
+                        saveUserLocally(firstName, lastName, email, encryptedPassword);
                         showErrorMessage("You are offline. User will be saved locally.");
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -249,7 +251,7 @@ public class SignUp extends AppCompatActivity {
                             String uid = user.getUid();
                             String email = user.getEmail();
                             saveUserToFirestore(uid, email);
-                            saveUserLocally(uid,email);
+                            saveUserLocallyEmailAndPassword(uid,email);
                             syncData();
                             startActivity(new Intent(SignUp.this, MainActivity.class));
                             finish();
@@ -302,7 +304,7 @@ public class SignUp extends AppCompatActivity {
                             String uid = user.getUid();
                             String email = user.getEmail();
                             saveUserToFirestore(uid, email);
-                            saveUserLocally(uid, email);
+                            saveUserLocallyEmailAndPassword(uid, email);
                             syncData();
                             startActivity(new Intent(SignUp.this, MainActivity.class));
                             finish();
@@ -322,9 +324,20 @@ public class SignUp extends AppCompatActivity {
         return networkInfo != null && networkInfo.isConnected();
     }
 
-    private void saveUserLocally(String email, String password) {
+
+
+    private void saveUserLocallyEmailAndPassword(String email, String password) {
         String uid = UUID.randomUUID().toString(); // Generate a unique ID locally
         Student student = new Student(uid, email, password);
+        student.setIs_synced(false);
+        appViewModel.insertStudent(student); // Save to Room database
+    }
+
+
+
+    private void saveUserLocally(String firstName, String lastName, String email, String password) {
+        String uid = UUID.randomUUID().toString(); // Generate a unique ID locally
+        Student student = new Student(uid,firstName,lastName, email, password);
         student.setIs_synced(false);
         appViewModel.insertStudent(student); // Save to Room database
     }
