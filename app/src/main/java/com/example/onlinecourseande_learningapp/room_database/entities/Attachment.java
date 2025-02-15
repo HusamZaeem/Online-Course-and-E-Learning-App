@@ -29,6 +29,7 @@ public class Attachment implements Syncable {
     private String attachment_id="";
     private String media_url;
     private String message_id;
+    private String type; //Type of the attachment, e.g., "file", "image", "video"
     private boolean is_synced;
     private Date last_updated;
 
@@ -36,12 +37,21 @@ public class Attachment implements Syncable {
     @Ignore
     public Attachment(){}
 
-    public Attachment(@NonNull String attachment_id, String media_url, String message_id, boolean is_synced, Date last_updated) {
+    public Attachment(@NonNull String attachment_id, String media_url, String message_id, String type, boolean is_synced, Date last_updated) {
         this.attachment_id = attachment_id;
         this.media_url = media_url;
         this.message_id = message_id;
+        this.type = type;
         this.is_synced = is_synced;
         this.last_updated = last_updated;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     public boolean isIs_synced() {
@@ -87,6 +97,7 @@ public class Attachment implements Syncable {
         Map<String, Object> map = new HashMap<>();
         map.put("media_url", media_url);
         map.put("message_id", message_id);
+        map.put("type", type);
         map.put("last_updated", Converter.toFirestoreTimestamp(last_updated));
         return map;
     }

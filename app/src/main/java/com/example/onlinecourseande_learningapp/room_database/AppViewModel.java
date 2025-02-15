@@ -1,10 +1,15 @@
 package com.example.onlinecourseande_learningapp.room_database;
 
+import static com.example.onlinecourseande_learningapp.ConversationActivity.STATUS_DELIVERED;
+import static com.example.onlinecourseande_learningapp.ConversationActivity.STATUS_READ;
+
 import android.app.Application;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.Transformations;
@@ -33,16 +38,21 @@ import com.example.onlinecourseande_learningapp.room_database.entities.Student;
 import com.example.onlinecourseande_learningapp.room_database.entities.StudentLesson;
 import com.example.onlinecourseande_learningapp.room_database.entities.StudentMentor;
 import com.example.onlinecourseande_learningapp.room_database.entities.StudentModule;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.SetOptions;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 public class AppViewModel extends AndroidViewModel {
 
     AppRepository appRepository;
     private static AppViewModel instance;
+    private FirebaseFirestore fs;
     private final MutableLiveData<Boolean> lessonCompletionStatus = new MutableLiveData<>();
     private final MutableLiveData<String> searchQuery = new MutableLiveData<>();
 
@@ -50,6 +60,7 @@ public class AppViewModel extends AndroidViewModel {
     public AppViewModel(@NonNull Application application) {
         super(application);
         appRepository = new AppRepository(application);
+        fs = FirebaseFirestore.getInstance();
     }
 
     public static AppViewModel getInstance(@NonNull Application application) {
@@ -88,6 +99,31 @@ public class AppViewModel extends AndroidViewModel {
     }
 
 
+    public LiveData<CourseGroupInfo> getCourseGroupInfo(String courseId) {
+        MediatorLiveData<CourseGroupInfo> mediator = new MediatorLiveData<>();
+        final CourseGroupInfo info = new CourseGroupInfo();
+
+        // Observe Group
+        mediator.addSource(getGroupByCourseIdLiveData(courseId), group -> {
+            info.setGroup(group);
+            mediator.setValue(info);
+        });
+
+        // Observe Mentor
+        mediator.addSource(appRepository.getMentorByCourseId(courseId), mentor -> {
+            info.setMentor(mentor);
+            mediator.setValue(info);
+        });
+
+        // Observe Students
+        mediator.addSource(getStudentsByCourseIdLive(courseId), students -> {
+            info.setStudents(students);
+            mediator.setValue(info);
+        });
+
+        return mediator;
+    }
+
 
 
     public LiveData<String> getSearchQuery() {
@@ -96,6 +132,15 @@ public class AppViewModel extends AndroidViewModel {
 
     public void setSearchQuery(String query) {
         searchQuery.setValue(query);
+    }
+
+
+    public LiveData<List<ChatParticipant>> getChatParticipants(String studentId) {
+        return appRepository.getChatParticipants(studentId);
+    }
+
+    public void getOrCreateIndividualChat(String senderId, String senderType, String receiverId, String receiverType, AppRepository.OnChatCreatedListener listener) {
+        appRepository.getOrCreateIndividualChat(senderId, senderType, receiverId, receiverType, listener);
     }
 
 
@@ -137,7 +182,9 @@ public class AppViewModel extends AndroidViewModel {
     }
 
 
-
+    public LiveData<Attachment> getAttachmentById(String attachmentId){
+        return appRepository.getAttachmentById(attachmentId);
+    }
 
 
     // BookmarkDao --------------------------------------------
@@ -267,7 +314,7 @@ public class AppViewModel extends AndroidViewModel {
     }
 
 
-    Chat getChatById(String chat_id){
+    public Chat getChatById(String chat_id){
         return appRepository.getChatById(chat_id);
     }
 
@@ -278,7 +325,9 @@ public class AppViewModel extends AndroidViewModel {
     }
 
 
-
+    public LiveData<Chat>getChatByGroupId(String group_id){
+        return appRepository.getChatByGroupId(group_id);
+    }
 
 
 
@@ -309,6 +358,11 @@ public class AppViewModel extends AndroidViewModel {
     public LiveData<List<Course>> getAllCourses (){
         return appRepository.getAllCourses();
     }
+
+    public LiveData<List<Course>> getAllCoursesDistinct() {
+        return Transformations.distinctUntilChanged(appRepository.getAllCourses());
+    }
+
 
     public LiveData<List<Course>> getCoursesByIds(List<String> courseIds){
         return appRepository.getCoursesByIds(courseIds);
@@ -425,19 +479,21 @@ public class AppViewModel extends AndroidViewModel {
 
 
 
-    public void completeEnrollment(String studentId, String courseId, double fee, String courseName) {
-        appRepository.completeEnrollment(studentId, courseId, fee, courseName);
-    }
+
 
 
 
 
     public void enrollInFreeCourse(String enrollment_id, String student_id, String course_id) {
-            appRepository.enrollInFreeCourse(enrollment_id, student_id, course_id);
+        // Enroll the student in the course
+        appRepository.enrollInFreeCourse(enrollment_id, student_id, course_id);
 
-
+        // Retrieve the course object
         Course course = appRepository.getCourseById(course_id);
 
+
+
+        // Create a notification for the student
         Notification notification = new Notification();
         notification.setNotification_id(UUID.randomUUID().toString());
         notification.setStudent_id(student_id);
@@ -448,10 +504,17 @@ public class AppViewModel extends AndroidViewModel {
         notification.setLast_updated(new Date());
         notification.setIs_synced(false);
 
-
+        // Insert the notification into the database
         appRepository.insertNotification(notification);
-
     }
+
+
+
+
+
+
+
+
 
     public LiveData<Enrollment> checkEnrollment(String student_id, String course_id) {
         return appRepository.checkEnrollment(student_id, course_id);
@@ -493,11 +556,13 @@ public class AppViewModel extends AndroidViewModel {
 
 
 
-    Group getGroupByCourseId(String course_id){
+    public Group getGroupByCourseId(String course_id){
         return appRepository.getGroupByCourseId(course_id);
     }
 
-
+    public LiveData<Group> getGroupByCourseIdLiveData(String courseId) {
+        return appRepository.getGroupByCourseIdLiveData(courseId);
+    }
 
     public void createGroupForCourse(String courseId, String courseName) {
             if (appRepository.getGroupByCourseId(courseId) == null){
@@ -506,17 +571,25 @@ public class AppViewModel extends AndroidViewModel {
             }
     }
 
-    // Add a student to a group
-    public void addStudentToGroup(String studentId, String courseId) {
-            Group group = appRepository.getGroupByCourseId(courseId);
-            if (group != null) {
-                GroupMembership groupMembership = new GroupMembership();
-                groupMembership.setGroup_id(group.getGroup_id());
-                groupMembership.setStudent_id(studentId);
-                appRepository.insertGroupMembership(groupMembership);
-            }
+
+
+    public Group getGroupByGroupId(String group_id){
+        return appRepository.getGroupByGroupId(group_id);
     }
 
+
+    public LiveData<List<Chat>> getAllChatsIncludingGroups(String userId) {
+        return appRepository.getAllChatsIncludingGroups(userId);
+    }
+
+    public LiveData<Group> getGroupByIdLive(String group_id){
+        return appRepository.getGroupByIdLive(group_id);
+    }
+
+
+    public LiveData<String>getCourseIdByGroupId(String group_id){
+        return appRepository.getCourseIdByGroupId(group_id);
+    }
 
 
     // GroupMembershipDao --------------------------------------------
@@ -542,19 +615,18 @@ public class AppViewModel extends AndroidViewModel {
         return appRepository.getGroupMembershipById(group_membership_id);
     }
 
-    public LiveData<List<String>> getAllGroupStudents(String group_id){
-        return appRepository.getAllGroupStudents(group_id);
+
+
+
+    public LiveData<GroupMembership> getGroupMembershipByGroupIdAndMemberId(String group_membership_id, String member_id){
+        return appRepository.getGroupMembershipByGroupIdAndMemberId(group_membership_id,member_id);
     }
 
-    public LiveData<List<String>> getAllStudentGroups(String student_id){
-        return appRepository.getAllStudentGroups(student_id);
+
+
+    public LiveData<List<GroupMembership>> getGroupMembershipsByGroupId(String group_id){
+        return appRepository.getGroupMembershipsByGroupId(group_id);
     }
-
-
-
-
-
-
 
     // LessonDao --------------------------------------------
 
@@ -775,8 +847,58 @@ public class AppViewModel extends AndroidViewModel {
     }
 
 
+    public LiveData<Message> getLastMessageForChat(String chat_id){
+        return appRepository.getLastMessageForChat(chat_id);
+    }
+
+    public LiveData<Message> getLastMessageForGroup(String groupId){
+        return appRepository.getLastMessageForGroup(groupId);
+    }
 
 
+    public LiveData<List<Message>> getUnreadMessages(String chatId, String currentUserId) {
+        return appRepository.getUnreadMessages(chatId, currentUserId);
+    }
+
+    public void markMessagesAsRead(String chatId, String currentUserId) {
+        appRepository.getUnreadMessages(chatId, currentUserId).observeForever(unreadMessages -> {
+            if (unreadMessages == null || unreadMessages.isEmpty()) return;
+
+            Date now = new Date();
+            for (Message message : unreadMessages) {
+                message.setReadAt(now);
+                message.setStatus(STATUS_READ);
+                message.setIs_synced(false);
+                appRepository.updateMessage(message);
+
+                // Update Firebase
+                FirebaseFirestore.getInstance().collection("Message")
+                        .document(message.getMessage_id())
+                        .update("status", STATUS_READ, "readAt", now);
+            }
+        });
+    }
+
+
+
+
+    public void markMessagesAsDelivered(String chatId, String currentUserId) {
+        AppDatabase.databaseWriteExecutor.execute(() -> {
+            List<Message> sentMessages = appRepository.getSentMessagesForChat(chatId, currentUserId);
+            Date now = new Date();
+            for (Message message : sentMessages) {
+                message.setStatus(STATUS_DELIVERED);
+                message.setDeliveredAt(now);
+                message.setIs_synced(false);
+                appRepository.updateMessage(message);
+
+                // Update Firebase
+                FirebaseFirestore.getInstance().collection("Message")
+                        .document(message.getMessage_id())
+                        .update("status", STATUS_DELIVERED, "deliveredAt", now);
+            }
+        });
+    }
 
 
     // ModuleDao --------------------------------------------
@@ -865,6 +987,9 @@ public class AppViewModel extends AndroidViewModel {
         return appRepository.getAllStudentNotifications(student_id);
     }
 
+    public LiveData<List<Student>> getStudentsByCourseIdLive(String courseId) {
+        return appRepository.getStudentsByCourseIdLive(courseId);
+    }
 
 
 

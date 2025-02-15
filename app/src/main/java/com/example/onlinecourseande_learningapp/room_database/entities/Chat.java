@@ -17,20 +17,19 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-@Entity(tableName = "Chat",
-        foreignKeys = {@ForeignKey(entity = Student.class, parentColumns = "student_id", childColumns = "sender_id", onDelete = ForeignKey.CASCADE),
-                      @ForeignKey(entity = Student.class, parentColumns = "student_id", childColumns = "receiver_id", onDelete = ForeignKey.CASCADE)
-        },
-        indices = {@Index(value = "sender_id"),
-                    @Index(value = "receiver_id")
-        })
+@Entity(tableName = "Chat")
 public class Chat implements Syncable {
 
     @PrimaryKey
     @NonNull
     private String chat_id="";
-    private String sender_id;
-    private String receiver_id;
+    private String sender_id;  // Used for one-to-one chats
+    private String sender_type; // "Mentor" or "Student"
+    private String receiver_id; // Used for one-to-one chats
+    private String receiver_type; // "Mentor" or "Student"
+    private String group_id; // Used for group chats
+    private boolean is_group_chat; // New flag to differentiate chat types
+    private Map<String, Boolean> typingStatus;
     private Date timestamp;
     private boolean is_synced;
     private Date last_updated;
@@ -39,13 +38,58 @@ public class Chat implements Syncable {
     @Ignore
     public Chat(){}
 
-    public Chat(@NonNull String chat_id, String sender_id, String receiver_id, Date timestamp, boolean is_synced, Date last_updated) {
+    public Chat(@NonNull String chat_id, String sender_id, String sender_type, String receiver_id, String receiver_type, String group_id, boolean is_group_chat, Map<String, Boolean> typingStatus, Date timestamp, boolean is_synced, Date last_updated) {
         this.chat_id = chat_id;
         this.sender_id = sender_id;
+        this.sender_type = sender_type;
         this.receiver_id = receiver_id;
+        this.receiver_type = receiver_type;
+        this.group_id = group_id;
+        this.is_group_chat = is_group_chat;
+        this.typingStatus = typingStatus;
         this.timestamp = timestamp;
         this.is_synced = is_synced;
         this.last_updated = last_updated;
+    }
+
+    public String getGroup_id() {
+        return group_id;
+    }
+
+    public void setGroup_id(String group_id) {
+        this.group_id = group_id;
+    }
+
+    public boolean isIs_group_chat() {
+        return is_group_chat;
+    }
+
+    public void setIs_group_chat(boolean is_group_chat) {
+        this.is_group_chat = is_group_chat;
+    }
+
+    public String getSender_type() {
+        return sender_type;
+    }
+
+    public void setSender_type(String sender_type) {
+        this.sender_type = sender_type;
+    }
+
+    public String getReceiver_type() {
+        return receiver_type;
+    }
+
+    public void setReceiver_type(String receiver_type) {
+        this.receiver_type = receiver_type;
+    }
+
+    public Map<String, Boolean> getTypingStatus() {
+        return typingStatus;
+    }
+
+    public void setTypingStatus(Map<String, Boolean> typingStatus) {
+        this.typingStatus = typingStatus;
     }
 
     public boolean isIs_synced() {
@@ -90,7 +134,12 @@ public class Chat implements Syncable {
     public Map<String, Object> toMap() {
         Map<String, Object> map = new HashMap<>();
         map.put("sender_id", sender_id);
+        map.put("sender_type", sender_type);
         map.put("receiver_id", receiver_id);
+        map.put("receiver_type", receiver_type);
+        map.put("group_id", group_id);
+        map.put("is_group_chat", is_group_chat);
+        map.put("typingStatus", typingStatus);
         map.put("timestamp", Converter.toFirestoreTimestamp(timestamp));
         map.put("last_updated", Converter.toFirestoreTimestamp(last_updated));
         return map;

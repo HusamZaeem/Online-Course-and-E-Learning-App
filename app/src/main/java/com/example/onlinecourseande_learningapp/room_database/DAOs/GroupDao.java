@@ -37,6 +37,9 @@ public interface GroupDao {
     @Query("SELECT * FROM `Group` WHERE group_id = :group_id")
     LiveData<List<Group>> getGroupById(String group_id);
 
+    @Query("SELECT * FROM `Group` WHERE group_id = :group_id")
+    LiveData<Group> getGroupByIdLive(String group_id);
+
     @Query("SELECT * FROM `Group` WHERE group_name = :group_name")
     LiveData<List<Group>> getGroupByGroupName(String group_name);
 
@@ -45,12 +48,20 @@ public interface GroupDao {
     @Query("SELECT * FROM `Group` WHERE course_id = :course_id")
     Group getGroupByCourseId(String course_id);
 
+    @Query("SELECT * FROM `Group` WHERE course_id = :course_id")
+    LiveData<Group> getGroupByCourseIdLiveData(String course_id);
 
     @Query("SELECT * FROM `Group` WHERE group_id = :group_id")
     Group getGroupByGroupId(String group_id);
 
+    @Query("SELECT course_id FROM `Group` WHERE group_id = :group_id")
+    LiveData<String>getCourseIdByGroupId(String group_id);
+
     @Query("SELECT * FROM `Group` WHERE is_synced = 0")
     List<Group> getUnsyncedGroup();
 
+
+    @Query("SELECT member_id FROM GroupMembership WHERE group_id = :groupId")
+    List<String> getGroupParticipants(String groupId);
 
 }

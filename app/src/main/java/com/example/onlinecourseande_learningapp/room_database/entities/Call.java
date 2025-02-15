@@ -21,13 +21,11 @@ import java.util.Map;
         tableName = "Call",
         foreignKeys = {
                 @ForeignKey(entity = Chat.class, parentColumns = "chat_id", childColumns = "chat_id", onDelete = ForeignKey.CASCADE),
-                @ForeignKey(entity = Student.class, parentColumns = "student_id", childColumns = "caller_id", onDelete = ForeignKey.CASCADE),
-                @ForeignKey(entity = Student.class, parentColumns = "student_id", childColumns = "receiver_id", onDelete = ForeignKey.CASCADE)
+                @ForeignKey(entity = Group.class, parentColumns = "group_id", childColumns = "group_id", onDelete = ForeignKey.CASCADE)
         },
         indices = {
                 @Index(value = "chat_id"),
-                @Index(value = "caller_id"),
-                @Index(value = "receiver_id")
+                @Index(value = "group_id")
         }
 )
 public class Call implements Syncable {
@@ -39,8 +37,12 @@ public class Call implements Syncable {
     private String chat_id;
 
     private String caller_id;
+    private String caller_type; //Mentor,Student
 
     private String receiver_id;
+    private String receiver_type; //Mentor,Student
+    private String group_id;
+    private String channel_id;
 
     private String callType; // "Voice", "Video"
 
@@ -48,7 +50,7 @@ public class Call implements Syncable {
 
     private Date endTime;
 
-    private String callStatus;
+    private String callStatus; // "ONGOING", "ENDED", "MISSED"
     private Date timestamp;
     private boolean is_synced;
     private Date last_updated;
@@ -57,11 +59,15 @@ public class Call implements Syncable {
     @Ignore
     public Call(){}
 
-    public Call(@NonNull String call_id, String chat_id, String caller_id, String receiver_id, String callType, Date startTime, Date endTime, String callStatus, Date timestamp, boolean is_synced, Date last_updated) {
+    public Call(@NonNull String call_id, String chat_id, String caller_id, String caller_type, String receiver_id, String receiver_type, String group_id, String channel_id, String callType, Date startTime, Date endTime, String callStatus, Date timestamp, boolean is_synced, Date last_updated) {
         this.call_id = call_id;
         this.chat_id = chat_id;
         this.caller_id = caller_id;
+        this.caller_type = caller_type;
         this.receiver_id = receiver_id;
+        this.receiver_type = receiver_type;
+        this.group_id = group_id;
+        this.channel_id = channel_id;
         this.callType = callType;
         this.startTime = startTime;
         this.endTime = endTime;
@@ -69,6 +75,38 @@ public class Call implements Syncable {
         this.timestamp = timestamp;
         this.is_synced = is_synced;
         this.last_updated = last_updated;
+    }
+
+    public String getCaller_type() {
+        return caller_type;
+    }
+
+    public void setCaller_type(String caller_type) {
+        this.caller_type = caller_type;
+    }
+
+    public String getReceiver_type() {
+        return receiver_type;
+    }
+
+    public void setReceiver_type(String receiver_type) {
+        this.receiver_type = receiver_type;
+    }
+
+    public String getGroup_id() {
+        return group_id;
+    }
+
+    public void setGroup_id(String group_id) {
+        this.group_id = group_id;
+    }
+
+    public String getChannel_id() {
+        return channel_id;
+    }
+
+    public void setChannel_id(String channel_id) {
+        this.channel_id = channel_id;
     }
 
     public boolean isIs_synced() {
@@ -113,8 +151,12 @@ public class Call implements Syncable {
     public Map<String, Object> toMap() {
         Map<String, Object> map = new HashMap<>();
         map.put("chat_id", chat_id);
+        map.put("channel_id", channel_id);
+        map.put("group_id", group_id);
         map.put("caller_id", caller_id);
+        map.put("caller_type", caller_type);
         map.put("receiver_id", receiver_id);
+        map.put("receiver_type", receiver_type);
         map.put("callType", callType);
         map.put("startTime", Converter.toFirestoreTimestamp(startTime));
         map.put("endTime", Converter.toFirestoreTimestamp(endTime));

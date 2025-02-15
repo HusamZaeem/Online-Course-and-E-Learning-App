@@ -57,7 +57,11 @@ import com.example.onlinecourseande_learningapp.room_database.entities.StudentMe
 import com.example.onlinecourseande_learningapp.room_database.entities.StudentModule;
 
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
@@ -119,184 +123,99 @@ public class AppRepository {
         return instance;
     }
 
-    public <T extends Syncable> CompletableFuture<List<T>> getAllEntitiesAsync(Class<T> entityClass) {
-        return CompletableFuture.supplyAsync(() -> getAllEntities(entityClass), AppDatabase.getDatabaseWriteExecutor());
-    }
-
-    public <T extends Syncable> CompletableFuture<T> getEntityByIdAsync(String id, Class<T> entityClass) {
-        return CompletableFuture.supplyAsync(() -> getEntityById(id, entityClass), AppDatabase.getDatabaseWriteExecutor());
-    }
-
-    private <T extends Syncable> List<T> getAllEntities(Class<T> entityClass) {
-        if (entityClass == Student.class) {
-            return (List<T>) studentDao.getAllStudentsList();
-        }
-        if (entityClass == Course.class) {
-            return (List<T>) courseDao.getAllCoursesList();
-        }
-        if (entityClass == Mentor.class) {
-            return (List<T>) mentorDao.getAllMentorsList();
-        }
-        if (entityClass == Module.class) {
-            return (List<T>) moduleDao.getAllModulesList();
-        }
-        if (entityClass == Lesson.class) {
-            return (List<T>) lessonDao.getAllLessonsList();
-        }
-        if (entityClass == MentorCourse.class) {
-            return (List<T>) mentorCourseDao.getAllMentorsCourses();
-        }
-        if (entityClass == Enrollment.class) {
-            return (List<T>) enrollmentDao.getAllEnrollmentsList();
-        }
-        if (entityClass == Chat.class) {
-            return (List<T>) chatDao.getAllChatsList();
-        }
-        if (entityClass == Call.class) {
-            return (List<T>) callDao.getAllCallsList();
-        }
-        if (entityClass == Group.class) {
-            return (List<T>) groupDao.getAllGroupsList();
-        }
-        if (entityClass == Message.class) {
-            return (List<T>) messageDao.getAllMessagesList();
-        }
-        if (entityClass == GroupMembership.class) {
-            return (List<T>) groupMembershipDao.getAllGroupMemberships();
-        }
-        if (entityClass == Review.class) {
-            return (List<T>) reviewDao.getAllReviewsList();
-        }
-        if (entityClass == Attachment.class) {
-            return (List<T>) attachmentDao.getAllAttachmentsList();
-        }
-        if (entityClass == Ad.class) {
-            return (List<T>) adDao.getAllAdsList();
-        }
-        if (entityClass == StudentLesson.class) {
-            return (List<T>) studentLessonDao.getAllStudentLesson();
-        }
-        if (entityClass == StudentMentor.class) {
-            return (List<T>) studentMentorDao.getAllStudentMentor();
-        }
-        if (entityClass == StudentModule.class) {
-            return (List<T>) studentModuleDao.getAllStudentModule();
-        }
-        if (entityClass == Bookmark.class) {
-            return (List<T>) bookmarkDao.getAllBookmarksList();
-        }
-        if (entityClass == Notification.class) {
-            return (List<T>) notificationDao.getAllNotificationsList();
-        }
-
-        throw new IllegalArgumentException("Unsupported entity class: " + entityClass.getName());
-    }
-
-    // Add generic method to get entity by ID
-    @SuppressWarnings("unchecked")
-    public <T extends Syncable> T getEntityById(String id, Class<T> entityClass) {
-        if (entityClass == Student.class) {
-            return (T) studentDao.getStudentById(id);
-        } else if (entityClass == Course.class) {
-            return (T) courseDao.getCourseById(id);
-        } else if (entityClass == Mentor.class) {
-            return (T) mentorDao.getMentorById(id);
-        } else if (entityClass == Module.class) {
-            return (T) moduleDao.getModuleByModuleId(id);
-        } else if (entityClass == Lesson.class) {
-            return (T) lessonDao.getLessonByLessonId(id);
-        } else if (entityClass == MentorCourse.class) {
-            return (T) mentorCourseDao.getMentorCourseByMentorCourseId(id);
-        } else if (entityClass == Enrollment.class) {
-            return (T) enrollmentDao.getEnrollmentByEnrollmentId(id);
-        } else if (entityClass == Chat.class) {
-            return (T) chatDao.getChatById(id);
-        } else if (entityClass == Call.class) {
-            return (T) callDao.getCallById(id);
-        } else if (entityClass == Group.class) {
-            return (T) groupDao.getGroupByGroupId(id);
-        } else if (entityClass == Message.class) {
-            return (T) messageDao.getMessageByMessageId(id);
-        } else if (entityClass == GroupMembership.class) {
-            return (T) groupMembershipDao.getGroupMembershipByGroupMembershipId(id);
-        } else if (entityClass == Review.class) {
-            return (T) reviewDao.getReviewByReviewId(id);
-        } else if (entityClass == Attachment.class) {
-            return (T) attachmentDao.getAttachmentByAttachmentId(id);
-        } else if (entityClass == StudentLesson.class) {
-            return (T) studentLessonDao.getStudentLessonById(id);
-        } else if (entityClass == StudentMentor.class) {
-            return (T) studentMentorDao.getStudentMentorById(id);
-        } else if (entityClass == StudentModule.class) {
-            return (T) studentModuleDao.getStudentModuleById(id);
-        } else if (entityClass == Ad.class) {
-            return (T) adDao.getAdById(id);
-        } else if (entityClass == Bookmark.class) {
-            return (T) bookmarkDao.getBookmarkByBookmarkId(id);
-        } else if (entityClass == Notification.class) {
-            return (T) notificationDao.getNotificationByNotificationId(id);
-        }
 
 
-        throw new IllegalArgumentException("Unsupported entity class: " + entityClass.getName());
+
+
+    /**
+     * Returns LiveData containing a list of ChatParticipant objects for all students (and mentors)
+     * enrolled in courses where the specified student is enrolled.
+     */
+    public LiveData<List<ChatParticipant>> getChatParticipants(final String studentId) {
+        final MutableLiveData<List<ChatParticipant>> liveData = new MutableLiveData<>();
+        AppDatabase.databaseWriteExecutor.execute(() -> {
+            List<ChatParticipant> participants = new ArrayList<>();
+            Set<String> processedKeys = new HashSet<>();
+
+            // Get courses that the student is enrolled in.
+            List<Enrollment> myEnrollments = enrollmentDao.getEnrollmentsForStudentList(studentId);
+            Set<String> courseIds = new HashSet<>();
+            for (Enrollment enrollment : myEnrollments) {
+                courseIds.add(enrollment.getCourse_id());
+            }
+
+            // For each course, get all other enrolled students.
+            for (String courseId : courseIds) {
+                List<Enrollment> courseEnrollments = enrollmentDao.getEnrollmentsForCourse(courseId);
+                for (Enrollment enrollment : courseEnrollments) {
+                    if (enrollment.getStudent_id().equals(studentId)) continue;
+                    Student student = studentDao.getStudentById(enrollment.getStudent_id());
+                    if (student != null) {
+                        String key = student.getStudent_id() + "_Student";
+                        if (!processedKeys.contains(key)) {
+                            processedKeys.add(key);
+                            String fullName = student.getFirst_name() + " " + student.getLast_name();
+                            ChatParticipant cp = new ChatParticipant(
+                                    student.getStudent_id(),
+                                    fullName,
+                                    "Student",
+                                    student.getProfile_photo()
+                            );
+                            participants.add(cp);
+                        }
+                    }
+                }
+                // For each course, get the mentors.
+                List<String> mentorIds = mentorCourseDao.getAllCourseMentorsList(courseId);
+                for (String mentorId : mentorIds) {
+                    Mentor mentor = mentorDao.getMentorById(mentorId);
+                    if (mentor != null) {
+                        String key = mentor.getMentor_id() + "_Mentor";
+                        if (!processedKeys.contains(key)) {
+                            processedKeys.add(key);
+                            String fullName = mentor.getMentor_fName() + " " + mentor.getMentor_lName();
+                            ChatParticipant cp = new ChatParticipant(
+                                    mentor.getMentor_id(),
+                                    fullName,
+                                    "Mentor",
+                                    mentor.getMentor_photo()
+                            );
+                            participants.add(cp);
+                        }
+                    }
+                }
+            }
+            liveData.postValue(participants);
+        });
+        return liveData;
     }
 
 
-    public <T extends Syncable> CompletableFuture<List<T>> getUnsyncedEntitiesAsync(Class<T> entityClass) {
-        return CompletableFuture.supplyAsync(() -> getUnsyncedEntities(entityClass), AppDatabase.getDatabaseWriteExecutor());
+    public void getOrCreateIndividualChat(String senderId, String senderType, String receiverId, String receiverType, OnChatCreatedListener listener) {
+        AppDatabase.databaseWriteExecutor.execute(() -> {
+            Chat existingChat = chatDao.findChatBetweenUsers(senderId, receiverId);
+            if (existingChat == null) {
+                // Create new chat
+                Chat newChat = new Chat();
+                newChat.setChat_id(UUID.randomUUID().toString());
+                newChat.setSender_id(senderId);
+                newChat.setSender_type(senderType);
+                newChat.setReceiver_id(receiverId);
+                newChat.setReceiver_type(receiverType);
+                newChat.setTimestamp(new Date());
+                newChat.setIs_synced(false);
+                newChat.setLast_updated(new Date());
+                chatDao.insertChat(newChat);
+                listener.onChatCreated(newChat);
+            } else {
+                listener.onChatCreated(existingChat);
+            }
+        });
     }
 
-
-    // Add method to get all unsynced entities of a type
-    @SuppressWarnings("unchecked")
-    public <T extends Syncable> List<T> getUnsyncedEntities(Class<T> entityClass) {
-        if (entityClass == Student.class) {
-            return (List<T>) studentDao.getUnsyncedStudents();
-        } else if (entityClass == Course.class) {
-            return (List<T>) courseDao.getUnsyncedCourses();
-        } else if (entityClass == Ad.class) {
-            return (List<T>) adDao.getUnsyncedAd();
-        } else if (entityClass == Attachment.class) {
-            return (List<T>) attachmentDao.getUnsyncedAttachment();
-        } else if (entityClass == Bookmark.class) {
-            return (List<T>) bookmarkDao.getUnsyncedBookmark();
-        } else if (entityClass == Call.class) {
-            return (List<T>) callDao.getUnsyncedCall();
-        } else if (entityClass == Chat.class) {
-            return (List<T>) chatDao.getUnsyncedChat();
-        } else if (entityClass == Enrollment.class) {
-            return (List<T>) enrollmentDao.getUnsyncedEnrollment();
-        } else if (entityClass == Group.class) {
-            return (List<T>) groupDao.getUnsyncedGroup();
-        } else if (entityClass == GroupMembership.class) {
-            return (List<T>) groupMembershipDao.getUnsyncedGroupMembership();
-        } else if (entityClass == Lesson.class) {
-            return (List<T>) lessonDao.getUnsyncedLesson();
-        } else if (entityClass == Mentor.class) {
-            return (List<T>) mentorDao.getUnsyncedMentors();
-        } else if (entityClass == MentorCourse.class) {
-            return (List<T>) mentorCourseDao.getUnsyncedMentorCourse();
-        } else if (entityClass == Message.class) {
-            return (List<T>) messageDao.getUnsyncedMessage();
-        } else if (entityClass == Module.class) {
-            return (List<T>) moduleDao.getUnsyncedModule();
-        } else if (entityClass == Notification.class) {
-            return (List<T>) notificationDao.getUnsyncedNotification();
-        } else if (entityClass == Review.class) {
-            return (List<T>) reviewDao.getUnsyncedReview();
-        } else if (entityClass == StudentLesson.class) {
-            return (List<T>) studentLessonDao.getUnsyncedStudentLesson();
-        } else if (entityClass == StudentMentor.class) {
-            return (List<T>) studentMentorDao.getUnsyncedStudentMentor();
-        } else if (entityClass == StudentModule.class) {
-            return (List<T>) studentModuleDao.getUnsyncedStudentModule();
-        }
-
-
-        throw new IllegalArgumentException("Unsupported entity class: " + entityClass.getName());
+    public interface OnChatCreatedListener {
+        void onChatCreated(Chat chat);
     }
-
-
 
 
 
@@ -346,6 +265,10 @@ public class AppRepository {
 
     public Attachment getAttachmentByAttachmentId(String attachment_id){
         return attachmentDao.getAttachmentByAttachmentId(attachment_id);
+    }
+
+    public LiveData<Attachment> getAttachmentById(String attachmentId){
+        return attachmentDao.getAttachmentById(attachmentId);
     }
 
 
@@ -521,7 +444,45 @@ public class AppRepository {
 
 
 
+    public LiveData<List<Chat>> getAllChatsIncludingGroups(String userId) {
+        MutableLiveData<List<Chat>> liveData = new MutableLiveData<>();
 
+        AppDatabase.databaseWriteExecutor.execute(() -> {
+            List<Chat> personalChats = chatDao.getAllChatsList().stream()
+                    // Add null checks for sender_id and receiver_id
+                    .filter(chat -> (chat.getSender_id() != null && chat.getSender_id().equals(userId)) ||
+                            (chat.getReceiver_id() != null && chat.getReceiver_id().equals(userId)))
+                    .collect(Collectors.toList());
+
+            List<Group> groups = groupDao.getAllGroupsList();
+            for (Group group : groups) {
+                List<String> participants = getGroupParticipants(group.getGroup_id()); // Get members
+                if (participants.contains(userId)) {
+                    Chat groupChat = new Chat();
+                    groupChat.setChat_id(group.getGroup_id());
+                    groupChat.setIs_group_chat(true);
+                    groupChat.setGroup_id(group.getGroup_id());
+                    groupChat.setTimestamp(group.getLast_updated());
+                    personalChats.add(groupChat);
+                }
+            }
+
+            liveData.postValue(personalChats);
+        });
+
+        return liveData;
+    }
+
+
+
+    public List<String> getGroupParticipants(String groupId) {
+        return groupDao.getGroupParticipants(groupId);
+    }
+
+
+    public LiveData<Chat>getChatByGroupId(String group_id){
+        return chatDao.getChatByGroupId(group_id);
+    }
 
 
     // CourseDao --------------------------------------------
@@ -574,6 +535,10 @@ public class AppRepository {
 
     public Course getCoursesByCategory (String category){
         return courseDao.getCoursesByCategory(category);
+    }
+
+    public List<Course> getAllCoursesList (){
+        return courseDao.getAllCoursesList();
     }
 
 
@@ -780,19 +745,7 @@ public class AppRepository {
 
 
 
-    // Enroll in a paid course
-    public void completeEnrollment(String studentId, String courseId, double fee, String courseName) {
-        AppExecutors.getInstance().diskIO().execute(() -> {
-            // Update enrollment status
-            enrollmentDao.updateFeeStatusAndTimestamp(studentId, courseId, fee);
 
-            // Create the group if it doesn't already exist
-            instance.createGroupForCourse(courseId, courseName);
-
-            // Add the student to the group
-            instance.addStudentToGroup(studentId, courseId);
-        });
-    }
 
 
 
@@ -854,8 +807,13 @@ public class AppRepository {
 
 
 
-    public Group getGroupByCourseId(String course_id){
-        return groupDao.getGroupByCourseId(course_id);
+    public Group getGroupByCourseId(String courseId) {
+        return groupDao.getGroupByCourseId(courseId);
+    }
+
+
+    public LiveData<Group> getGroupByCourseIdLiveData(String courseId) {
+        return groupDao.getGroupByCourseIdLiveData(courseId);
     }
 
 
@@ -870,22 +828,22 @@ public class AppRepository {
         });
     }
 
-    // Add a student to a group
-    public void addStudentToGroup(String studentId, String courseId) {
-        AppExecutors.getInstance().diskIO().execute(() -> {
-            Group group = groupDao.getGroupByCourseId(courseId);
-            if (group != null) {
-                GroupMembership groupMembership = new GroupMembership();
-                groupMembership.setGroup_id(group.getGroup_id());
-                groupMembership.setStudent_id(studentId);
-                groupMembershipDao.insertGroupMembership(groupMembership);
-            }
-        });
-    }
+
 
 
     public Group getGroupByGroupId(String group_id){
+
         return groupDao.getGroupByGroupId(group_id);
+
+    }
+
+    public LiveData<Group> getGroupByIdLive(String group_id){
+        return groupDao.getGroupByIdLive(group_id);
+    }
+
+
+    public LiveData<String>getCourseIdByGroupId(String group_id){
+        return groupDao.getCourseIdByGroupId(group_id);
     }
 
 
@@ -918,13 +876,7 @@ public class AppRepository {
         return groupMembershipDao.getGroupMembershipById(group_membership_id);
     }
 
-    public LiveData<List<String>> getAllGroupStudents(String group_id){
-        return groupMembershipDao.getAllGroupStudents(group_id);
-    }
 
-    public LiveData<List<String>> getAllStudentGroups(String student_id){
-        return groupMembershipDao.getAllStudentGroups(student_id);
-    }
 
 
 
@@ -934,6 +886,15 @@ public class AppRepository {
     }
 
 
+
+    public LiveData<GroupMembership> getGroupMembershipByGroupIdAndMemberId(String group_membership_id, String member_id){
+        return groupMembershipDao.getGroupMembershipByGroupIdAndMemberId(group_membership_id,member_id);
+    }
+
+
+    public LiveData<List<GroupMembership>> getGroupMembershipsByGroupId(String group_id){
+        return groupMembershipDao.getGroupMembershipsByGroupId(group_id);
+    }
 
     // LessonDao --------------------------------------------
 
@@ -1132,6 +1093,24 @@ public class AppRepository {
     }
 
 
+
+
+
+    public LiveData<Mentor> getMentorByCourseId(String courseId) {
+        MutableLiveData<Mentor> liveData = new MutableLiveData<>();
+        AppDatabase.databaseWriteExecutor.execute(() -> {
+            // Get the mentor_id for the course
+            String mentorId = mentorCourseDao.getMentorIdByCourseId(courseId);
+            // Fetch the mentor using the mentor_id
+            Mentor mentor = mentorDao.getMentorById(mentorId);
+            liveData.postValue(mentor);
+        });
+        return liveData;
+    }
+
+
+
+
     // MessageDao --------------------------------------------
 
 
@@ -1187,6 +1166,24 @@ public class AppRepository {
         return messageDao.getMessageByMessageId(message_id);
     }
 
+
+    public LiveData<Message> getLastMessageForChat(String chat_id){
+        return messageDao.getLastMessageForChat(chat_id);
+    }
+
+
+    public LiveData<Message> getLastMessageForGroup(String groupId){
+        return messageDao.getLastMessageForGroup(groupId);
+    }
+
+
+    public LiveData<List<Message>> getUnreadMessages(String chatId, String currentUserId) {
+        return messageDao.getUnreadMessages(chatId, currentUserId);
+    }
+
+    public List<Message> getSentMessagesForChat(String chatId, String currentUserId) {
+        return messageDao.getSentMessagesForChat(chatId, currentUserId);
+    }
 
 
     // ModuleDao --------------------------------------------
@@ -1460,6 +1457,27 @@ public class AppRepository {
     public LiveData<Student> getStudentByEmail (String email){
         return studentDao.getStudentByEmail(email);
     }
+
+
+//    public List<Student> getStudentsByCourseId(String courseId) {
+//        // Fetch all student IDs for a given course
+//        List<String> studentIds = enrollmentDao.getStudentIdsByCourseId(courseId);
+//
+//        // Use student IDs to get the students from the Student entity
+//        return studentDao.getStudentsByIds(studentIds);
+//    }
+
+
+    public LiveData<List<Student>> getStudentsByCourseIdLive(String courseId) {
+        MutableLiveData<List<Student>> liveData = new MutableLiveData<>();
+        CompletableFuture.runAsync(() -> {
+            List<String> studentIds = enrollmentDao.getStudentIdsByCourseId(courseId);
+            List<Student> students = studentDao.getStudentsByIds(studentIds);
+            liveData.postValue(students);
+        });
+        return liveData;
+    }
+
 
 
     // StudentLessonDao --------------------------------------------

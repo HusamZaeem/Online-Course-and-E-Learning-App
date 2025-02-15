@@ -45,4 +45,8 @@ public interface MentorDao {
     @Query("SELECT * FROM Mentor WHERE is_synced = 0")
     List<Mentor> getUnsyncedMentors();
 
+
+
+
+
 }

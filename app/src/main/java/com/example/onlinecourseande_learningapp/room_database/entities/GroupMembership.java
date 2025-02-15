@@ -26,18 +26,11 @@ import java.util.Map;
                         parentColumns = "group_id",
                         childColumns = "group_id",
                         onDelete = ForeignKey.CASCADE
-                ),
-                @ForeignKey(
-                        entity = Student.class,
-                        parentColumns = "student_id",
-                        childColumns = "student_id",
-                        onDelete = ForeignKey.CASCADE
                 )
-                ,
+
         },
         indices = {
-                @Index(value = "group_id"),
-                @Index(value = "student_id"),
+                @Index(value = "group_id")
         }
 )
 public class GroupMembership implements Syncable {
@@ -46,18 +39,22 @@ public class GroupMembership implements Syncable {
     @NonNull
     private String group_membership_id="";
     private String group_id;
-    private String student_id;
+    private String member_id;
+    private String member_type; //mentor,student
     private boolean is_synced;
     private Date last_updated;
 
     public GroupMembership() {
     }
 
+
+
     @Ignore
-    public GroupMembership(@NonNull String group_membership_id, String group_id, String student_id, boolean is_synced, Date last_updated) {
+    public GroupMembership(@NonNull String group_membership_id, String group_id, String member_id, String member_type, boolean is_synced, Date last_updated) {
         this.group_membership_id = group_membership_id;
         this.group_id = group_id;
-        this.student_id = student_id;
+        this.member_id = member_id;
+        this.member_type = member_type;
         this.is_synced = is_synced;
         this.last_updated = last_updated;
     }
@@ -99,12 +96,27 @@ public class GroupMembership implements Syncable {
     public Map<String, Object> toMap() {
         Map<String, Object> map = new HashMap<>();
         map.put("group_id", group_id);
-        map.put("student_id", student_id);
+        map.put("member_id", member_id);
+        map.put("member_type", member_type);
         map.put("last_updated", Converter.toFirestoreTimestamp(last_updated));
         return map;
     }
 
+    public String getMember_id() {
+        return member_id;
+    }
 
+    public void setMember_id(String member_id) {
+        this.member_id = member_id;
+    }
+
+    public String getMember_type() {
+        return member_type;
+    }
+
+    public void setMember_type(String member_type) {
+        this.member_type = member_type;
+    }
 
     public void setLast_updated(Date last_updated) {
         this.last_updated = last_updated;
@@ -135,11 +147,4 @@ public class GroupMembership implements Syncable {
         this.group_id = group_id;
     }
 
-    public String getStudent_id() {
-        return student_id;
-    }
-
-    public void setStudent_id(String student_id) {
-        this.student_id = student_id;
-    }
 }

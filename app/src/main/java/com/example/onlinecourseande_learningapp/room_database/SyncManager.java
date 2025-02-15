@@ -15,7 +15,10 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Supplier;
 
+
+
 public class SyncManager {
+
     private final AppDatabase roomDatabase;
     private final AppRepository appRepository;
     private final FirebaseSyncHelper firebaseSyncHelper;
@@ -106,30 +109,29 @@ public class SyncManager {
     }
 
 
-        private CompletableFuture<Void> startListeningForFirebaseUpdates() {
-            return CompletableFuture.runAsync(() -> {
-                firebaseSyncHelper.startSyncingStudents(() -> {
-                    firebaseSyncHelper.startSyncingMentors(() -> {
-                        firebaseSyncHelper.startSyncingCourses(() -> {
-                            firebaseSyncHelper.startSyncingModules(() -> {
-                                firebaseSyncHelper.startSyncingLessons(() -> {
-                                    firebaseSyncHelper.startSyncingChats(() -> {
-                                        firebaseSyncHelper.startSyncingStudentModules(() -> {
-                                            firebaseSyncHelper.startSyncingStudentMentors(() -> {
-                                                firebaseSyncHelper.startSyncingStudentLessons(() -> {
-                                                    firebaseSyncHelper.startSyncingMentorCourses(() -> {
-                                                        firebaseSyncHelper.startSyncingGroups(() -> {
+    private CompletableFuture<Void> startListeningForFirebaseUpdates() {
+        return CompletableFuture.runAsync(() -> {
+            firebaseSyncHelper.startSyncingStudents(() -> {
+                firebaseSyncHelper.startSyncingMentors(() -> {
+                    firebaseSyncHelper.startSyncingCourses(() -> {
+                        firebaseSyncHelper.startSyncingModules(() -> {
+                            firebaseSyncHelper.startSyncingLessons(() -> {
+                                firebaseSyncHelper.startSyncingChats(() -> {
+                                    firebaseSyncHelper.startSyncingStudentModules(() -> {
+                                        firebaseSyncHelper.startSyncingStudentMentors(() -> {
+                                            firebaseSyncHelper.startSyncingStudentLessons(() -> {
+                                                firebaseSyncHelper.startSyncingMentorCourses(() -> {
+                                                    firebaseSyncHelper.startSyncingGroups(() -> {
                                                         firebaseSyncHelper.startSyncingGroupMemberships(() -> {
                                                             firebaseSyncHelper.startSyncingCalls(() -> {
                                                                 firebaseSyncHelper.startSyncingReviews(() -> {
                                                                     firebaseSyncHelper.startSyncingNotifications(() -> {
-                                                                                firebaseSyncHelper.startSyncingEnrollments(() -> {
-                                                                                    firebaseSyncHelper.startSyncingMessages(() -> {
-                                                                                        firebaseSyncHelper.startSyncingAttachments(() -> {
-                                                                                        firebaseSyncHelper.startSyncingBookmarks(() -> {
-                                                                                            firebaseSyncHelper.startSyncingAds(() -> {
+                                                                        firebaseSyncHelper.startSyncingEnrollments(() -> {
+                                                                            firebaseSyncHelper.startSyncingMessages(() -> {
+                                                                                firebaseSyncHelper.startSyncingAttachments(() -> {
+                                                                                    firebaseSyncHelper.startSyncingBookmarks(() -> {
+                                                                                        firebaseSyncHelper.startSyncingAds(() -> {
 
-                                                                                            });
                                                                                         });
                                                                                     });
                                                                                 });
@@ -150,6 +152,7 @@ public class SyncManager {
                     });
                 });
             });
+        });
 
-}
+    }
 }

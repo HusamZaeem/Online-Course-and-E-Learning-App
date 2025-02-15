@@ -57,6 +57,10 @@ public interface MentorCourseDao {
     List<String> getCoursesForAMentor(String mentorId);
 
 
+    @Query("SELECT mentor_id FROM MentorCourse WHERE course_id = :course_id")
+    List<String> getAllCourseMentorsList(String course_id);
 
+    @Query("SELECT mentor_id FROM MentorCourse WHERE course_id = :courseId")
+    String getMentorIdByCourseId(String courseId);
 
 }

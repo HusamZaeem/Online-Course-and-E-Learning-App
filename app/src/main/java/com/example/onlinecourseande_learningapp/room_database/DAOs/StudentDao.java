@@ -50,6 +50,7 @@ public interface StudentDao {
     @Query("SELECT * FROM Student WHERE is_synced = 0")
     List<Student> getUnsyncedStudents();
 
-
+    @Query("SELECT * FROM Student WHERE student_id IN (:studentIds)")
+    List<Student> getStudentsByIds(List<String> studentIds);
 
 }

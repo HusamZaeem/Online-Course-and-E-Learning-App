@@ -58,4 +58,19 @@ public interface MessageDao {
     List<Message> getUnsyncedMessage();
 
 
+    @Query("SELECT * FROM Message WHERE chat_id = :chat_id ORDER BY timestamp DESC LIMIT 1")
+    LiveData<Message> getLastMessageForChat(String chat_id);
+
+
+
+    @Query("SELECT * FROM Message WHERE group_id = :groupId ORDER BY timestamp DESC LIMIT 1")
+    LiveData<Message> getLastMessageForGroup(String groupId);
+
+
+    @Query("SELECT * FROM Message WHERE chat_id = :chatId AND sender_id != :currentUserId AND status < 2")
+    LiveData<List<Message>> getUnreadMessages(String chatId, String currentUserId);
+
+    @Query("SELECT * FROM Message WHERE chat_id = :chatId AND sender_id != :currentUserId AND status = 0")
+    List<Message> getSentMessagesForChat(String chatId, String currentUserId);
+
 }

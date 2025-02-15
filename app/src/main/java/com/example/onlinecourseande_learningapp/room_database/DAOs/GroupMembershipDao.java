@@ -31,20 +31,27 @@ public interface GroupMembershipDao {
     @Query("SELECT * FROM GroupMembership WHERE group_membership_id = :group_membership_id")
     LiveData<List<GroupMembership>> getGroupMembershipById(String group_membership_id);
 
-    @Query("SELECT student_id FROM GroupMembership WHERE group_id = :group_id")
-    LiveData<List<String>> getAllGroupStudents(String group_id);
-
-    @Query("SELECT group_id FROM GroupMembership WHERE student_id = :student_id")
-    LiveData<List<String>> getAllStudentGroups(String student_id);
 
 
     @Query("SELECT * FROM GroupMembership WHERE group_membership_id = :group_membership_id")
     GroupMembership getGroupMembershipByGroupMembershipId(String group_membership_id);
+
+
+    @Query("SELECT * FROM GroupMembership WHERE group_membership_id = :group_membership_id AND member_id = :member_id")
+    LiveData<GroupMembership> getGroupMembershipByGroupIdAndMemberId(String group_membership_id, String member_id);
+
+
+    @Query("SELECT * FROM GroupMembership WHERE group_id = :group_id")
+    LiveData<List<GroupMembership>> getGroupMembershipsByGroupId(String group_id);
 
     @Query("SELECT * FROM GroupMembership WHERE is_synced = 0")
     List<GroupMembership> getUnsyncedGroupMembership();
 
     @Query("SELECT * FROM GroupMembership")
     List<GroupMembership> getAllGroupMemberships();
+
+
+    @Query("SELECT member_id FROM GroupMembership WHERE group_id = :groupId")
+    List<String> getGroupParticipants(String groupId);
 
 }

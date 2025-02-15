@@ -92,4 +92,11 @@
     <string name="certificate_date">Issued on December 20, 2024</string>
     <string name="certificate_id">Id : SK123456789</string>
     <string name="download_certificate">Download Certificate</string>
+    <string name="user_photo">user photo</string>
+    <string name="last_message">"Hello, Good morning "</string>
+    <string name="incoming">Incoming\n</string>
+    <string name="call_date">Dec 19, 2024</string>
+    <string name="call_icon">Call icon</string>
+    <string name="send">send</string>
+    <string name="type_a_message">Type a message...</string>
 </resources>

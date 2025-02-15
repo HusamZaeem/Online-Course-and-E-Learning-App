@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="8dp">
+
+    <!-- Sender's Name -->
+    <TextView
+        android:id="@+id/tvSenderName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Sender Name"
+        android:textColor="@color/primary_color"
+        android:textStyle="bold"
+        android:textSize="14sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- Received Message Bubble -->
+    <TextView
+        android:id="@+id/tvMessageReceived"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:maxWidth="300dp"
+        android:background="@drawable/bg_message_received"
+        android:padding="12dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="4dp"
+        android:text="Received message"
+        android:textColor="@color/primary_color"
+        android:textSize="16sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvSenderName" />
+
+
+    <ImageView
+        android:id="@+id/ivAttachmentReceived"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_margin="4dp"
+        android:visibility="gone"
+        android:scaleType="centerCrop"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvMessageReceived" />
+
+
+    <!-- Time Label -->
+    <TextView
+        android:id="@+id/tvTimeReceived"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:text="12:34"
+        android:textColor="@color/gray"
+        android:textSize="12sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/ivAttachmentReceived"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

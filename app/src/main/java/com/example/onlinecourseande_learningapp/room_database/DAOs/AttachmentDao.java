@@ -64,4 +64,7 @@ public interface AttachmentDao {
     List<Attachment> getUnsyncedAttachment();
 
 
+    @Query("SELECT * FROM Attachment WHERE attachment_id = :attachmentId LIMIT 1")
+    LiveData<Attachment> getAttachmentById(String attachmentId);
+
 }

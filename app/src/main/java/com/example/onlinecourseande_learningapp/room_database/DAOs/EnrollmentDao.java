@@ -158,4 +158,12 @@ public interface EnrollmentDao {
     @Query("SELECT * FROM Enrollment WHERE student_id = :studentId AND status = 'Completed'")
     List<Enrollment> getCompletedEnrollments(String studentId);
 
+
+    @Query("SELECT * FROM Enrollment WHERE course_id = :courseId")
+    List<Enrollment> getEnrollmentsForCourse(String courseId);
+
+
+    @Query("SELECT student_id FROM Enrollment WHERE course_id = :courseId")
+    List<String> getStudentIdsByCourseId(String courseId);
+
 }
