@@ -46,6 +46,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.SetOptions;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -132,9 +133,10 @@ public class SignUp extends AppCompatActivity {
                                         FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
                                         if (firebaseUser != null) {
                                             String uid = firebaseUser.getUid();
-                                            saveUserToFirestore(uid, email, password);
-                                            saveUserLocally(firstName, lastName, email, encryptedPassword);
-                                            syncData();
+                                            saveUserToFirestore(uid, firstName, lastName, email);
+                                            Student student = new Student(uid, firstName, lastName, email, encryptedPassword);
+                                            student.setIs_synced(true);
+                                            appViewModel.insertStudent(student);
                                             startActivity(new Intent(getBaseContext(), MainActivity.class));
                                             finish();
                                         }
@@ -247,21 +249,21 @@ public class SignUp extends AppCompatActivity {
                     if (task.isSuccessful()) {
                         FirebaseUser user = firebaseAuth.getCurrentUser();
                         if (user != null) {
-                            // User successfully logged in, create user in Firestore
                             String uid = user.getUid();
                             String email = user.getEmail();
-                            saveUserToFirestore(uid, email);
-                            saveUserLocallyEmailAndPassword(uid,email);
+                            // If names are not available, pass empty strings
+                            saveUserToFirestore(uid, "", "", email);
+                            saveUserLocallyEmailAndPassword(email, "");  // Adjust locally as needed
                             syncData();
                             startActivity(new Intent(SignUp.this, MainActivity.class));
                             finish();
                         }
                     } else {
-                        // Handle failure
                         Toast.makeText(SignUp.this, "Authentication failed.", Toast.LENGTH_SHORT).show();
                     }
                 });
     }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -303,8 +305,11 @@ public class SignUp extends AppCompatActivity {
                         if (user != null) {
                             String uid = user.getUid();
                             String email = user.getEmail();
-                            saveUserToFirestore(uid, email);
-                            saveUserLocallyEmailAndPassword(uid, email);
+                            // Retrieve names from the account if available, else use empty strings
+                            String firstName = acct.getGivenName() != null ? acct.getGivenName() : "";
+                            String lastName = acct.getFamilyName() != null ? acct.getFamilyName() : "";
+                            saveUserToFirestore(uid, firstName, lastName, email);
+                            saveUserLocally(firstName, lastName, email, ""); // No password available for Google sign-in
                             syncData();
                             startActivity(new Intent(SignUp.this, MainActivity.class));
                             finish();
@@ -314,6 +319,7 @@ public class SignUp extends AppCompatActivity {
                     }
                 });
     }
+
 
 
 
@@ -342,28 +348,23 @@ public class SignUp extends AppCompatActivity {
         appViewModel.insertStudent(student); // Save to Room database
     }
 
-    private void saveUserToFirestore(String uid, String email, String password) {
-        Map<String, Object> userMap = new HashMap<>();
-        userMap.put("email", email);
-        userMap.put("password", password);
 
-        FirebaseFirestore.getInstance().collection("Student")
-                .document(uid)
-                .set(userMap)
-                .addOnSuccessListener(aVoid -> Log.d("SignUp", "User added to Firestore"))
-                .addOnFailureListener(e -> Log.e("SignUp", "Error adding user to Firestore", e));
-    }
 
-    private void saveUserToFirestore(String uid, String email) {
+    private void saveUserToFirestore(String uid, String firstName, String lastName, String email) {
         Map<String, Object> userMap = new HashMap<>();
+        userMap.put("firstName", firstName);
+        userMap.put("lastName", lastName);
         userMap.put("email", email);
 
         FirebaseFirestore.getInstance().collection("Student")
                 .document(uid)
-                .set(userMap)
-                .addOnSuccessListener(aVoid -> Log.d("SignUp", "User added to Firestore"))
+                .set(userMap, SetOptions.merge())  // Merge ensures user is added only once
+                .addOnSuccessListener(aVoid -> Log.d("SignUp", "User added to Firestore successfully"))
                 .addOnFailureListener(e -> Log.e("SignUp", "Error adding user to Firestore", e));
     }
+
+
+
 
 
     private void showErrorMessage(String message) {
