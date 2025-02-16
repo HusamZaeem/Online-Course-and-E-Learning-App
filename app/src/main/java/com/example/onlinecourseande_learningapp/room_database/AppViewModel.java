@@ -880,7 +880,7 @@ public class AppViewModel extends AndroidViewModel {
                 // Update Firebase
                 FirebaseFirestore.getInstance().collection("Message")
                         .document(message.getMessage_id())
-                        .update("status", STATUS_READ, "readAt", now);
+                        .update("status", STATUS_READ, "readAt", Converter.toFirestoreTimestamp(now));
             }
         });
     }
@@ -901,7 +901,7 @@ public class AppViewModel extends AndroidViewModel {
                 // Update Firebase
                 FirebaseFirestore.getInstance().collection("Message")
                         .document(message.getMessage_id())
-                        .update("status", STATUS_DELIVERED, "deliveredAt", now);
+                        .update("status", STATUS_DELIVERED, "deliveredAt", Converter.toFirestoreTimestamp(now));
             }
         });
     }
