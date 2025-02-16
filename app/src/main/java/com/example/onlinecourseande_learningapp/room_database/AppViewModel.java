@@ -481,31 +481,37 @@ public class AppViewModel extends AndroidViewModel {
 
 
 
-
-
-
     public void enrollInFreeCourse(String enrollment_id, String student_id, String course_id) {
         // Enroll the student in the course
         appRepository.enrollInFreeCourse(enrollment_id, student_id, course_id);
 
-        // Retrieve the course object
-        Course course = appRepository.getCourseById(course_id);
+        // Retrieve the course object as LiveData
+        LiveData<Course> courseLiveData = appRepository.getCourseByIdLiveData(course_id);
 
+        // Use observeForever to get the Course details
+        courseLiveData.observeForever(new Observer<Course>() {
+            @Override
+            public void onChanged(Course course) {
+                if (course != null) {
+                    // Create a notification for the student
+                    Notification notification = new Notification();
+                    notification.setNotification_id(UUID.randomUUID().toString());
+                    notification.setStudent_id(student_id);
+                    notification.setTitle("Enrollment Successful");
+                    notification.setContent("You have successfully enrolled in the " + course.getCourse_name() + " course.");
+                    notification.setType("enrollment");
+                    notification.setTimestamp(new Date());
+                    notification.setLast_updated(new Date());
+                    notification.setIs_synced(false);
 
+                    // Insert the notification into the database
+                    appRepository.insertNotification(notification);
 
-        // Create a notification for the student
-        Notification notification = new Notification();
-        notification.setNotification_id(UUID.randomUUID().toString());
-        notification.setStudent_id(student_id);
-        notification.setTitle("Enrollment Successful");
-        notification.setContent("You have successfully enrolled in the " + course.getCourse_name() + " course.");
-        notification.setType("enrollment");
-        notification.setTimestamp(new Date());
-        notification.setLast_updated(new Date());
-        notification.setIs_synced(false);
-
-        // Insert the notification into the database
-        appRepository.insertNotification(notification);
+                    // Remove this observer to avoid memory leaks
+                    courseLiveData.removeObserver(this);
+                }
+            }
+        });
     }
 
 
