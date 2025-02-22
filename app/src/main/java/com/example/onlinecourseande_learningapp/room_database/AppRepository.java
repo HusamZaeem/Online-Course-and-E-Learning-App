@@ -47,6 +47,7 @@ import com.example.onlinecourseande_learningapp.room_database.entities.Lesson;
 import com.example.onlinecourseande_learningapp.room_database.entities.Mentor;
 import com.example.onlinecourseande_learningapp.room_database.entities.MentorCourse;
 import com.example.onlinecourseande_learningapp.room_database.entities.Message;
+import com.example.onlinecourseande_learningapp.room_database.entities.MessageWithAttachments;
 import com.example.onlinecourseande_learningapp.room_database.entities.Module;
 import com.example.onlinecourseande_learningapp.room_database.entities.ModuleWithLessons;
 import com.example.onlinecourseande_learningapp.room_database.entities.Notification;
@@ -269,6 +270,11 @@ public class AppRepository {
 
     public LiveData<Attachment> getAttachmentById(String attachmentId){
         return attachmentDao.getAttachmentById(attachmentId);
+    }
+
+
+    public LiveData<Attachment> getAttachmentByMessageId(String message_id){
+        return attachmentDao.getAttachmentByMessageId(message_id);
     }
 
 
@@ -1185,6 +1191,17 @@ public class AppRepository {
         return messageDao.getSentMessagesForChat(chatId, currentUserId);
     }
 
+
+    public LiveData<List<MessageWithAttachments>> getMessagesWithAttachments(String chatId){
+        return messageDao.getMessagesWithAttachments(chatId);
+    }
+
+
+    public void updateMessageStatus(String messageId, int newStatus, Date lastUpdated){
+        AppDatabase.databaseWriteExecutor.execute(() -> {
+            messageDao.updateMessageStatus(messageId,newStatus,lastUpdated);
+        });
+    }
 
     // ModuleDao --------------------------------------------
 

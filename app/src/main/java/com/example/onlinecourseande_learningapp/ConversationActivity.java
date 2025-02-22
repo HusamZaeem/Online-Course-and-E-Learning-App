@@ -3,6 +3,7 @@ package com.example.onlinecourseande_learningapp;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -11,6 +12,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
+import android.provider.Settings;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -39,6 +41,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -59,6 +62,7 @@ public class ConversationActivity extends AppCompatActivity {
     private String attachmentType;
     private Handler typingHandler = new Handler();
     private Runnable typingTimeoutRunnable;
+    private String pendingPickerType = null;
 
     // Status constants
     private static final int STATUS_PENDING = -1;
@@ -82,7 +86,12 @@ public class ConversationActivity extends AppCompatActivity {
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
                     if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
-                        attachmentUri = result.getData().getData();
+                        if (result.getData() != null && result.getData().getData() != null) {
+                            attachmentUri = result.getData().getData();
+                        } else {
+                            return;
+                        }
+                        // Persist permission if needed (for Android 14+)
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                             try {
                                 getContentResolver().takePersistableUriPermission(
@@ -95,10 +104,18 @@ public class ConversationActivity extends AppCompatActivity {
                         }
                         attachmentType = getAttachmentType(getFileExtension(attachmentUri));
                         binding.attachmentPreview.setVisibility(View.VISIBLE);
-                        Glide.with(this).load(attachmentUri).into(binding.ivAttachmentPreview);
+                        if ("image".equalsIgnoreCase(attachmentType)) {
+                            Glide.with(this).load(attachmentUri).into(binding.ivAttachmentPreview);
+                        } else if ("video".equalsIgnoreCase(attachmentType)) {
+                            Glide.with(this).load(attachmentUri).thumbnail(0.1f).into(binding.ivAttachmentPreview);
+                        } else { // file
+                            binding.ivAttachmentPreview.setImageResource(R.drawable.ic_file_placeholder);
+                        }
+                        binding.btnRemoveAttachment.setVisibility(View.VISIBLE);
                     }
                 }
         );
+
 
         String targetUserId = getIntent().getStringExtra("target_user_id");
         String targetUserType = getIntent().getStringExtra("target_user_type");
@@ -119,7 +136,7 @@ public class ConversationActivity extends AppCompatActivity {
         storage = FirebaseStorage.getInstance();
         storageRef = storage.getReference();
 
-        messageAdapter = new MessageAdapter(messageList, new ArrayList<>(), this, currentUserId, isGroupChat);
+        messageAdapter = new MessageAdapter(messageList, new ArrayList<>(), this, currentUserId, isGroupChat, appViewModel, this);
         binding.recyclerViewMessages.setLayoutManager(new LinearLayoutManager(this));
         binding.recyclerViewMessages.setAdapter(messageAdapter);
 
@@ -246,51 +263,67 @@ public class ConversationActivity extends AppCompatActivity {
 
 
 
-    private void requestPermissionsIfNeeded() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) { // Android 14+ (API 34+)
-            // Request READ_MEDIA_VISUAL_USER_SELECTED permission
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED}, 100);
-            } else {
-                openMediaPicker();
-            }
-        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) { // Android 13 (API 33)
-            // Request READ_MEDIA_IMAGES and READ_MEDIA_VIDEO permissions
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_IMAGES) != PackageManager.PERMISSION_GRANTED ||
-                    ContextCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_VIDEO) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(this, new String[]{
-                        Manifest.permission.READ_MEDIA_IMAGES,
-                        Manifest.permission.READ_MEDIA_VIDEO
-                }, 100);
-            } else {
-                openMediaPicker();
-            }
-        } else { // Android 12 and below
-            // Request READ_EXTERNAL_STORAGE permission
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(this, new String[]{
-                        Manifest.permission.READ_EXTERNAL_STORAGE
-                }, 100);
-            } else {
-                openMediaPicker();
-            }
+    private boolean hasMediaPermissions() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            return ContextCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED) == PackageManager.PERMISSION_GRANTED;
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            return ContextCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_IMAGES) == PackageManager.PERMISSION_GRANTED &&
+                    ContextCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_VIDEO) == PackageManager.PERMISSION_GRANTED;
+        } else {
+            return ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
         }
     }
 
+    // Request permissions without directly opening the picker.
+    private void requestMediaPermissions() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED}, 100);
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            ActivityCompat.requestPermissions(this, new String[]{
+                    Manifest.permission.READ_MEDIA_IMAGES,
+                    Manifest.permission.READ_MEDIA_VIDEO
+            }, 100);
+        } else {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 100);
+        }
+    }
+
+
+    private void checkAndOpenMediaPicker(String pickerType) {
+        if (hasMediaPermissions()) {
+            openMediaPicker(pickerType);
+        } else {
+            pendingPickerType = pickerType;
+            requestMediaPermissions();
+        }
+    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
         if (requestCode == 100) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Log.d("Permission", "Permission granted for selected photos.");
-                openMediaPicker();  // Open media picker after permission is granted
+            boolean granted = grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED;
+
+            if (granted && pendingPickerType != null) {
+                openMediaPicker(pendingPickerType);
+                pendingPickerType = null;
             } else {
-                Log.d("Permission", "Permission denied for selected photos.");
-                Toast.makeText(this, "Permission denied, can't access photos", Toast.LENGTH_SHORT).show();
+                // Permission denied, show dialog to guide the user to the settings
+                new AlertDialog.Builder(this)
+                        .setTitle("Permission Required")
+                        .setMessage("To send media files, please allow storage access in settings.")
+                        .setPositiveButton("Open Settings", (dialog, which) -> {
+                            Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                                    Uri.fromParts("package", getPackageName(), null));
+                            startActivity(intent);
+                        })
+                        .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
+                        .show();
             }
         }
     }
+
 
 
 
@@ -305,27 +338,50 @@ public class ConversationActivity extends AppCompatActivity {
                 .addSnapshotListener((snapshots, error) -> {
                     if (error != null || snapshots == null) return;
 
-                    WriteBatch batch = firestore.batch(); // Initialize WriteBatch for batch updates
+                    List<Message> messages = new ArrayList<>();
+                    List<String> messageIds = new ArrayList<>();
 
                     for (DocumentSnapshot doc : snapshots.getDocuments()) {
                         Message message = doc.toObject(Message.class);
                         if (message != null) {
-                            // Handle updates for status
-                            if (message.getStatus() == STATUS_DELIVERED) {
-                                messageAdapter.updateMessageStatus(message.getMessage_id(), STATUS_DELIVERED);
-                            } else if (message.getStatus() == STATUS_READ) {
-                                messageAdapter.updateMessageStatus(message.getMessage_id(), STATUS_READ);
-                            }
+                            messages.add(message);
+                            messageIds.add(message.getMessage_id());
+                            appViewModel.insertMessage(message); // Save message to RoomDB
+
+                            //  Update the UI in real-time
+                            messageAdapter.updateMessageStatus(message.getMessage_id(), message.getStatus());
+
+                            //  Sync status updates to RoomDB to keep it consistent
+                            appViewModel.updateMessageStatus(message.getMessage_id(), message.getStatus(), new Date());
                         }
                     }
 
-                    // Commit batch updates
-                    batch.commit().addOnFailureListener(e -> {
-                        Log.e("Firestore", "Error in batch commit: ", e);
-                        Toast.makeText(ConversationActivity.this, "Failed to update status", Toast.LENGTH_SHORT).show();
-                    });
+                    fetchAttachmentsForMessages(messageIds, messages);
                 });
     }
+
+
+    // Fetch attachments related to messages
+    private void fetchAttachmentsForMessages(List<String> messageIds, List<Message> messages) {
+        firestore.collection("Attachment")
+                .whereIn("message_id", messageIds)
+                .addSnapshotListener((snapshots, error) -> {
+                    if (error != null || snapshots == null) return;
+
+                    List<Attachment> attachments = new ArrayList<>();
+                    for (DocumentSnapshot doc : snapshots.getDocuments()) {
+                        Attachment attachment = doc.toObject(Attachment.class);
+                        if (attachment != null) {
+                            attachments.add(attachment);
+                            appViewModel.insertAttachment(attachment); // Save attachment to RoomDB
+                        }
+                    }
+
+                    // Update adapter with messages and attachments
+                    messageAdapter.updateMessagesWithAttachments(messages, attachments);
+                });
+    }
+
 
 
 
@@ -343,10 +399,10 @@ public class ConversationActivity extends AppCompatActivity {
         message.setChat_id(chatId);
         message.setSender_id(currentUserId);
         message.setSender_type(currentUserType);
-        message.setContent(content.isEmpty() ? "" : content);
+        message.setContent(content);
         message.setTimestamp(now);
         message.setMessage_type(attachmentUri == null ? "text" : attachmentType);
-        message.setStatus(STATUS_PENDING);  // Set as "pending"
+        message.setStatus(STATUS_SENT);
         message.setIs_synced(false);
         message.setLast_updated(now);
 
@@ -354,18 +410,18 @@ public class ConversationActivity extends AppCompatActivity {
             message.setGroup_id(groupId);
         }
 
-        // Insert in Room DB first
         appViewModel.insertMessage(message);
 
-        // Clear EditText after sending message
+        // Instantly update UI so message appears immediately
+        messageAdapter.updateMessages(Collections.singletonList(message));
+
+        Uri tempAttachmentUri = attachmentUri;
         binding.etMessage.setText("");
         binding.attachmentPreview.setVisibility(View.GONE);
-        attachmentUri = null;
-        attachmentType = null;
+        clearAttachment();
 
-        // If there's an attachment, upload it first before syncing message
-        if (attachmentUri != null) {
-            uploadAttachment(attachmentUri, messageId, message);
+        if (tempAttachmentUri != null) {
+            uploadAttachment(tempAttachmentUri, messageId, message);
         } else {
             syncMessageToFirebase(message);
         }
@@ -373,43 +429,35 @@ public class ConversationActivity extends AppCompatActivity {
 
 
 
+
+
     private void uploadAttachment(Uri uri, String messageId, Message message) {
-
-
-        requestPermissionsIfNeeded(); // Requesting permissions
-
-        // Determine file type and upload it to Firebase
         String fileExtension = getFileExtension(uri);
         attachmentType = getAttachmentType(fileExtension);
 
-        // Upload the attachment to Firebase Storage
         StorageReference fileRef = storageRef.child("attachments/" + UUID.randomUUID().toString());
         fileRef.putFile(uri).addOnSuccessListener(taskSnapshot ->
                 fileRef.getDownloadUrl().addOnSuccessListener(downloadUrl -> {
-                            // Create and save attachment to Room DB
-                            Attachment attachment = new Attachment();
-                            attachment.setAttachment_id(UUID.randomUUID().toString());
-                            attachment.setMessage_id(messageId);
-                            attachment.setMedia_url(downloadUrl.toString());
-                            attachment.setType(attachmentType);
-                            attachment.setIs_synced(false);
-                            attachment.setLast_updated(new Date());
+                    Attachment attachment = new Attachment();
+                    attachment.setAttachment_id(UUID.randomUUID().toString());
+                    attachment.setMessage_id(messageId);
+                    attachment.setMedia_url(downloadUrl.toString());
+                    attachment.setType(attachmentType);
+                    attachment.setIs_synced(false);
+                    attachment.setLast_updated(new Date());
 
-                            appViewModel.insertAttachment(attachment);
-                            syncAttachmentToFirebase(attachment);
+                    appViewModel.insertAttachment(attachment);
+                    syncAttachmentToFirebase(attachment);
 
-                            // Sync the message after uploading the attachment
-                            message.setStatus(STATUS_SENT);
-                            message.setIs_synced(true);
-                            appViewModel.updateMessage(message);
-                            syncMessageToFirebase(message);
-                        })
-                        .addOnFailureListener(e -> {
-                            Toast.makeText(this, "Failed to upload file", Toast.LENGTH_SHORT).show();
-                        })
-        );
+                    message.setStatus(STATUS_SENT);
+                    message.setIs_synced(true);
+                    appViewModel.updateMessage(message);
+                    syncMessageToFirebase(message);
+                })
+        ).addOnFailureListener(e -> {
+            Toast.makeText(this, "Failed to upload file", Toast.LENGTH_SHORT).show();
+        });
     }
-
 
 
 
@@ -458,45 +506,26 @@ public class ConversationActivity extends AppCompatActivity {
     }
 
     private void setupAttachmentPicker() {
-        ActivityResultLauncher<Intent> pickFile = registerForActivityResult(
-                new ActivityResultContracts.StartActivityForResult(),
-                result -> {
-                    if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
-                        attachmentUri = result.getData().getData();
-
-                        // Grant persistent URI permission for Android 14+
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-                            getContentResolver().takePersistableUriPermission(
-                                    attachmentUri,
-                                    Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION
-                            );
-                        }
-
-                        attachmentType = getAttachmentType(getFileExtension(attachmentUri));
-                        binding.attachmentPreview.setVisibility(View.VISIBLE);
-                        Glide.with(this).load(attachmentUri).into(binding.ivAttachmentPreview);
-                    }
-                });
-
-
-        binding.btnAttach.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                requestPermissionsIfNeeded();
-                openMediaPicker();
-            }
+        binding.btnAttach.setOnClickListener(v -> {
+            new AlertDialog.Builder(ConversationActivity.this)
+                    .setTitle("Attach")
+                    .setMessage("Choose attachment type")
+                    .setPositiveButton("File", (dialog, which) -> checkAndOpenMediaPicker("file"))
+                    .setNegativeButton("Photo/Video", (dialog, which) -> checkAndOpenMediaPicker("media"))
+                    .show();
         });
     }
 
 
-    private void openMediaPicker() {
-        Intent intent;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) { // Android 14+
-            intent = new Intent(MediaStore.ACTION_PICK_IMAGES);
-        } else { // Android 13 and below
-            intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-            intent.addCategory(Intent.CATEGORY_OPENABLE);
+    private void openMediaPicker(String pickerType) {
+        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        if ("file".equals(pickerType)) {
             intent.setType("*/*");
+        } else if ("media".equals(pickerType)) {
+            intent.setType("*/*");
+            String[] mimeTypes = {"image/*", "video/*"};
+            intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
         }
         pickFileLauncher.launch(intent);
     }

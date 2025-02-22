@@ -7,11 +7,14 @@ import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
+import androidx.room.Transaction;
 import androidx.room.Update;
 
 import com.example.onlinecourseande_learningapp.room_database.entities.Message;
+import com.example.onlinecourseande_learningapp.room_database.entities.MessageWithAttachments;
 import com.example.onlinecourseande_learningapp.room_database.entities.Module;
 
+import java.util.Date;
 import java.util.List;
 
 @Dao
@@ -72,5 +75,14 @@ public interface MessageDao {
 
     @Query("SELECT * FROM Message WHERE chat_id = :chatId AND sender_id != :currentUserId AND status = 0")
     List<Message> getSentMessagesForChat(String chatId, String currentUserId);
+
+
+    @Transaction
+    @Query("SELECT * FROM message WHERE chat_id = :chatId ORDER BY timestamp ASC")
+    LiveData<List<MessageWithAttachments>> getMessagesWithAttachments(String chatId);
+
+
+    @Query("UPDATE Message SET status = :newStatus, last_updated = :lastUpdated WHERE message_id = :messageId")
+    void updateMessageStatus(String messageId, int newStatus, Date lastUpdated);
 
 }

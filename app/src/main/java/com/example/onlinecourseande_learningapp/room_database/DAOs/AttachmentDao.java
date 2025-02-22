@@ -67,4 +67,8 @@ public interface AttachmentDao {
     @Query("SELECT * FROM Attachment WHERE attachment_id = :attachmentId LIMIT 1")
     LiveData<Attachment> getAttachmentById(String attachmentId);
 
+
+    @Query("SELECT * FROM Attachment WHERE message_id = :message_id LIMIT 1")
+    LiveData<Attachment> getAttachmentByMessageId(String message_id);
+
 }

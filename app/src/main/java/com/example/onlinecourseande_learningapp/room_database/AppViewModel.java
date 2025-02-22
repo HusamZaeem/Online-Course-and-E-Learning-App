@@ -30,6 +30,7 @@ import com.example.onlinecourseande_learningapp.room_database.entities.Lesson;
 import com.example.onlinecourseande_learningapp.room_database.entities.Mentor;
 import com.example.onlinecourseande_learningapp.room_database.entities.MentorCourse;
 import com.example.onlinecourseande_learningapp.room_database.entities.Message;
+import com.example.onlinecourseande_learningapp.room_database.entities.MessageWithAttachments;
 import com.example.onlinecourseande_learningapp.room_database.entities.Module;
 import com.example.onlinecourseande_learningapp.room_database.entities.ModuleWithLessons;
 import com.example.onlinecourseande_learningapp.room_database.entities.Notification;
@@ -186,6 +187,11 @@ public class AppViewModel extends AndroidViewModel {
         return appRepository.getAttachmentById(attachmentId);
     }
 
+
+
+    public LiveData<Attachment> getAttachmentByMessageId(String message_id){
+        return appRepository.getAttachmentByMessageId(message_id);
+    }
 
     // BookmarkDao --------------------------------------------
 
@@ -906,6 +912,15 @@ public class AppViewModel extends AndroidViewModel {
         });
     }
 
+
+    public LiveData<List<MessageWithAttachments>> getMessagesWithAttachments(String chatId){
+        return appRepository.getMessagesWithAttachments(chatId);
+    }
+
+
+    public void updateMessageStatus(String messageId, int newStatus, Date lastUpdated){
+            appRepository.updateMessageStatus(messageId,newStatus,lastUpdated);
+    }
 
     // ModuleDao --------------------------------------------
 
