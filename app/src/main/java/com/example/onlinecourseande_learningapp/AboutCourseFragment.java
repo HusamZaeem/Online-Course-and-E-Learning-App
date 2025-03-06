@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import com.example.onlinecourseande_learningapp.databinding.FragmentAboutCourseBinding;
 import com.example.onlinecourseande_learningapp.room_database.AppViewModel;
+import com.example.onlinecourseande_learningapp.room_database.entities.Course;
 import com.example.onlinecourseande_learningapp.room_database.entities.Mentor;
 
 import java.util.UUID;
@@ -80,6 +81,12 @@ public class AboutCourseFragment extends Fragment {
                 String enrollment_id = UUID.randomUUID().toString();
                 appViewModel.enrollInFreeCourse(enrollment_id, studentId, courseId);
                 Toast.makeText(getContext(), "You are now enrolled in this course", Toast.LENGTH_SHORT).show();
+
+                Course course = appViewModel.getCourseById(courseId);
+                String notificationMessage = "You have successfully enrolled in the " + course.getCourse_name();
+                int notificationId = (int) System.currentTimeMillis();
+                NotificationHelper.sendNotification(getContext(), "Enrollment Successful", notificationMessage, notificationId);
+
 
                 binding.btnEnroll.setEnabled(false);
                 binding.btnEnroll.setText("Enrolled");

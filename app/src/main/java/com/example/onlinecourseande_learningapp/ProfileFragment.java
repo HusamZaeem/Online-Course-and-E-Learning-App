@@ -110,6 +110,13 @@ public class ProfileFragment extends Fragment {
                     currentStudent.setIs_synced(false);
                     currentStudent.setLast_updated(new Date());
                     appViewModel.updateStudent(currentStudent);
+
+                    String notificationMessage = "Your account information was updated successfully " + binding.etFirstName.getText().toString().trim() +"!";
+                    int notificationId = (int) System.currentTimeMillis();
+                    NotificationHelper.sendNotification(getContext(), "Account Updated", notificationMessage, notificationId);
+
+
+
                 }
                 setFieldsEnabled(false);
                 binding.btnEditSave.setText("Edit Personal Information");
@@ -137,11 +144,10 @@ public class ProfileFragment extends Fragment {
 
 
 
-        // Logout button: clear only the student session (remove student_id) while preserving email/password if "remember me" is checked.
         binding.btnLogout.setOnClickListener(v -> {
             clearStudentSession(requireContext());
             Intent intent = new Intent(requireContext(), SignIn.class);
-            // Clear the back stack.
+
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
         });
@@ -151,7 +157,7 @@ public class ProfileFragment extends Fragment {
         initActivityResultLaunchers();
     }
 
-    // Populate the UI fields with the student data.
+
     private void populateStudentData(Student student) {
         binding.etFirstName.setText(student.getFirst_name());
         binding.etLastName.setText(student.getLast_name());
@@ -172,15 +178,15 @@ public class ProfileFragment extends Fragment {
         }
     }
 
-    // Enable or disable editing on fields.
+
     private void setFieldsEnabled(boolean enabled) {
         binding.etFirstName.setEnabled(enabled);
         binding.etLastName.setEnabled(enabled);
         binding.etPhone.setEnabled(enabled);
-        binding.etDob.setEnabled(enabled);  // Only editable in edit mode.
+        binding.etDob.setEnabled(enabled);
     }
 
-    // Display a DatePickerDialog for selecting Date of Birth.
+
     private void showDatePickerDialog() {
         final Calendar calendar = Calendar.getInstance();
         if (currentStudent != null && currentStudent.getDate_of_birth() != null) {
@@ -198,7 +204,6 @@ public class ProfileFragment extends Fragment {
         datePickerDialog.show();
     }
 
-    // Show a dialog to choose between Camera and Gallery for selecting a profile photo.
     private void showPhotoOptionsDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
         builder.setTitle("Select Photo")
@@ -216,7 +221,7 @@ public class ProfileFragment extends Fragment {
         builder.create().show();
     }
 
-    // Initialize ActivityResultLaunchers for Camera and Gallery.
+
     private void initActivityResultLaunchers() {
         galleryLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
@@ -245,7 +250,7 @@ public class ProfileFragment extends Fragment {
                 });
     }
 
-    // Upload the image to Firebase Storage and update the student's profile photo.
+
     private void uploadImageToFirebase(Uri imageUri) {
         FirebaseStorage storage = FirebaseStorage.getInstance();
         String studentId = currentStudent.getStudent_id();
@@ -260,7 +265,7 @@ public class ProfileFragment extends Fragment {
                                 currentStudent.setIs_synced(false);
                                 currentStudent.setLast_updated(new Date());
                                 appViewModel.updateStudent(currentStudent);
-                                // Immediately update the UI with the new photo.
+
                                 ImageLoaderUtil.loadImageFromFirebaseStorage(requireContext(), downloadUri.toString(), binding.ivProfileStudentPhoto);
                             }
                         })
@@ -268,7 +273,7 @@ public class ProfileFragment extends Fragment {
                 .addOnFailureListener(e -> Log.e("ProfileFragment", "Image upload failed", e));
     }
 
-    // Save Bitmap to a temporary file and return its URI.
+
     private Uri getImageUriFromBitmap(Context context, Bitmap bitmap) {
         try {
             File cacheDir = context.getCacheDir();
@@ -284,7 +289,7 @@ public class ProfileFragment extends Fragment {
         return null;
     }
 
-    // Retrieve the student id from SharedPreferences.
+
     private String getStudentIdFromSharedPreferences(Context context) {
         SharedPreferences sp = context.getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
         return sp.getString("student_id", null);
